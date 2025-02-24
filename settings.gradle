@@ -1,0 +1,6 @@
+rootProject.name = 'instock'
+
+include 'core-module'
+include 'community-module'
+include 'stock-module'
+include 'piggyBank-module'
