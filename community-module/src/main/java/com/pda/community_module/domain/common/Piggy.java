@@ -1,4 +1,4 @@
-package com.pda.piggyBank_module.domain.common;
+package com.pda.community_module.domain.common;
 
 import jakarta.persistence.*;
 import lombok.*;
