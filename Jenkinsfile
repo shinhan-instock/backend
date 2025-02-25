@@ -13,6 +13,11 @@ metadata:
   labels:
     jenkins-build: app-build
 spec:
+  tolerations:
+  - key: "no-kafka"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
   containers:
   - name: kaniko
     image: gcr.io/kaniko-project/executor:v1.5.1-debug
