@@ -53,6 +53,20 @@ spec:
         stage('Build JAR') {
             steps {
                 sh './gradlew :core-module:clean :core-module:build --no-daemon'
+
+                // 현재 작업 디렉토리 확인
+                sh 'pwd'
+
+                // 빌드된 JAR 파일 목록 확인
+                sh 'ls -al ./core-module/build/libs/'
+
+                // JAR 파일이 없으면 빌드 실패 처리
+                script {
+                    def jarExists = sh(script: 'ls ./core-module/build/libs/*.jar | wc -l', returnStdout: true).trim()
+                    if (jarExists == "0") {
+                        error "🚨 JAR 파일이 생성되지 않았습니다! build.gradle 설정을 확인하세요."
+                    }
+                }
             }
         }
 
@@ -61,13 +75,19 @@ spec:
                 stage('Build & Push core-module') {
                     steps {
                         container('kaniko') {
-                            sh "/kaniko/executor --context ${WORKSPACE}/core-module \
-                                --destination ${registry}/core-module:latest \
-                                --insecure \
-                                --skip-tls-verify  \
-                                --cleanup \
-                                --dockerfile ${WORKSPACE}/core-module/Dockerfile \
-                                --verbosity debug"
+                            script {
+                                // JAR 파일 경로 확인
+                                sh 'ls -al ${WORKSPACE}/core-module/build/libs/'
+
+                                // Docker 이미지 빌드 및 푸시
+                                sh "/kaniko/executor --context ${WORKSPACE}/core-module \
+                                    --destination ${registry}/core-module:latest \
+                                    --insecure \
+                                    --skip-tls-verify  \
+                                    --cleanup \
+                                    --dockerfile ${WORKSPACE}/core-module/Dockerfile \
+                                    --verbosity debug"
+                            }
                         }
                     }
                 }
