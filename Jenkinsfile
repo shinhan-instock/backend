@@ -81,6 +81,8 @@ spec:
             steps {
                 sh './gradlew :core-module:clean :core-module:build --no-daemon'
                 sh './gradlew :community-module:clean :community-module:build --no-daemon'
+                sh './gradlew :piggyBank-module:clean :piggyBank-module:build --no-daemon'
+                sh './gradlew :stock-module:clean :stock-module:build --no-daemon'
 
               
                 // 현재 작업 디렉토리 확인
