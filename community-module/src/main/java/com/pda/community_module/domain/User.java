@@ -1,9 +1,9 @@
-package com.pda.piggyBank_module.domain;
+package com.pda.community_module.domain;
 
-import com.pda.piggyBank_module.domain.common.BaseEntity;
-import com.pda.piggyBank_module.domain.mapping.PostLike;
-import com.pda.piggyBank_module.domain.mapping.PostScrap;
-import com.pda.piggyBank_module.domain.mapping.UserFollows;
+import com.pda.community_module.domain.common.BaseEntity;
+import com.pda.community_module.domain.mapping.PostLike;
+import com.pda.community_module.domain.mapping.PostScrap;
+import com.pda.community_module.domain.mapping.UserFollows;
 import jakarta.persistence.*;
 import lombok.*;
 
