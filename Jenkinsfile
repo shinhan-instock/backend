@@ -1,6 +1,6 @@
 pipeline {
     environment {
-        registry = 'docker.io/kmaster8' // DockerHub 계정
+        registry = 'docker.io/jiwonchoe' // DockerHub 계정
         registryCredential = 'dockerhub-jw' // Jenkins에 등록된 DockerHub 인증 정보
     }
 
@@ -76,7 +76,7 @@ spec:
                                 --skip-tls-verify  \
                                 --cleanup \
                                 --dockerfile core-module/Dockerfile \
-                                --verbosity debug'
+                                --verbosity debug --force'
                         }
                     }
                 }
