@@ -43,19 +43,13 @@ spec:
         }
     }
 
-        stage ('git clone') {
+    **stages {**   // 💡 stage들을 감싸는 stages 블록 추가
+
+        stage ('Git Clone') {
             steps {
                 checkout scmGit(branches: [[name: 'main']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
             }
         }
-        // stage('Checkout') {
-        //     steps {
-        //         script {
-        //             git url: 'https://github.com/shinhan-instock/backend.git', credentialsId: 'jiwonchoe12'
-        //             sh 'ls -la'
-        //         }
-        //     }
-        // }
 
         stage('Build JAR') {
             steps {
@@ -68,20 +62,20 @@ spec:
                 stage('Build & Push core-module') {
                     steps {
                         container('kaniko') {
-                            sh '/kaniko/executor --context ${WORKSPACE}/core-module \
-                                --destination $registry/core-module:latest \
+                            sh "/kaniko/executor --context ${WORKSPACE}/core-module \
+                                --destination ${registry}/core-module:latest \
                                 --insecure \
                                 --skip-tls-verify  \
                                 --cleanup \
                                 --dockerfile ${WORKSPACE}/core-module/Dockerfile \
-                                --verbosity debug'
+                                --verbosity debug"
                         }
                     }
                 }
-
             }
         }
-    }
+
+    } // **stages 블록 닫기**
 
     post {
         success {
