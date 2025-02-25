@@ -39,7 +39,7 @@ spec:
     volumeMounts:
       - name: jenkins-docker-cfg
         mountPath: /kaniko/.docker
-  - name: kaniko-piggyBank
+  - name: kaniko-piggybank
     image: gcr.io/kaniko-project/executor:v1.23.2-debug
     imagePullPolicy: Always
     command:
@@ -143,7 +143,7 @@ spec:
 
         stage('Build & Push piggyBank-module') {
             steps {
-            container('kaniko-piggyBank') {
+            container('kaniko-piggybank') {
                 script {
                 // JAR 파일 경로 확인
                 sh 'ls -al ${WORKSPACE}/piggyBank-module/build/libs/'
