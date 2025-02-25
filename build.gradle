@@ -48,6 +48,8 @@ allprojects {
             mainClass.set('com.pda.piggyBank_module.PiggyBankModuleApplication')
         } else if (project.name == 'stock-module') {
             mainClass.set('com.pda.stock_module.StockModuleApplication')
+        } else {
+            enabled = false 
         }
     }
 }
