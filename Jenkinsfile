@@ -86,7 +86,7 @@ spec:
                                     --insecure \
                                     --skip-tls-verify  \
                                     --cleanup \
-									--dockerfile "${WORKSPACE}/core-module/Dockerfile" \
+									--dockerfile ${WORKSPACE}/core-module/Dockerfile \
                                     --verbosity debug"
                             }
                         }
@@ -106,7 +106,7 @@ spec:
                                     --insecure \
                                     --skip-tls-verify  \
                                     --cleanup \
-									--dockerfile "${WORKSPACE}/community-module/Dockerfile" \
+									--dockerfile ${WORKSPACE}/community-module/Dockerfile \
                                     --verbosity debug"
                             }
                         }
