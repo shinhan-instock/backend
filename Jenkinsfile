@@ -77,18 +77,20 @@ spec:
                     steps {
                         container('kaniko') {
                             script {
-                                // JAR 파일 경로 확인
-                                sh 'ls -al ${WORKSPACE}/core-module/build/libs/'
-
-                                // Docker 이미지 빌드 및 푸시
-                                sh "/kaniko/executor --context ${WORKSPACE}/core-module/ \
-                                    --destination ${registry}/core-module:latest \
-                                    --insecure \
-                                    --skip-tls-verify  \
-                                    --cleanup \
-									--dockerfile ${WORKSPACE}/core-module/Dockerfile \
-									--ignore-path=${WORKSPACE} \
-                                    --verbosity debug"
+				lock('kaniko-execute') {
+	                                // JAR 파일 경로 확인
+	                                sh 'ls -al ${WORKSPACE}/core-module/build/libs/'
+	
+	                                // Docker 이미지 빌드 및 푸시
+	                                sh "/kaniko/executor --context ${WORKSPACE}/core-module/ \
+	                                    --destination ${registry}/core-module:latest \
+	                                    --insecure \
+	                                    --skip-tls-verify  \
+	                                    --cleanup \
+										--dockerfile ${WORKSPACE}/core-module/Dockerfile \
+										--ignore-path=${WORKSPACE} \
+	                                    --verbosity debug"
+				}
                             }
                         }
                     }
@@ -98,18 +100,20 @@ spec:
                     steps {
                         container('kaniko') {
                             script {
-                                // JAR 파일 경로 확인
-                                sh 'ls -al ${WORKSPACE}/community-module/build/libs/'
-
-                                // Docker 이미지 빌드 및 푸시
-                                //sh "/kaniko/executor --context ${WORKSPACE}/community-module/ \
-                                //    --destination ${registry}/community-module:latest \
-                                //    --insecure \
-                                //    --skip-tls-verify  \
-                                //    --cleanup \
-								//	--dockerfile ${WORKSPACE}/community-module/Dockerfile \
-								//	--ignore-path=${WORKSPACE} \
-                                //    --verbosity debug"
+				lock('kaniko-execute') {
+	                                // JAR 파일 경로 확인
+	                                sh 'ls -al ${WORKSPACE}/community-module/build/libs/'
+	
+	                                // Docker 이미지 빌드 및 푸시
+	                                sh "/kaniko/executor --context ${WORKSPACE}/community-module/ \
+	                                    --destination ${registry}/community-module:latest \
+	                                    --insecure \
+	                                    --skip-tls-verify  \
+	                                    --cleanup \
+				        					--dockerfile ${WORKSPACE}/community-module/Dockerfile \
+										--ignore-path=${WORKSPACE} \
+	                                    --verbosity debug"
+				}
                             }
                         }
                     }
