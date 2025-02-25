@@ -38,6 +38,20 @@ allprojects {
 //	tasks.named('test') {
 //		useJUnitPlatform()
 //	}
+	// 모듈별 mainClassName 설정
+    bootJar {
+        if (project.name == 'core-module') {
+            mainClass.set('com.pda.core_module.CoreModuleApplication')
+        } else if (project.name == 'community-module') {
+            mainClass.set('com.pda.community_module.CommunityModuleApplication')
+        } else if (project.name == 'piggyBank-module') {
+            mainClass.set('com.pda.piggyBank_module.PiggyBankModuleApplication')
+        } else if (project.name == 'stock-module') {
+            mainClass.set('com.pda.stock_module.StockModuleApplication')
+        } else {
+            enabled = false 
+        }
+    }
 }
 project(':core-module'){
 	dependencies{
@@ -55,6 +69,7 @@ project(':piggyBank-module') {
 	dependencies {
 		implementation project(':core-module')
 		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+		implementation 'com.mysql:mysql-connector-j'
 	}
 }
 project(':stock-module') {
