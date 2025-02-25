@@ -1,2 +1,32 @@
 server:
   port: 8081
+spring:
+  datasource:
+    url: ${MY_URL}
+    username: ${MY_USERNAME}
+    password: ${MY_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: never
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+        hbm2ddl:
+          auto: create
+        default_batch_fetch_size: 1000
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password:
+
+appkey: ${APP_KEY}
+appsecret: ${APP_SECRET}

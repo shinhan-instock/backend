@@ -60,5 +60,9 @@ project(':piggyBank-module') {
 project(':stock-module') {
 	dependencies {
 		implementation project(':core-module')
+		implementation 'com.google.code.gson:gson'
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+		implementation 'com.mysql:mysql-connector-j'
+
 	}
 }
