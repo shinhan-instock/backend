@@ -39,6 +39,8 @@ spec:
           items:
             - key: .dockerconfigjson
               path: config.json
+  - name: workspace-volume  # 이 부분 추가
+    emptyDir: {}  # Jenkins의 workspace와 공유하도록 설정
 """
         }
     }
