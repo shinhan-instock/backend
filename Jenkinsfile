@@ -87,6 +87,7 @@ spec:
                                     --skip-tls-verify  \
                                     --cleanup \
 									--dockerfile ${WORKSPACE}/core-module/Dockerfile \
+									--ignore-path=${WORKSPACE} \
                                     --verbosity debug"
                             }
                         }
@@ -107,6 +108,7 @@ spec:
                                     --skip-tls-verify  \
                                     --cleanup \
 									--dockerfile ${WORKSPACE}/community-module/Dockerfile \
+									--ignore-path=${WORKSPACE} \
                                     --verbosity debug"
                             }
                         }
