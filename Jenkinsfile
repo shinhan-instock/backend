@@ -80,13 +80,13 @@ spec:
                                 // JAR 파일 경로 확인
                                 sh 'ls -al ${WORKSPACE}/core-module/build/libs/'
 
+								cd "${WORKSPACE}/core-module/"
                                 // Docker 이미지 빌드 및 푸시
-                                sh "/kaniko/executor --context ${WORKSPACE}/core-module \
+                                sh "/kaniko/executor --context `pwd` \
                                     --destination ${registry}/core-module:latest \
                                     --insecure \
                                     --skip-tls-verify  \
                                     --cleanup \
-                                    --dockerfile ${WORKSPACE}/core-module/Dockerfile \
                                     --verbosity debug"
                             }
                         }
@@ -100,13 +100,13 @@ spec:
                                 // JAR 파일 경로 확인
                                 sh 'ls -al ${WORKSPACE}/community-module/build/libs/'
 
+								cd "${WORKSPACE}/community-module/"
                                 // Docker 이미지 빌드 및 푸시
-                                sh "/kaniko/executor --context ${WORKSPACE}/community-module \
+                                sh "/kaniko/executor --context `pwd` \
                                     --destination ${registry}/community-module:latest \
                                     --insecure \
                                     --skip-tls-verify  \
                                     --cleanup \
-                                    --dockerfile ${WORKSPACE}/community-module/Dockerfile \
                                     --verbosity debug"
                             }
                         }
