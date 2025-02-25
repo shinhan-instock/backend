@@ -53,7 +53,7 @@ spec:
         stage('Build JAR') {
             steps {
                 sh './gradlew :core-module:clean :core-module:build --no-daemon'
-                sh './gradlew :core-module:clean :core-module:build --no-daemon'
+                sh './gradlew :community-module:clean :community-module:build --no-daemon'
 
               
                 // 현재 작업 디렉토리 확인
