@@ -38,6 +38,18 @@ allprojects {
 //	tasks.named('test') {
 //		useJUnitPlatform()
 //	}
+	// 모듈별 mainClassName 설정
+    bootJar {
+        if (project.name == 'core-module') {
+            mainClassName = 'com.pda.core_module.MainApplication'
+        } else if (project.name == 'community-module') {
+            mainClassName = 'com.pda.community_module.MainApplication'
+        } else if (project.name == 'piggyBank-module') {
+            mainClassName = 'com.pda.piggyBank_module.MainApplication'
+        } else if (project.name == 'stock-module') {
+            mainClassName = 'com.pda.stock_module.MainApplication'
+        }
+    }
 }
 project(':core-module'){
 	dependencies{
