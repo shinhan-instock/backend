@@ -14,6 +14,8 @@ metadata:
   labels:
     jenkins-build: app-build
 spec:
+  nodeSelector:
+    kubernetes.io/hostname: k8s-cicd
   tolerations:
   - key: "no-kafka"
     operator: "Equal"
