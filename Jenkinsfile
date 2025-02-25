@@ -64,6 +64,7 @@ spec:
         
                 // JAR 파일을 core-module-latest.jar로 이름 변경
                 sh 'cp ./core-module/build/libs/core-module-0.0.1-SNAPSHOT.jar ./core-module/build/libs/core-module-latest.jar'
+                sh 'cp ./community-module/build/libs/community-module-0.0.1-SNAPSHOT.jar ./community-module/build/libs/community-module-latest.jar'
         
                 // 변경된 파일 확인
                 sh 'ls -al ./core-module/build/libs/'
