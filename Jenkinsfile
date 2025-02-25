@@ -10,7 +10,6 @@ pipeline {
 apiVersion: v1
 kind: Pod
 metadata:
-  name: kaniko
   labels:
     jenkins-build: app-build
 spec:
@@ -23,7 +22,7 @@ spec:
     effect: "NoSchedule"
   containers:
   - name: kaniko
-    image: gcr.io/kaniko-project/executor:v1.5.1-debug
+    image: gcr.io/kaniko-project/executor:v1.23.2-debug
     imagePullPolicy: Always
     command:
     - /busybox/cat
@@ -44,9 +43,8 @@ spec:
         }
     }
 
-    stages {
         stage ('git clone') {
-            steps() {
+            steps {
                 checkout scmGit(branches: [[name: 'main']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
             }
         }
@@ -61,7 +59,7 @@ spec:
 
         stage('Build JAR') {
             steps {
-                sh './gradlew build'
+                sh './gradlew :core-module:clean :core-module:build --no-daemon'
             }
         }
 
@@ -70,58 +68,17 @@ spec:
                 stage('Build & Push core-module') {
                     steps {
                         container('kaniko') {
-                            sh '/kaniko/executor --context `pwd`/core-module \
+                            sh '/kaniko/executor --context ${WORKSPACE}/core-module \
                                 --destination $registry/core-module:latest \
                                 --insecure \
                                 --skip-tls-verify  \
                                 --cleanup \
-                                --dockerfile core-module/Dockerfile \
-                                --verbosity debug --force'
-                        }
-                    }
-                }
-
-                stage('Build & Push community-module') {
-                    steps {
-                        container('kaniko') {
-                            sh '/kaniko/executor --context `pwd`/community-module \
-                                --destination $registry/community-module:latest \
-                                --insecure \
-                                --skip-tls-verify  \
-                                --cleanup \
-                                --dockerfile community-module/Dockerfile \
+                                --dockerfile ${WORKSPACE}/core-module/Dockerfile \
                                 --verbosity debug'
                         }
                     }
                 }
 
-                stage('Build & Push stock-module') {
-                    steps {
-                        container('kaniko') {
-                            sh '/kaniko/executor --context `pwd`/stock-module \
-                                --destination $registry/stock-module:latest \
-                                --insecure \
-                                --skip-tls-verify  \
-                                --cleanup \
-                                --dockerfile stock-module/Dockerfile \
-                                --verbosity debug'
-                        }
-                    }
-                }
-
-                stage('Build & Push piggyBank-module') {
-                    steps {
-                        container('kaniko') {
-                            sh '/kaniko/executor --context `pwd`/piggyBank-module \
-                                --destination $registry/piggyBank-module:latest \
-                                --insecure \
-                                --skip-tls-verify  \
-                                --cleanup \
-                                --dockerfile piggyBank-module/Dockerfile \
-                                --verbosity debug'
-                        }
-                    }
-                }
             }
         }
     }
