@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "watchlist")
 public class WatchList extends BaseEntity {
 
     @Id

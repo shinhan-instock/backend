@@ -9,6 +9,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "post_count")
+
 public class PostCount extends BaseEntity {
 
     @Id
@@ -20,8 +22,10 @@ public class PostCount extends BaseEntity {
     private Post post;
 
     @Column(nullable = false)
+    @Builder.Default
     private Long likeCount=0L;
 
     @Column(nullable = false)
+    @Builder.Default
     private Long commentCount=0L;
 }

@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "user")
 public class User extends BaseEntity {
 
     @Id
@@ -63,6 +64,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Sentiment> sentiments;
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//    private List<Sentiment> sentiments;
 }
