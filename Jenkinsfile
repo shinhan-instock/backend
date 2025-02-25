@@ -102,14 +102,14 @@ spec:
                                 sh 'ls -al ${WORKSPACE}/community-module/build/libs/'
 
                                 // Docker 이미지 빌드 및 푸시
-                                sh "/kaniko/executor --context ${WORKSPACE}/community-module/ \
-                                    --destination ${registry}/community-module:latest \
-                                    --insecure \
-                                    --skip-tls-verify  \
-                                    --cleanup \
-									--dockerfile ${WORKSPACE}/community-module/Dockerfile \
-									--ignore-path=${WORKSPACE} \
-                                    --verbosity debug"
+                                //sh "/kaniko/executor --context ${WORKSPACE}/community-module/ \
+                                //    --destination ${registry}/community-module:latest \
+                                //    --insecure \
+                                //    --skip-tls-verify  \
+                                //    --cleanup \
+								//	--dockerfile ${WORKSPACE}/community-module/Dockerfile \
+								//	--ignore-path=${WORKSPACE} \
+                                //    --verbosity debug"
                             }
                         }
                     }
