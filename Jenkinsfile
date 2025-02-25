@@ -53,20 +53,18 @@ spec:
         stage('Build JAR') {
             steps {
                 sh './gradlew :core-module:clean :core-module:build --no-daemon'
-
+        
                 // 현재 작업 디렉토리 확인
                 sh 'pwd'
-
+        
                 // 빌드된 JAR 파일 목록 확인
                 sh 'ls -al ./core-module/build/libs/'
-
-                // JAR 파일이 없으면 빌드 실패 처리
-                script {
-                    def jarExists = sh(script: 'ls ./core-module/build/libs/*.jar | wc -l', returnStdout: true).trim()
-                    if (jarExists == "0") {
-                        error "🚨 JAR 파일이 생성되지 않았습니다! build.gradle 설정을 확인하세요."
-                    }
-                }
+        
+                // JAR 파일을 core-module-latest.jar로 이름 변경
+                sh 'cp ./core-module/build/libs/core-module-0.0.1-SNAPSHOT.jar ./core-module/build/libs/core-module-latest.jar'
+        
+                // 변경된 파일 확인
+                sh 'ls -al ./core-module/build/libs/'
             }
         }
 
