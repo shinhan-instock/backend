@@ -21,7 +21,7 @@ spec:
   containers:
   - name: kaniko
     image: gcr.io/kaniko-project/executor:v1.5.1-debug
-    imagePullPolicy: IfNotPresent
+    imagePullPolicy: Always
     command:
     - /busybox/cat
     tty: true
