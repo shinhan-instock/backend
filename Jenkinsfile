@@ -10,6 +10,7 @@ pipeline {
 apiVersion: v1
 kind: Pod
 metadata:
+  name: kaniko
   labels:
     jenkins-build: app-build
 spec:
