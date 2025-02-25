@@ -41,13 +41,13 @@ allprojects {
 	// 모듈별 mainClassName 설정
     bootJar {
         if (project.name == 'core-module') {
-            mainClassName = 'com.pda.core_module.MainApplication'
+            mainClassName = 'com.pda.core_module.CoreModuleApplication'
         } else if (project.name == 'community-module') {
-            mainClassName = 'com.pda.community_module.MainApplication'
+            mainClassName = 'com.pda.community_module.CommunityModuleApplication'
         } else if (project.name == 'piggyBank-module') {
-            mainClassName = 'com.pda.piggyBank_module.MainApplication'
+            mainClassName = 'com.pda.piggyBank_module.PiggyBankModuleApplication'
         } else if (project.name == 'stock-module') {
-            mainClassName = 'com.pda.stock_module.MainApplication'
+            mainClassName = 'com.pda.stock_module.StockModuleApplication'
         }
     }
 }
