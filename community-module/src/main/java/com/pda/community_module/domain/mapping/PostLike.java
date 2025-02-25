@@ -1,6 +1,7 @@
-package com.pda.piggyBank_module.domain;
+package com.pda.community_module.domain.mapping;
 
-import com.pda.piggyBank_module.domain.common.BaseEntity;
+import com.pda.community_module.domain.Post;
+import com.pda.community_module.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +10,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Comment extends BaseEntity {
+public class PostLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +23,4 @@ public class Comment extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @Column(nullable = false, length = 255)
-    private String content;
 }

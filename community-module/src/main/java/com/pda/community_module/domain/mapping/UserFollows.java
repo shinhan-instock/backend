@@ -1,6 +1,6 @@
-package com.pda.piggyBank_module.domain.mapping;
+package com.pda.community_module.domain.mapping;
 
-import com.pda.piggyBank_module.domain.User;
+import com.pda.community_module.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
