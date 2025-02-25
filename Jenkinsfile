@@ -30,6 +30,15 @@ spec:
     volumeMounts:
       - name: jenkins-docker-cfg
         mountPath: /kaniko/.docker
+  - name: kaniko2
+    image: gcr.io/kaniko-project/executor:v1.23.2-debug
+    imagePullPolicy: Always
+    command:
+    - /busybox/cat
+    tty: true
+    volumeMounts:
+      - name: jenkins-docker-cfg
+        mountPath: /kaniko/.docker
   volumes:
   - name: jenkins-docker-cfg
     projected:
@@ -94,7 +103,7 @@ spec:
 
 	stage('Build & Push community-module') {
 	    steps {
-		container('kaniko') {
+		container('kaniko2') {
 		    script {
 			// JAR 파일 경로 확인
 			sh 'ls -al ${WORKSPACE}/community-module/build/libs/'
