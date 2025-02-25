@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "sentiment")
 public class Sentiment extends BaseEntity {
 
     @Id
@@ -19,5 +20,7 @@ public class Sentiment extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @Column(name = "sentiment_score")
+    @Builder.Default
     private Long sentimentScore=0L;
 }

@@ -62,7 +62,7 @@ project(':community-module') {
 	dependencies {
 		implementation project(':core-module')
 		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
+		implementation 'com.mysql:mysql-connector-j'
 	}
 }
 project(':piggyBank-module') {
