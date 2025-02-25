@@ -30,6 +30,8 @@ spec:
     volumeMounts:
       - name: jenkins-docker-cfg
         mountPath: /kaniko/.docker
+      - name: workspace-volume   # 이 부분 추가
+        mountPath: /home/jenkins/agent/workspace  # Jenkins workspace 경로 공유
   volumes:
   - name: jenkins-docker-cfg
     projected:
