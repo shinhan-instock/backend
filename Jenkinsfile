@@ -43,8 +43,7 @@ spec:
         }
     }
 
-    **stages {**   // 💡 stage들을 감싸는 stages 블록 추가
-
+    stages {   
         stage ('Git Clone') {
             steps {
                 checkout scmGit(branches: [[name: 'main']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
