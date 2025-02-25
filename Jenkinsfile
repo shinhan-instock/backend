@@ -42,14 +42,19 @@ spec:
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                script {
-                    git url: 'https://github.com/shinhan-instock/backend.git', credentialsId: 'jiwonchoe12'
-                    sh 'ls -la'
-                }
+        stage ('git clone') {
+            steps() {
+                checkout scmGit(branches: [[name: 'main']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
             }
         }
+        // stage('Checkout') {
+        //     steps {
+        //         script {
+        //             git url: 'https://github.com/shinhan-instock/backend.git', credentialsId: 'jiwonchoe12'
+        //             sh 'ls -la'
+        //         }
+        //     }
+        // }
 
         stage('Build JAR') {
             steps {
