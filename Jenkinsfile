@@ -81,7 +81,7 @@ spec:
             steps {
                 sh './gradlew :core-module:clean :core-module:build --no-daemon'
                 sh './gradlew :community-module:clean :community-module:build --no-daemon'
-                sh './gradlew :piggyBank-module:clean :piggyBank-module:build --no-daemon'
+                sh './gradlew :piggybank-module:clean :piggybank-module:build --no-daemon'
                 sh './gradlew :stock-module:clean :stock-module:build --no-daemon'
 
               
@@ -164,20 +164,20 @@ spec:
             }
         }
         
-        stage('Build & Push piggyBank-module') {
+        stage('Build & Push piggybank-module') {
             steps {
             container('kaniko-piggybank') {
                 script {
                 // JAR 파일 경로 확인
-                sh 'ls -al ${WORKSPACE}/piggyBank-module/build/libs/'
+                sh 'ls -al ${WORKSPACE}/piggybank-module/build/libs/'
 
                 // Docker 이미지 빌드 및 푸시
-                sh "/kaniko/executor --context ${WORKSPACE}/piggyBank-module/ \
-                    --destination ${registry}/piggyBank-module:latest \
+                sh "/kaniko/executor --context ${WORKSPACE}/piggybank-module/ \
+                    --destination ${registry}/piggybank-module:latest \
                     --insecure \
                     --skip-tls-verify  \
                     --cleanup \
-                    --dockerfile ${WORKSPACE}/piggyBank-module/Dockerfile \
+                    --dockerfile ${WORKSPACE}/piggybank-module/Dockerfile \
                     --ignore-path=${WORKSPACE} \
                     --verbosity debug"
                 }
