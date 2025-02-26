@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pda.community_module.converter.WatchListConverter;
 import com.pda.community_module.domain.User;
 import com.pda.community_module.repository.UserRepository;
+import com.pda.community_module.web.dto.WatchListRequestDTO;
 import com.pda.core_module.apiPayload.ApiResponse;
 import com.pda.community_module.config.StockServiceClient;
 import com.pda.community_module.converter.StockSearchConverter;
 import com.pda.community_module.domain.WatchList;
 import com.pda.community_module.repository.WatchListRepository;
 import com.pda.community_module.web.dto.StockResponseDTO;
+import com.pda.core_module.apiPayload.GeneralException;
+import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -49,7 +52,7 @@ public class WatchListServiceImpl implements WatchListService {
 
                 // FeignClient를 통해 여러 주식 데이터 요청
                 StockResponseDTO stockResponse = stockServiceClient.getStockData(stockNames);
-                System.out.println("📌 Feign 응답 원본: " + stockResponse);
+//                System.out.println("Feign 응답 원본: " + stockResponse);
 
                 // DTO 변환 (StockSearchConverter 사용)
                 List<StockResponseDTO.StockResult> stockResults = StockSearchConverter.toStockSearchResList(stockResponse);
@@ -73,10 +76,22 @@ public class WatchListServiceImpl implements WatchListService {
     public void addWatchList(Long userId, String stockCode, String stockName) {
         // 사용자 확인
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         // 관심 종목 등록 (Converter 사용)
         WatchList watchListEntity = WatchListConverter.toWatchListEntity(user, stockCode, stockName);
         watchListRepository.save(watchListEntity);
+    }
+
+    @Override
+    @Transactional
+    public void deleteWatchList(WatchListRequestDTO.DeleteWatchListDTO requestDTO) {
+        User user = userRepository.findById(requestDTO.getUserId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        WatchList watchList = watchListRepository.findByUserAndStockName(user, requestDTO.getStockName())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.WATCHLIST_NOT_FOUND));
+
+        watchListRepository.delete(watchList);
     }
 }
