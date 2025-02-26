@@ -172,7 +172,7 @@ spec:
 
                 // Docker 이미지 빌드 및 푸시
                 sh "/kaniko/executor --context ${WORKSPACE}/piggyBank-module/ \
-                    --destination ${registry}/piggyBank-module:latest \
+                    --destination ${registry}/piggybank-module:latest \
                     --insecure \
                     --skip-tls-verify  \
                     --cleanup \
