@@ -7,9 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -28,6 +26,8 @@ public class RedisCommon {
         return null;
     }
 
+
+
     public <T> T getEntriesFromHash(String key, Class<T> clazz) {
         Map<Object, Object> entries = template.opsForHash().entries("stock:" + key);
         if (entries != null) {
@@ -36,6 +36,7 @@ public class RedisCommon {
         }
         return null;
     }
+
 
     public <T> List<T> getAllList(String key, Class<T> clazz) {
         List<String> jsonValues = template.opsForList().range(key, 0, -1);

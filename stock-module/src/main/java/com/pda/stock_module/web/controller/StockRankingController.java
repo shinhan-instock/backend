@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/stocks")
+@RequestMapping("/api/stocks/rankings")
 @RequiredArgsConstructor
 public class StockRankingController {
     private final RankingListService rankingListService;
@@ -33,11 +33,6 @@ public class StockRankingController {
         return ResponseEntity.ok(stockQueryService.getTop10ByTheme(stockName));
     }
 
-    @GetMapping("/{stockName}")
-    public ResponseEntity<DetailStockResponse> getStockDetail(
-            @PathVariable String stockName
-    ) {
-        return ResponseEntity.ok(stockQueryService.getStockDetail(stockName));
-    }
+
 }
 
