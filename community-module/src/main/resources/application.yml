@@ -13,11 +13,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-        show_sql: true
+        show_sql: false
         format_sql: true
         use_sql_comments: true
         hbm2ddl:
-          auto: create
+          auto: update
         default_batch_fetch_size: 1000
   servlet:
     multipart:
@@ -30,3 +30,6 @@ spring:
 #
 #appkey: ${APP_KEY}
 #appsecret: ${APP_SECRET}
+stock:
+  api:
+    base-url: "http://localhost:8081"
