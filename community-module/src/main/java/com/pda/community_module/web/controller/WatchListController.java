@@ -1,6 +1,8 @@
 package com.pda.community_module.web.controller;
 
 import com.pda.community_module.service.WatchListService;
+import com.pda.community_module.web.dto.WatchListRequestDTO;
+import com.pda.core_module.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +26,16 @@ public class WatchListController {
                                         @RequestParam int page,
                                         @RequestParam int size) {
         return watchListService.streamStockPrices(userId, page, size);
+    }
+
+    @PostMapping("")
+    @Operation(summary = "관심종목 등록", description = "wish list를 등록합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "사용자를 찾을 수 없습니다.")
+    })
+    public ApiResponse<Void> addWatchList(@RequestBody WatchListRequestDTO requestDTO) {
+        watchListService.addWatchList(requestDTO.getUserId(), requestDTO.getStockCode(), requestDTO.getStockName());
+        return ApiResponse.onSuccess(null);
     }
 }

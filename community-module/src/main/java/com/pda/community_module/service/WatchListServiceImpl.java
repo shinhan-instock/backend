@@ -1,12 +1,16 @@
 package com.pda.community_module.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pda.community_module.converter.WatchListConverter;
+import com.pda.community_module.domain.User;
+import com.pda.community_module.repository.UserRepository;
 import com.pda.core_module.apiPayload.ApiResponse;
 import com.pda.community_module.config.StockServiceClient;
 import com.pda.community_module.converter.StockSearchConverter;
 import com.pda.community_module.domain.WatchList;
 import com.pda.community_module.repository.WatchListRepository;
 import com.pda.community_module.web.dto.StockResponseDTO;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +28,7 @@ public class WatchListServiceImpl implements WatchListService {
 
     private final WatchListRepository watchListRepository;
     private final StockServiceClient stockServiceClient;
+    private final UserRepository userRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public SseEmitter streamStockPrices(Long userId, int page, int size) {
@@ -61,5 +66,17 @@ public class WatchListServiceImpl implements WatchListService {
         }, 0, 3, TimeUnit.SECONDS); // 3초마다 갱신
 
         return emitter;
+    }
+
+    @Transactional
+    @Override
+    public void addWatchList(Long userId, String stockCode, String stockName) {
+        // 사용자 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 관심 종목 등록 (Converter 사용)
+        WatchList watchListEntity = WatchListConverter.toWatchListEntity(user, stockCode, stockName);
+        watchListRepository.save(watchListEntity);
     }
 }

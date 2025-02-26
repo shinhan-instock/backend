@@ -21,7 +21,7 @@ public class WatchList extends BaseEntity {
     private User user;
 
     @Column(length = 255)
-    private String stockId;
+    private String stockCode;
 
     @Column(length = 255)
     private String stockName;
