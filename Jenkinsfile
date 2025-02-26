@@ -127,13 +127,22 @@ spec:
             }
         }
 
+        // ✅ 변경된 파일 목록을 미리 가져옴
+        stage('Check Git Changes') {
+            steps {
+                script {
+                    env.CHANGED_FILES = sh(script: 'git diff --name-only HEAD~1', returnStdout: true).trim()
+                }
+            }
+        }
+
         stage('Build & Push Docker Images') {
             parallel {
             stage('Build & Push core-module') {
                 steps {
                     container('kaniko-core') {
                         script {
-                            def changedFiles = sh(script: 'git diff --name-only HEAD~1', returnStdout: true).trim().split("\n")
+                            def changedFiles = env.CHANGED_FILES.split("\n")
                             def shouldBuild = changedFiles.any { it.startsWith("core-module/") }
 
                             if (shouldBuild) {
@@ -159,8 +168,8 @@ spec:
                     container('kaniko-community') {
                         script {
                             // 변경된 파일 목록 가져오기
-                            def changedFiles = sh(script: 'git diff --name-only HEAD~1', returnStdout: true).trim().split("\n")
-                            def shouldBuild = changedFiles.any { it.startsWith("community-module/") }
+                            def changedFiles = env.CHANGED_FILES.split("\n")
+                            def shouldBuild = changedFiles.any { it.startsWith("core-module/") }
 
                             if (shouldBuild) {
                                 echo "🔨 community-module 변경 감지됨, 빌드 시작!"
@@ -192,8 +201,8 @@ spec:
                     container('kaniko-stock') {
                         script {
                             // 변경된 파일 목록 가져오기
-                            def changedFiles = sh(script: 'git diff --name-only HEAD~1', returnStdout: true).trim().split("\n")
-                            def shouldBuild = changedFiles.any { it.startsWith("stock-module/") }
+                            def changedFiles = env.CHANGED_FILES.split("\n")
+                            def shouldBuild = changedFiles.any { it.startsWith("core-module/") }
 
                             if (shouldBuild) {
                                 echo "🔨 stock-module 변경 감지됨, 빌드 시작!"
@@ -225,8 +234,8 @@ spec:
                     container('kaniko-piggybank') {
                         script {
                             // 변경된 파일 목록 가져오기
-                            def changedFiles = sh(script: 'git diff --name-only HEAD~1', returnStdout: true).trim().split("\n")
-                            def shouldBuild = changedFiles.any { it.startsWith("piggyBank-module/") }
+                            def changedFiles = env.CHANGED_FILES.split("\n")
+                            def shouldBuild = changedFiles.any { it.startsWith("core-module/") }
 
                             if (shouldBuild) {
                                 echo "🔨 piggyBank-module 변경 감지됨, 빌드 시작!"
