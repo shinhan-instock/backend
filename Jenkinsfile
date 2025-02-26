@@ -79,9 +79,9 @@ spec:
 
         stage('Build JAR') {
             steps {
-                // sh './gradlew :core-module:clean :core-module:build --no-daemon'
-                // sh './gradlew :community-module:clean :community-module:build --no-daemon'
-                // sh './gradlew :stock-module:clean :stock-module:build --no-daemon'
+                sh './gradlew :core-module:clean :core-module:build --no-daemon'
+                sh './gradlew :community-module:clean :community-module:build --no-daemon'
+                sh './gradlew :stock-module:clean :stock-module:build --no-daemon'
                 sh './gradlew :piggyBank-module:clean :piggyBank-module:build --no-daemon'
               
                 // 현재 작업 디렉토리 확인
@@ -99,88 +99,92 @@ spec:
             }
         }
 
-        // stage('Build & Push core-module') {
-        //     steps {
-        //     container('kaniko-core') {
-        //         script {
-        //         // JAR 파일 경로 확인
-        //         sh 'ls -al ${WORKSPACE}/core-module/build/libs/'
+        stage('Build & Push Docker Images') {
+            parallel {
+            stage('Build & Push core-module') {
+                steps {
+                container('kaniko-core') {
+                    script {
+                    // JAR 파일 경로 확인
+                    sh 'ls -al ${WORKSPACE}/core-module/build/libs/'
 
-        //         // Docker 이미지 빌드 및 푸시
-        //         sh "/kaniko/executor --context ${WORKSPACE}/core-module/ \
-        //             --destination ${registry}/core-module:latest \
-        //             --insecure \
-        //             --skip-tls-verify  \
-        //             --cleanup \
-        //             --dockerfile ${WORKSPACE}/core-module/Dockerfile \
-        //             --ignore-path=${WORKSPACE} \
-        //             --verbosity debug"
-                
-        //         }
-        //     }
-        //     }
-        // }
-
-        // stage('Build & Push community-module') {
-        //     steps {
-        //     container('kaniko-community') {
-        //         script {
-        //         // JAR 파일 경로 확인
-        //         sh 'ls -al ${WORKSPACE}/community-module/build/libs/'
-
-        //         // Docker 이미지 빌드 및 푸시
-        //         sh "/kaniko/executor --context ${WORKSPACE}/community-module/ \
-        //             --destination ${registry}/community-module:latest \
-        //             --insecure \
-        //             --skip-tls-verify  \
-        //             --cleanup \
-        //             --dockerfile ${WORKSPACE}/community-module/Dockerfile \
-        //             --ignore-path=${WORKSPACE} \
-        //             --verbosity debug"
-        //         }
-        //         }
-        //     }
-        // }
-
-        // stage('Build & Push stock-module') {
-        //     steps {
-        //     container('kaniko-stock') {
-        //         script {
-        //         // JAR 파일 경로 확인
-        //         sh 'ls -al ${WORKSPACE}/stock-module/build/libs/'
-
-        //         // Docker 이미지 빌드 및 푸시
-        //         sh "/kaniko/executor --context ${WORKSPACE}/stock-module/ \
-        //             --destination ${registry}/stock-module:latest \
-        //             --insecure \
-        //             --skip-tls-verify  \
-        //             --cleanup \
-        //             --dockerfile ${WORKSPACE}/stock-module/Dockerfile \
-        //             --ignore-path=${WORKSPACE} \
-        //             --verbosity debug"
-        //         }
-        //         }
-        //     }
-        // }
-        
-        stage('Build & Push piggyBank-module') {
-            steps {
-            container('kaniko-piggybank') {
-                script {
-                // JAR 파일 경로 확인
-                sh 'ls -al ${WORKSPACE}/piggyBank-module/build/libs/'
-
-                // Docker 이미지 빌드 및 푸시
-                sh "/kaniko/executor --context ${WORKSPACE}/piggyBank-module/ \
-                    --destination ${registry}/piggybank-module:latest \
-                    --insecure \
-                    --skip-tls-verify  \
-                    --cleanup \
-                    --dockerfile ${WORKSPACE}/piggyBank-module/Dockerfile \
-                    --ignore-path=${WORKSPACE} \
-                    --verbosity debug"
+                    // Docker 이미지 빌드 및 푸시
+                    sh "/kaniko/executor --context ${WORKSPACE}/core-module/ \
+                        --destination ${registry}/core-module:latest \
+                        --insecure \
+                        --skip-tls-verify  \
+                        --cleanup \
+                        --dockerfile ${WORKSPACE}/core-module/Dockerfile \
+                        --ignore-path=${WORKSPACE} \
+                        --verbosity debug"
+                    
+                    }
                 }
                 }
+            }
+
+            stage('Build & Push community-module') {
+                steps {
+                container('kaniko-community') {
+                    script {
+                    // JAR 파일 경로 확인
+                    sh 'ls -al ${WORKSPACE}/community-module/build/libs/'
+
+                    // Docker 이미지 빌드 및 푸시
+                    sh "/kaniko/executor --context ${WORKSPACE}/community-module/ \
+                        --destination ${registry}/community-module:latest \
+                        --insecure \
+                        --skip-tls-verify  \
+                        --cleanup \
+                        --dockerfile ${WORKSPACE}/community-module/Dockerfile \
+                        --ignore-path=${WORKSPACE} \
+                        --verbosity debug"
+                    }
+                    }
+                }
+            }
+
+            stage('Build & Push stock-module') {
+                steps {
+                container('kaniko-stock') {
+                    script {
+                    // JAR 파일 경로 확인
+                    sh 'ls -al ${WORKSPACE}/stock-module/build/libs/'
+
+                    // Docker 이미지 빌드 및 푸시
+                    sh "/kaniko/executor --context ${WORKSPACE}/stock-module/ \
+                        --destination ${registry}/stock-module:latest \
+                        --insecure \
+                        --skip-tls-verify  \
+                        --cleanup \
+                        --dockerfile ${WORKSPACE}/stock-module/Dockerfile \
+                        --ignore-path=${WORKSPACE} \
+                        --verbosity debug"
+                    }
+                    }
+                }
+            }
+            
+            stage('Build & Push piggyBank-module') {
+                steps {
+                container('kaniko-piggybank') {
+                    script {
+                    // JAR 파일 경로 확인
+                    sh 'ls -al ${WORKSPACE}/piggyBank-module/build/libs/'
+
+                    // Docker 이미지 빌드 및 푸시
+                    sh "/kaniko/executor --context ${WORKSPACE}/piggyBank-module/ \
+                        --destination ${registry}/piggybank-module:latest \
+                        --insecure \
+                        --skip-tls-verify  \
+                        --cleanup \
+                        --dockerfile ${WORKSPACE}/piggyBank-module/Dockerfile \
+                        --ignore-path=${WORKSPACE} \
+                        --verbosity debug"
+                    }
+                    }
+                }
+            }
             }
         }
     }
