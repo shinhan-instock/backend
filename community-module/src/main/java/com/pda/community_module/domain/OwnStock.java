@@ -21,7 +21,7 @@ public class OwnStock extends BaseEntity {
     private Account account;
 
     @Column(length = 20)
-    private String stockId;
+    private String stockCode;
 
     private Long stockCount;
 
