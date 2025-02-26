@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
-public class StockThemeService {
+public class FetchStockThemeService {
     private final StringRedisTemplate redisTemplate;
     private final RestTemplate restTemplate;
     private final Gson gson = new Gson(); // Gson 객체 생성
@@ -46,8 +46,8 @@ public class StockThemeService {
 
 
                     for (Map<String, Object> sector : sectors) {
+
                         String sectorName = (String) sector.get("sectorName"); // 업종명.
-                        Map<String, Object> themeStocks = new HashMap<>();
                         List<Map<String, Object>> includedStocks = (List<Map<String, Object>>) sector.get("includedStocks");
 
                         int size = includedStocks.size();
@@ -58,9 +58,8 @@ public class StockThemeService {
                         List<Map<String, Object>> sortedIncludedStocks = new ArrayList<>();
                         sortedIncludedStocks.addAll(maxTop5);
                         sortedIncludedStocks.addAll(minTop5);
-                        System.out.println(sortedIncludedStocks);
                         for (Map<String, Object> stockData : sortedIncludedStocks) {
-
+                            Map<String, Object> themeStocks = new HashMap<>();
 
                             String stockName = (String) stockData.get("name");
                             themeStocks.put("stockName", stockName);
@@ -85,6 +84,9 @@ public class StockThemeService {
                                 String redisKey = "sector:" + sectorName;
                                 String result = gson.toJson(themeStocks);
                                 redisTemplate.opsForList().leftPush(redisKey, result);
+
+                                // 레디스 데이터 제한
+                                redisTemplate.opsForList().trim(redisKey,0,9);
 
                                 // Redis 데이터에 TTL(Time-To-Live) 설정 (예: 1일)
                                 redisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
