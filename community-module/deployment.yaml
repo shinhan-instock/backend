@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: be-core
+  name: be-community
   namespace: be-namespace
 spec:
   replicas: 2
@@ -12,15 +12,15 @@ spec:
       maxSurge: 1        # 한 번에 추가로 생성할 수 있는 최대 개수 (1개)
   selector:
     matchLabels:
-      app: be-core
+      app: be-community
   template:
     metadata:
       labels:
-        app: be-core
+        app: be-community
     spec:
       containers:
-      - name: be-core
-        image: jiwonchoe/core-module:latest
+      - name: be-community
+        image: jiwonchoe/community-module:latest
         imagePullPolicy: Always  # ⭐️ 항상 최신 이미지로 업데이트
         ports:
         - containerPort: 80
