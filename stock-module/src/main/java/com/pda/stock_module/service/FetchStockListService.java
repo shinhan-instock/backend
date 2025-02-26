@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 @Primary
-public class StockList implements StockService{
+public class FetchStockListService {
     private final StringRedisTemplate redisTemplate;
     private final RestTemplate restTemplate;
 

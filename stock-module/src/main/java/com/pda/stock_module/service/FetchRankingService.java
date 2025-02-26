@@ -1,7 +1,6 @@
 package com.pda.stock_module.service;
 import com.pda.stock_module.domain.common.Ranking;
 import com.pda.stock_module.repository.RankingRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Service
 @RequiredArgsConstructor
 @Component
-public class RankingService {
+public class FetchRankingService {
 
     private final RankingRepository rankingRepository;
     private final RestTemplate restTemplate;

@@ -1,8 +1,7 @@
 package com.pda.stock_module.config;
-import com.pda.stock_module.service.RankingService;
-import com.pda.stock_module.service.StockService;
-import com.pda.stock_module.service.StockTheme;
-import lombok.NoArgsConstructor;
+import com.pda.stock_module.service.FetchRankingService;
+import com.pda.stock_module.service.FetchStockListService;
+import com.pda.stock_module.service.FetchStockThemeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -11,15 +10,16 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SchedulerConfig {
 
-    private final RankingService rankingService;
-    private final StockService stockService;
+    private final FetchRankingService fetchRankingService;
+    private final FetchStockListService fetchStockListService;
+    private final FetchStockThemeService fetchStockThemeService;
 
     /**
      * 매 1분마다 거래량 순위 업데이트
      */
     @Scheduled(cron = "0 */1 * * * ?")
     public void scheduleVolumeRankUpdate() {
-        rankingService.updateVolumeRanking();
+        fetchRankingService.updateVolumeRanking();
     }
 
     /**
@@ -27,7 +27,7 @@ public class SchedulerConfig {
      */
     @Scheduled(cron = "15 */1 * * * ?")
     public void scheduleFluctuationRankUpdate() {
-        rankingService.updateFluctuationRanking();
+        fetchRankingService.updateFluctuationRanking();
     }
 
     /**
@@ -35,7 +35,7 @@ public class SchedulerConfig {
      */
     @Scheduled(cron = "30 */1 * * * ?")
     public void scheduleProfitAssetRankUpdate() {
-        rankingService.updateProfitAssetRanking();
+        fetchRankingService.updateProfitAssetRanking();
     }
 
     /**
@@ -43,12 +43,13 @@ public class SchedulerConfig {
      */
     @Scheduled(cron = "45 */1 * * * ?")
     public void scheduleMarketCapRankUpdate() {
-        rankingService.updateMarketCapRanking();
+        fetchRankingService.updateMarketCapRanking();
     }
 
 
     @Scheduled(fixedRate = 5000) // 5초마다 실행
     public void scheduleStockDataUpdate() {
-        stockService.updateStockData();
+        fetchStockListService.updateStockData();
+        fetchStockThemeService.updateStockThemeData();
     }
 }
