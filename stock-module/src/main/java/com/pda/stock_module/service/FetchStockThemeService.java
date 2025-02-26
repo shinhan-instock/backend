@@ -15,13 +15,13 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
-public class StockTheme implements StockService {
+public class StockThemeService {
     private final StringRedisTemplate redisTemplate;
     private final RestTemplate restTemplate;
     private final Gson gson = new Gson(); // Gson 객체 생성
 
     @Transactional
-    public void updateStockData() {
+    public void updateStockThemeData() {
         String[] markets = {"KOSPI", "KOSDAQ"}; // 시장 배열
 
         for (String market : markets) {
