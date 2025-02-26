@@ -39,15 +39,15 @@ spec:
     volumeMounts:
       - name: jenkins-docker-cfg
         mountPath: /kaniko/.docker
-  - name: kaniko-piggybank
-    image: gcr.io/kaniko-project/executor:v1.23.2-debug
-    imagePullPolicy: Always
-    command:
-    - /busybox/cat
-    tty: true
-    volumeMounts:
-      - name: jenkins-docker-cfg
-        mountPath: /kaniko/.docker
+//   - name: kaniko-piggybank
+//     image: gcr.io/kaniko-project/executor:v1.23.2-debug
+//     imagePullPolicy: Always
+//     command:
+//     - /busybox/cat
+//     tty: true
+//     volumeMounts:
+//       - name: jenkins-docker-cfg
+//         mountPath: /kaniko/.docker
   - name: kaniko-stock
     image: gcr.io/kaniko-project/executor:v1.23.2-debug
     imagePullPolicy: Always
@@ -81,7 +81,7 @@ spec:
             steps {
                 sh './gradlew :core-module:clean :core-module:build --no-daemon'
                 sh './gradlew :community-module:clean :community-module:build --no-daemon'
-                sh './gradlew :piggybank-module:clean :piggybank-module:build --no-daemon'
+                // sh './gradlew :piggybank-module:clean :piggybank-module:build --no-daemon'
                 sh './gradlew :stock-module:clean :stock-module:build --no-daemon'
 
               
@@ -164,26 +164,26 @@ spec:
             }
         }
         
-        stage('Build & Push piggybank-module') {
-            steps {
-            container('kaniko-piggybank') {
-                script {
-                // JAR 파일 경로 확인
-                sh 'ls -al ${WORKSPACE}/piggybank-module/build/libs/'
+        // stage('Build & Push piggybank-module') {
+        //     steps {
+        //     container('kaniko-piggybank') {
+        //         script {
+        //         // JAR 파일 경로 확인
+        //         sh 'ls -al ${WORKSPACE}/piggybank-module/build/libs/'
 
-                // Docker 이미지 빌드 및 푸시
-                sh "/kaniko/executor --context ${WORKSPACE}/piggybank-module/ \
-                    --destination ${registry}/piggybank-module:latest \
-                    --insecure \
-                    --skip-tls-verify  \
-                    --cleanup \
-                    --dockerfile ${WORKSPACE}/piggybank-module/Dockerfile \
-                    --ignore-path=${WORKSPACE} \
-                    --verbosity debug"
-                }
-                }
-            }
-        }
+        //         // Docker 이미지 빌드 및 푸시
+        //         sh "/kaniko/executor --context ${WORKSPACE}/piggybank-module/ \
+        //             --destination ${registry}/piggybank-module:latest \
+        //             --insecure \
+        //             --skip-tls-verify  \
+        //             --cleanup \
+        //             --dockerfile ${WORKSPACE}/piggybank-module/Dockerfile \
+        //             --ignore-path=${WORKSPACE} \
+        //             --verbosity debug"
+        //         }
+        //         }
+        //     }
+        // }
     }
 
     post {
