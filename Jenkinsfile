@@ -169,7 +169,7 @@ spec:
                         script {
                             // 변경된 파일 목록 가져오기
                             def changedFiles = env.CHANGED_FILES.split("\n")
-                            def shouldBuild = changedFiles.any { it.startsWith("core-module/") }
+                            def shouldBuild = changedFiles.any { it.startsWith("community-module/") }
 
                             if (shouldBuild) {
                                 echo "🔨 community-module 변경 감지됨, 빌드 시작!"
@@ -202,7 +202,7 @@ spec:
                         script {
                             // 변경된 파일 목록 가져오기
                             def changedFiles = env.CHANGED_FILES.split("\n")
-                            def shouldBuild = changedFiles.any { it.startsWith("core-module/") }
+                            def shouldBuild = changedFiles.any { it.startsWith("stock-module/") }
 
                             if (shouldBuild) {
                                 echo "🔨 stock-module 변경 감지됨, 빌드 시작!"
@@ -235,7 +235,7 @@ spec:
                         script {
                             // 변경된 파일 목록 가져오기
                             def changedFiles = env.CHANGED_FILES.split("\n")
-                            def shouldBuild = changedFiles.any { it.startsWith("core-module/") }
+                            def shouldBuild = changedFiles.any { it.startsWith("piggyBank-module/") }
 
                             if (shouldBuild) {
                                 echo "🔨 piggyBank-module 변경 감지됨, 빌드 시작!"
