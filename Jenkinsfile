@@ -39,15 +39,6 @@ spec:
     volumeMounts:
       - name: jenkins-docker-cfg
         mountPath: /kaniko/.docker
-//   - name: kaniko-piggybank
-//     image: gcr.io/kaniko-project/executor:v1.23.2-debug
-//     imagePullPolicy: Always
-//     command:
-//     - /busybox/cat
-//     tty: true
-//     volumeMounts:
-//       - name: jenkins-docker-cfg
-//         mountPath: /kaniko/.docker
   - name: kaniko-stock
     image: gcr.io/kaniko-project/executor:v1.23.2-debug
     imagePullPolicy: Always
