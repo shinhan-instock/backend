@@ -1,14 +1,14 @@
 package com.pda.stock_module.service;
 
 import com.pda.stock_module.domain.common.RedisCommon;
+import com.pda.stock_module.web.dto.DetailStockResponse;
 import com.pda.stock_module.web.dto.TopStockResponse;
 import com.pda.stock_module.web.model.ListModel;
+import com.pda.stock_module.web.model.StockDetailModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.lang.model.SourceVersion;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,15 +18,13 @@ import java.util.stream.Collectors;
 public class StockQueryService {
     private final RedisCommon redisCommon;
 
-
     public List<TopStockResponse> getTop10ByTheme(String stockName) {
         try {
             // Redis에서 theme 가져오기
-            String theme = redisCommon.getFromHash("stock:" + stockName, "sectorName");
+            String theme = redisCommon.getValueFromHash("stock:" + stockName, "sectorName");
             if (theme == null || theme.isEmpty()) {
                 throw new IllegalArgumentException("Sector name not found for stock: " + stockName);
             }
-            System.out.println("theme = " + theme);
 
             // Redis에서 stockLists 가져오기
             List<ListModel> stockLists = redisCommon.getAllList("sector:" + theme, ListModel.class);
@@ -53,6 +51,26 @@ public class StockQueryService {
             // 예상치 못한 예외 처리
             log.error("Unexpected error occurred: {}", e.getMessage(), e);
             throw new RuntimeException("An unexpected error occurred while fetching stock data.", e);
+        }
+    }
+
+    // 주식 상세 정보 조회
+    public DetailStockResponse getStockDetail(String stockName) {
+        try {
+            StockDetailModel stockInfo = redisCommon.getEntriesFromHash(stockName, StockDetailModel.class);
+
+            if (stockInfo == null) {
+                return null;
+            }
+
+            return new DetailStockResponse(
+                    stockInfo.getStockName(),
+                    stockInfo.getPrice(),
+                    stockInfo.getPriceChange()
+            );
+        } catch (Exception e) {
+            System.err.println("Error while fetching stock details: " + e.getMessage());
+            return null;
         }
     }
 
