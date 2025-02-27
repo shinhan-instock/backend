@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,5 +48,18 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
         return PostConverter.toPostEntity(post);
+    }
+
+    @Override
+    public List<PostResponseDTO.getPostDTO> getMyPosts() {
+        // 나인지 확인해서 post 리스트인데 나인지 확인어케하는지 몰라서 수정할거임 나중에
+        List<Post> posts = postRepository.findAll();
+        return PostConverter.toPostListEntity(posts);
+    }
+
+    @Override
+    public List<PostResponseDTO.getPostDTO> getPostsByUser(Long userId) {
+        List<Post> posts = postRepository.findAllByUserId(userId);
+        return PostConverter.toPostListEntity(posts);
     }
 }
