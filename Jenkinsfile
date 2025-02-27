@@ -143,21 +143,28 @@ spec:
                                     --verbosity debug"
                                 
                                 echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경 - Core"
-                                sh """
-                                    git checkout argocd
-                                    git pull origin argocd
-                                    git merge origin/main
-                                    sed -i 's|image: jiwonchoe/core-module:v1.*|image: jiwonchoe/core-module:v1.${BUILD_ID}|' core-module/deployment.yaml
-                                    git add .
-                                    git commit -m "Update Core Docker Image Version"
-                                    git push origin argocd
-                                """
+                                // sh """
+                                //     git checkout argocd
+                                //     git pull origin argocd
+                                //     git merge origin/main
+                                //     sed -i 's|image: jiwonchoe/core-module:v1.*|image: jiwonchoe/core-module:v1.${BUILD_ID}|' core-module/deployment.yaml
+                                //     git add .
+                                //     git commit -m "Update Core Docker Image Version"
+                                //     git push origin argocd
+                                // """
+                                echo "1"
                                 sh 'git checkout argocd'
+                                echo "2"
                                 sh 'git pull origin argocd'
+                                echo "3"
                                 sh 'git merge origin/main'
+                                echo "4"
                                 sh "sed -i 's|image: jiwonchoe/core-module:v1.*|image: jiwonchoe/core-module:v1.${BUILD_ID}|' core-module/deployment.yaml"
+                                echo "5"
                                 sh 'git add .'
+                                echo "6"
                                 sh 'git commit -m "Update Core Docker Image Version"'
+                                echo "7"
                                 sh 'git push origin argocd'
 
                             } else {
