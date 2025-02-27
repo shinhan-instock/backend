@@ -152,6 +152,13 @@ spec:
                                     git commit -m "Update Core Docker Image Version"
                                     git push origin argocd
                                 """
+                                sh 'git checkout argocd'
+                                sh 'git pull origin argocd'
+                                sh 'git merge origin/main'
+                                sh "sed -i 's|image: jiwonchoe/core-module:v1.*|image: jiwonchoe/core-module:v1.${BUILD_ID}|' core-module/deployment.yaml"
+                                sh 'git add .'
+                                sh 'git commit -m "Update Core Docker Image Version"'
+                                sh 'git push origin argocd'
 
                             } else {
                                 echo "✅ core-module 변경 없음, 빌드 스킵!"
