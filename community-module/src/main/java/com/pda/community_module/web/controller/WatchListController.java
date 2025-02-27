@@ -49,6 +49,9 @@ public class WatchListController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "STOCK4001", description = "watch list속 주식을 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
 
     })
+
+
+
     public ApiResponse<?> deleteWatchList(@RequestBody WatchListRequestDTO.DeleteWatchListDTO requestDTO) {
         watchListService.deleteWatchList(requestDTO);
         return ApiResponse.onSuccess(null);
