@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: be-core
-        image: jiwonchoe/core-module:latest
+        image: nginx
         imagePullPolicy: Always
         ports:
         - containerPort: 80
