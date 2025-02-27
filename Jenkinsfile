@@ -73,10 +73,7 @@ spec:
     stages {   
         stage ('Git Clone') {
             steps {
-                script {
-                    checkout scmGit(branches: [[name: 'main']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
-                    sh 'git fetch --all'
-                }
+                checkout scmGit(branches: [[name: 'main']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
             }
         }
 
@@ -141,36 +138,6 @@ spec:
                                     --dockerfile ${WORKSPACE}/core-module/Dockerfile \
                                     --ignore-path=${WORKSPACE} \
                                     --verbosity debug"
-                                
-                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경 - Core"
-                                // sh """
-                                //     git checkout argocd
-                                //     git pull origin argocd
-                                //     git merge origin/main
-                                //     sed -i 's|image: jiwonchoe/core-module:v1.*|image: jiwonchoe/core-module:v1.${BUILD_ID}|' core-module/deployment.yaml
-                                //     git add .
-                                //     git commit -m "Update Core Docker Image Version"
-                                //     git push origin argocd
-                                // """
-                                echo "1"
-                                sh "git config --global user.email 'belle021202@naver.com'"
-                                echo "11"
-                                sh 'git config --global user.name "jiwonchoe12"'
-                                echo "1111"
-                                sh 'git checkout argocd'
-                                echo "2"
-                                sh 'git pull origin argocd'
-                                echo "3"
-                                sh 'git merge origin/main'
-                                echo "4"
-                                sh "sed -i 's|image: jiwonchoe/core-module:v1.*|image: jiwonchoe/core-module:v1.${BUILD_ID}|' core-module/deployment.yaml"
-                                echo "5"
-                                sh 'git add .'
-                                echo "6"
-                                sh 'git commit -m "Update Core Docker Image Version"'
-                                echo "7"
-                                sh 'git push origin argocd'
-
                             } else {
                                 echo "✅ core-module 변경 없음, 빌드 스킵!"
                             }
@@ -203,17 +170,6 @@ spec:
                                     --dockerfile ${WORKSPACE}/community-module/Dockerfile \
                                     --ignore-path=${WORKSPACE} \
                                     --verbosity debug
-                                """
-
-                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경 - Community"
-                                sh """
-                                    git checkout argocd
-                                    git pull origin argocd
-                                    git merge origin/main
-                                    sed -i 's|image: jiwonchoe/community-module:v1.*|image: jiwonchoe/community-module:v1.${BUILD_ID}|' community-module/deployment.yaml
-                                    git add .
-                                    git commit -m "Update Community Docker Image Version"
-                                    git push origin argocd
                                 """
                             } else {
                                 echo "✅ community-module 변경 없음, 빌드 스킵!"
@@ -248,18 +204,6 @@ spec:
                                     --ignore-path=${WORKSPACE} \
                                     --verbosity debug
                                 """
-
-                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경 - Stock"
-                                sh """
-                                    git checkout argocd
-                                    git pull origin argocd
-                                    git merge origin/main
-                                    sed -i 's|image: jiwonchoe/stock-module:v1.*|image: jiwonchoe/stock-module:v1.${BUILD_ID}|' stock-module/deployment.yaml
-                                    git add .
-                                    git commit -m "Update Stock Docker Image Version"
-                                    git push origin argocd
-                                """
-
                             } else {
                                 echo "✅ stock-module 변경 없음, 빌드 스킵!"
                             }
@@ -293,17 +237,6 @@ spec:
                                     --ignore-path=${WORKSPACE} \
                                     --verbosity debug
                                 """
-
-                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경 - Piggy"
-                                sh """
-                                    git checkout argocd
-                                    git pull origin argocd
-                                    git merge origin/main
-                                    sed -i 's|image: jiwonchoe/piggybank-module:v1.*|image: jiwonchoe/piggybank-module:v1.${BUILD_ID}|' piggyBank-module/deployment.yaml
-                                    git add .
-                                    git commit -m "Update piggy Docker Image Version"
-                                    git push origin argocd
-                                """
                             } else {
                                 echo "✅ piggyBank-module 변경 없음, 빌드 스킵!"
                             }
@@ -311,6 +244,68 @@ spec:
                     }
                 }
             }
+            }
+        }
+
+        stage('Checkout argocd & Modify deployment.yaml') {
+            steps {
+                script {
+                    def changedFiles = sh(script: 'git diff --name-only HEAD~1', returnStdout: true).trim().split("\n")
+                    echo "Changed files: ${changedFiles}"
+
+                    def modules = [
+                        'core-module': false,
+                        'community-module': false,
+                        'stock-module': false,
+                        'piggyBank-module': false
+                    ]
+
+                    changedFiles.each { file ->
+                        modules.each { module, shouldBuild ->
+                            if (file.startsWith(module)) {
+                                modules[module] = true
+                            }
+                        }
+                    }
+
+                    modules.each { module, shouldBuild ->
+                        if (shouldBuild) {
+                            echo "1"
+                            // sh "git config --global user.email 'belle021202@naver.com'"
+                            // echo "11"
+                            // sh 'git config --global user.name "jiwonchoe12"'
+                            echo "1111"
+                            sh 'git checkout argocd'
+                            echo "2"
+                            sh 'git pull origin argocd'
+                            echo "3"
+                            sh 'git merge origin/main'
+                            echo "4"
+                            sh "sed -i 's|image: jiwonchoe/${module}:v1.*|image: jiwonchoe/${module}:v1.${BUILD_ID}|' ${module}/deployment.yaml"
+                            echo "5"
+                            sh 'git add .'
+                            echo "6"
+                            sh 'git commit -m Update Docker Image Version"'
+                            echo "7"
+                            sh 'git push origin argocd'
+                        } else {
+                            echo "Skipping ${module}"
+                        }
+                    }
+
+                    //
+                    // echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경 - Piggy"
+                    //             sh """
+                    //                 git checkout argocd
+                    //                 git pull origin argocd
+                    //                 git merge origin/main
+                    //                 sed -i 's|image: jiwonchoe/piggybank-module:v1.*|image: jiwonchoe/piggybank-module:v1.${BUILD_ID}|' piggyBank-module/deployment.yaml
+                    //                 git add .
+                    //                 git commit -m "Update piggy Docker Image Version"
+                    //                 git push origin argocd
+                    //             """
+                    //
+                }
             }
         }
     }
