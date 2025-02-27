@@ -107,23 +107,6 @@ spec:
                         }
                     }
                 }
-                // sh './gradlew :core-module:clean :core-module:build --no-daemon'
-                // sh './gradlew :community-module:clean :community-module:build --no-daemon'
-                // sh './gradlew :stock-module:clean :stock-module:build --no-daemon'
-                // sh './gradlew :piggyBank-module:clean :piggyBank-module:build --no-daemon'
-              
-                // 현재 작업 디렉토리 확인
-                sh 'pwd'
-        
-                // 빌드된 JAR 파일 목록 확인
-                // sh 'ls -al ./core-module/build/libs/'
-        
-                // JAR 파일을 core-module-latest.jar로 이름 변경
-                // sh 'cp ./core-module/build/libs/core-module-0.0.1-SNAPSHOT.jar ./core-module/build/libs/core-module-latest.jar'
-                // sh 'cp ./community-module/build/libs/community-module-0.0.1-SNAPSHOT.jar ./community-module/build/libs/community-module-latest.jar'
-        
-                // // 변경된 파일 확인
-                // sh 'ls -al ./core-module/build/libs/'
             }
         }
 
@@ -148,13 +131,25 @@ spec:
                             if (shouldBuild) {
                                 echo "🔨 core-module 변경 감지됨, 빌드 시작!"
                                 sh "/kaniko/executor --context ${WORKSPACE}/core-module/ \
-                                    --destination ${registry}/core-module:latest \
+                                    --destination ${registry}/core-module:v1.${BUILD_ID} \
                                     --insecure \
                                     --skip-tls-verify  \
                                     --cleanup \
                                     --dockerfile ${WORKSPACE}/core-module/Dockerfile \
                                     --ignore-path=${WORKSPACE} \
                                     --verbosity debug"
+                                
+                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경"
+                                sh """
+                                    git checkout argocd
+                                    git pull origin argocd
+                                    git merge origin/main
+                                    sed -i 's|image: jiwonchoe/core-module:v1.*|image: jiwonchoe/core-module:v1.${BUILD_ID}|' core-module/deployment.yaml
+                                    git add .
+                                    git commit -m "Update Core Docker Image Version"
+                                    git push origin argocd
+                                """
+
                             } else {
                                 echo "✅ core-module 변경 없음, 빌드 스킵!"
                             }
@@ -180,13 +175,24 @@ spec:
                                 // Docker 이미지 빌드 및 푸시
                                 sh """
                                     /kaniko/executor --context ${WORKSPACE}/community-module/ \
-                                    --destination ${registry}/community-module:latest \
+                                    --destination ${registry}/community-module:v1.${BUILD_ID} \
                                     --insecure \
                                     --skip-tls-verify  \
                                     --cleanup \
                                     --dockerfile ${WORKSPACE}/community-module/Dockerfile \
                                     --ignore-path=${WORKSPACE} \
                                     --verbosity debug
+                                """
+
+                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경"
+                                sh """
+                                    git checkout argocd
+                                    git pull origin argocd
+                                    git merge origin/main
+                                    sed -i 's|image: jiwonchoe/community-module:v1.*|image: jiwonchoe/community-module:v1.${BUILD_ID}|' community-module/deployment.yaml
+                                    git add .
+                                    git commit -m "Update Community Docker Image Version"
+                                    git push origin argocd
                                 """
                             } else {
                                 echo "✅ community-module 변경 없음, 빌드 스킵!"
@@ -213,7 +219,7 @@ spec:
                                 // Docker 이미지 빌드 및 푸시
                                 sh """
                                     /kaniko/executor --context ${WORKSPACE}/stock-module/ \
-                                    --destination ${registry}/stock-module:latest \
+                                    --destination ${registry}/stock-module:v1.${BUILD_ID} \
                                     --insecure \
                                     --skip-tls-verify  \
                                     --cleanup \
@@ -221,6 +227,18 @@ spec:
                                     --ignore-path=${WORKSPACE} \
                                     --verbosity debug
                                 """
+
+                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경"
+                                sh """
+                                    git checkout argocd
+                                    git pull origin argocd
+                                    git merge origin/main
+                                    sed -i 's|image: jiwonchoe/stock-module:v1.*|image: jiwonchoe/stock-module:v1.${BUILD_ID}|' stock-module/deployment.yaml
+                                    git add .
+                                    git commit -m "Update Stock Docker Image Version"
+                                    git push origin argocd
+                                """
+
                             } else {
                                 echo "✅ stock-module 변경 없음, 빌드 스킵!"
                             }
@@ -246,13 +264,24 @@ spec:
                                 // Docker 이미지 빌드 및 푸시
                                 sh """
                                     /kaniko/executor --context ${WORKSPACE}/piggyBank-module/ \
-                                    --destination ${registry}/piggybank-module:latest \
+                                    --destination ${registry}/piggybank-module:v1.${BUILD_ID} \
                                     --insecure \
                                     --skip-tls-verify  \
                                     --cleanup \
                                     --dockerfile ${WORKSPACE}/piggyBank-module/Dockerfile \
                                     --ignore-path=${WORKSPACE} \
                                     --verbosity debug
+                                """
+
+                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경"
+                                sh """
+                                    git checkout argocd
+                                    git pull origin argocd
+                                    git merge origin/main
+                                    sed -i 's|image: jiwonchoe/piggybank-module:v1.*|image: jiwonchoe/piggybank-module:v1.${BUILD_ID}|' piggyBank-module/deployment.yaml
+                                    git add .
+                                    git commit -m "Update Stock Docker Image Version"
+                                    git push origin argocd
                                 """
                             } else {
                                 echo "✅ piggyBank-module 변경 없음, 빌드 스킵!"
