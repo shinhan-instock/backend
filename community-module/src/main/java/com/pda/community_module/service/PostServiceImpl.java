@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,5 +42,12 @@ public class PostServiceImpl implements PostService {
         }
 
         return PostConverter.toPostListEntity(posts);
+    }
+
+    @Override
+    public PostResponseDTO.getPostDTO getPostById(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        return PostConverter.toPostEntity(post);
     }
 }

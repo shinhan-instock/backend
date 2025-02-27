@@ -8,4 +8,6 @@ public interface PostService {
 
 
     List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, Long user_id);
+
+    PostResponseDTO.getPostDTO getPostById(Long postId);
 }
