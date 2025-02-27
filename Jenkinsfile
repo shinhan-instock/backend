@@ -278,7 +278,7 @@ spec:
                     sh 'git merge origin/main'
                     modules.each { module, shouldBuild ->
                         if (shouldBuild) {
-                            withCredentials([gitUsernamePassword(credentialsId: 'github-jiwon', gitToolName: 'Default')]) {
+                            withCredentials([sshUserPrivateKey(credentialsId: 'jiwonchoe12', keyFileVariable: 'SSH_KEY')]) {
                                 echo "4"
                                 sh "sed -i 's|image: jiwonchoe/${module}:v1.*|image: jiwonchoe/${module}:v1.${BUILD_ID}|' ${module}/deployment.yaml"
                                 echo "5"
