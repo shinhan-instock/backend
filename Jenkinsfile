@@ -267,18 +267,18 @@ spec:
                             }
                         }
                     }
-                    sh "git config --global user.email 'belle021202@naver.com'"
-                    echo "11"
-                    sh 'git config --global user.name "jiwonchoe12"'
-                    echo "1111"
-                    sh 'git checkout argocd'
-                    echo "2"
-                    sh 'git pull origin argocd'
-                    echo "3"
-                    sh 'git merge origin/main'
                     modules.each { module, shouldBuild ->
                         if (shouldBuild) {
                             withCredentials([sshUserPrivateKey(credentialsId: 'jiwonchoe12', keyFileVariable: 'SSH_KEY')]) {
+                                sh "git config --global user.email 'belle021202@naver.com'"
+                                echo "11"
+                                sh 'git config --global user.name "jiwonchoe12"'
+                                echo "1111"
+                                sh 'git checkout argocd'
+                                echo "2"
+                                sh 'git pull origin argocd'
+                                echo "3"
+                                sh 'git merge origin/main'
                                 echo "4"
                                 sh "sed -i 's|image: jiwonchoe/${module}:v1.*|image: jiwonchoe/${module}:v1.${BUILD_ID}|' ${module}/deployment.yaml"
                                 echo "5"
