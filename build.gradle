@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.3.6'
+	id 'org.springframework.boot' version '3.3.6'//다운그레이드
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -22,7 +22,7 @@ allprojects {
 	}
 
 	ext {
-		set('springCloudVersion', "2023.0.1")
+		set('springCloudVersion', "2023.0.1")//다운그레이드
 	}
 
 	dependencyManagement {
