@@ -269,7 +269,7 @@ spec:
                     }
                     modules.each { module, shouldBuild ->
                         if (shouldBuild) {
-                            withCredentials([sshUserPrivateKey(credentialsId: 'jiwonchoe12', keyFileVariable: 'SSH_KEY')]) {
+                            withCredentials([gitUsernamePassword(credentialsId: 'github-jiwon', gitToolName: 'Default')]) {
                                 sh "git config --global user.email 'belle021202@naver.com'"
                                 echo "11"
                                 sh 'git config --global user.name "jiwonchoe12"'
