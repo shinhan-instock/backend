@@ -21,6 +21,6 @@ spec:
       containers:
       - name: be-community
         image: jiwonchoe/community-module:latest
-        imagePullPolicy: Always  # ⭐️ 항상 최신 이미지로 업데이트
+        imagePullPolicy: Always 
         ports:
         - containerPort: 80
