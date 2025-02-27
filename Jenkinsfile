@@ -73,7 +73,10 @@ spec:
     stages {   
         stage ('Git Clone') {
             steps {
-                checkout scmGit(branches: [[name: 'main']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
+                script {
+                    checkout scmGit(branches: [[name: 'main']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
+                    sh 'git fetch -all'
+                }
             }
         }
 
@@ -139,7 +142,7 @@ spec:
                                     --ignore-path=${WORKSPACE} \
                                     --verbosity debug"
                                 
-                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경"
+                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경 - Core"
                                 sh """
                                     git checkout argocd
                                     git pull origin argocd
@@ -184,7 +187,7 @@ spec:
                                     --verbosity debug
                                 """
 
-                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경"
+                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경 - Community"
                                 sh """
                                     git checkout argocd
                                     git pull origin argocd
@@ -228,7 +231,7 @@ spec:
                                     --verbosity debug
                                 """
 
-                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경"
+                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경 - Stock"
                                 sh """
                                     git checkout argocd
                                     git pull origin argocd
@@ -273,14 +276,14 @@ spec:
                                     --verbosity debug
                                 """
 
-                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경"
+                                echo "✅ argocd branch로 checkout 후에 main branch 머지 & Dockerfile 내용 변경 - Piggy"
                                 sh """
                                     git checkout argocd
                                     git pull origin argocd
                                     git merge origin/main
                                     sed -i 's|image: jiwonchoe/piggybank-module:v1.*|image: jiwonchoe/piggybank-module:v1.${BUILD_ID}|' piggyBank-module/deployment.yaml
                                     git add .
-                                    git commit -m "Update Stock Docker Image Version"
+                                    git commit -m "Update piggy Docker Image Version"
                                     git push origin argocd
                                 """
                             } else {
