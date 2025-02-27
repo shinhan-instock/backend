@@ -267,15 +267,17 @@ spec:
                             }
                         }
                     }
+                    
                     modules.each { module, shouldBuild ->
                         if (shouldBuild) {
+                            def lowerModule = module.toLowerCase()
                             withCredentials([gitUsernamePassword(credentialsId: 'github-jiwon', gitToolName: 'Default')]) {
                                 sh "git config --global user.email 'belle021202@naver.com'"
                                 sh 'git config --global user.name "jiwonchoe12"'
                                 sh 'git checkout argocd'
                                 sh 'git pull origin argocd'
                                 sh 'git merge origin/main'
-                                sh "sed -i 's|image: jiwonchoe/${module}:v1.*|image: jiwonchoe/${module}:v1.${BUILD_ID}|' ${module}/deployment.yaml"
+                                sh "sed -i 's|image: jiwonchoe/${lowerModule}:v1.*|image: jiwonchoe/${lowerModule}:v1.${BUILD_ID}|' ${module}/deployment.yaml"
                                 sh 'git add .'
                                 sh 'git commit -m "Update Docker Image Version"'
                                 sh 'git push origin argocd'
