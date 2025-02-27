@@ -75,7 +75,7 @@ spec:
             steps {
                 script {
                     checkout scmGit(branches: [[name: 'main']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
-                    sh 'git fetch -all'
+                    sh 'git fetch --all'
                 }
             }
         }
