@@ -153,6 +153,10 @@ spec:
                                 //     git push origin argocd
                                 // """
                                 echo "1"
+                                sh "git config --global user.email 'belle021202@naver.com'"
+                                echo "11"
+                                sh 'git config --global user.name "jiwonchoe12"'
+                                echo "1111"
                                 sh 'git checkout argocd'
                                 echo "2"
                                 sh 'git pull origin argocd'
