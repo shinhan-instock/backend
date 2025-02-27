@@ -267,6 +267,9 @@ spec:
                             }
                         }
                     }
+                    sh "git config --global user.email 'belle021202@naver.com'"
+                    echo "11"
+                    sh 'git config --global user.name "jiwonchoe12"'
                     echo "1111"
                     sh 'git checkout argocd'
                     echo "2"
@@ -275,10 +278,6 @@ spec:
                     sh 'git merge origin/main'
                     modules.each { module, shouldBuild ->
                         if (shouldBuild) {
-                            // sh "git config --global user.email 'belle021202@naver.com'"
-                            // echo "11"
-                            // sh 'git config --global user.name "jiwonchoe12"'
-                            
                             echo "4"
                             sh "sed -i 's|image: jiwonchoe/${module}:v1.*|image: jiwonchoe/${module}:v1.${BUILD_ID}|' ${module}/deployment.yaml"
                             echo "5"
