@@ -257,7 +257,7 @@ spec:
                         'core-module': false,
                         'community-module': false,
                         'stock-module': false,
-                        'piggyBank-module': false
+                        'piggybank-module': false
                     ]
 
                     changedFiles.each { file ->
