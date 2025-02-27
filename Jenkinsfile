@@ -278,14 +278,16 @@ spec:
                     sh 'git merge origin/main'
                     modules.each { module, shouldBuild ->
                         if (shouldBuild) {
-                            echo "4"
-                            sh "sed -i 's|image: jiwonchoe/${module}:v1.*|image: jiwonchoe/${module}:v1.${BUILD_ID}|' ${module}/deployment.yaml"
-                            echo "5"
-                            sh 'git add .'
-                            echo "6"
-                            sh 'git commit -m "Update Docker Image Version"'
-                            echo "7"
-                            sh 'git push origin argocd'
+                            withCredentials([gitUsernamePassword(credentialsId: 'jiwonchoe12', gitToolName: 'Default')]) {
+                                echo "4"
+                                sh "sed -i 's|image: jiwonchoe/${module}:v1.*|image: jiwonchoe/${module}:v1.${BUILD_ID}|' ${module}/deployment.yaml"
+                                echo "5"
+                                sh 'git add .'
+                                echo "6"
+                                sh 'git commit -m "Update Docker Image Version"'
+                                echo "7"
+                                sh 'git push origin argocd'
+                            }
                         } else {
                             echo "Skipping ${module}"
                         }
