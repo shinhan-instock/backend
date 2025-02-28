@@ -281,6 +281,7 @@ spec:
                                 sh "sed -i 's|image: jiwonchoe/${lowerModule}:v1.*|image: jiwonchoe/${lowerModule}:v1.${BUILD_ID}|' ${module}/gateway.yaml"
                                 sh "sed -i 's|image: jiwonchoe/${lowerModule}:v1.*|image: jiwonchoe/${lowerModule}:v1.${BUILD_ID}|' ${module}/service.yaml"
                                 sh "sed -i 's|image: jiwonchoe/${lowerModule}:v1.*|image: jiwonchoe/${lowerModule}:v1.${BUILD_ID}|' ${module}/virtualservice.yaml"
+
                                 sh 'git add .'
                                 sh 'git commit -m "Update Docker Image Version"'
                                 sh 'git push origin argocd'
