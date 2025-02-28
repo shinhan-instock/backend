@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-core
+  namespace: be-namespace
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1  # 한 번에 다운될 수 있는 최대 개수 (1개)
+      maxSurge: 1        # 한 번에 추가로 생성할 수 있는 최대 개수 (1개)
+  selector:
+    matchLabels:
+      app: be-core
+  template:
+    metadata:
+      labels:
+        app: be-core
+    spec:
+      containers: 
+      - name: be-core
+        image: jiwonchoe/core-module:v1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80

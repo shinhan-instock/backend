@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-stock
+  namespace: be-namespace
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1  # 한 번에 다운될 수 있는 최대 개수 (1개)
+      maxSurge: 1        # 한 번에 추가로 생성할 수 있는 최대 개수 (1개)
+  selector:
+    matchLabels:
+      app: be-stock
+  template:
+    metadata:
+      labels:
+        app: be-stock
+    spec:
+      containers:
+      - name: be-stock
+        image: jiwonchoe/stock-module:v1.1
+        imagePullPolicy: Always  # ⭐️ 항상 최신 이미지로 업데이트
+        ports:
+        - containerPort: 80
