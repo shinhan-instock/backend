@@ -4,11 +4,10 @@ import com.pda.community_module.domain.Post;
 import com.pda.community_module.web.dto.PostResponseDTO;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PostConverter {
-    public static List<PostResponseDTO.getPostDTO> toPostListEntity(List<Post> posts){
+    public static List<PostResponseDTO.getPostDTO> toPostListDto(List<Post> posts){
        return posts.stream().map(post -> new PostResponseDTO.getPostDTO(
                 post.getId(),
                 post.getUser().getNickname(),
@@ -17,11 +16,13 @@ public class PostConverter {
                 post.getSentiment() != null ? post.getSentiment().getSentimentScore() : 50,
                 post.getImageUrl(),
                 post.getLikes().size(),
-                post.getComments().size()
+                post.getComments().size(),
+               post.getCreatedAt(),
+               post.getUpdateAt()
         )).collect(Collectors.toList());
     }
 
-    public static PostResponseDTO.getPostDTO toPostEntity(Post post) {
+    public static PostResponseDTO.getPostDTO toPostDto(Post post) {
         return new PostResponseDTO.getPostDTO(
                 post.getId(),
                 post.getUser().getNickname(),
@@ -30,7 +31,9 @@ public class PostConverter {
                 post.getSentiment() != null ? post.getSentiment().getSentimentScore() : 50,
                 post.getImageUrl(),
                 post.getLikes().size(),
-                post.getComments().size()
+                post.getComments().size(), post.getCreatedAt(),
+                post.getUpdateAt()
+
         );
     }
 
