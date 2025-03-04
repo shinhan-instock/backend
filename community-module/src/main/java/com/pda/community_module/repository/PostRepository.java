@@ -14,12 +14,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByUserIdIn(List<Long> userIds);
 
-    // 특정 유저가 스크랩한 모든 게시글 ID 조회
-    List<Long> findAllPostIdsByUserId(Long userId);
-
-    // 특정 유저가 팔로우한 모든 게시글 ID 조회
-    List<Long> findAllFollowingIdsByUserId(Long userId);
-
     List<Post> findAllByUserId(Long id);
 
     List<Post> findAllByHashtag(String name);

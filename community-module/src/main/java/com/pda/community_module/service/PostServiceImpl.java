@@ -1,15 +1,18 @@
 package com.pda.community_module.service;
 
 import com.pda.community_module.converter.PostConverter;
+import com.pda.community_module.converter.WatchListConverter;
 import com.pda.community_module.domain.Post;
 import com.pda.community_module.domain.User;
 import com.pda.community_module.domain.WatchList;
+import com.pda.community_module.domain.mapping.PostLike;
 import com.pda.community_module.domain.mapping.PostScrap;
+import com.pda.community_module.repository.PostLikeRepository;
 import com.pda.community_module.repository.PostRepository;
 import com.pda.community_module.repository.PostScrapRepository;
 import com.pda.community_module.repository.UserRepository;
+import com.pda.community_module.web.dto.PostRequestDTO;
 import com.pda.community_module.web.dto.PostResponseDTO;
-import com.pda.community_module.web.dto.WatchListRequestDTO;
 import com.pda.core_module.apiPayload.GeneralException;
 import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,8 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
 
     private final PostScrapRepository postScrapRepository;
+
+    private final PostLikeRepository postLikeRepository;
 
     @Override
     public List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, Long userId) {
@@ -68,15 +73,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponseDTO.getPostDTO> getMyPosts() {
-        // 나인지 확인해서 post 리스트인데 나인지 확인어케하는지 몰라서 수정할거임 나중에
-        List<Post> posts = postRepository.findAll();
+    public List<PostResponseDTO.getPostDTO> getMyPosts(String userid) {
+        User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        List<Post> posts = postRepository.findAllByUserId(user.getId());
         return PostConverter.toPostListDto(posts);
     }
 
     @Override
     public List<PostResponseDTO.getPostDTO> getPostsByUser(String nickname) {
-        User user =  userRepository.findByNickname(nickname);
+        User user =  userRepository.findByNickname(nickname).orElseThrow(()->new GeneralException(ErrorStatus.USER_NOT_FOUND));
         List<Post> posts = postRepository.findAllByUserId(user.getId());
 
         return PostConverter.toPostListDto(posts);
@@ -88,10 +93,72 @@ public class PostServiceImpl implements PostService {
         return PostConverter.toPostListDto(posts);
     }
 
+    @Transactional
     @Override
-    public void deletePost(Long userid, Long id) {
-        User user = userRepository.findById(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        Post post  = postRepository.findById(id).orElseThrow(()-> new GeneralException(ErrorStatus.POST_NOT_FOUND));
-        postRepository.delete(post);
+    public void deletePost(String userid, Long id) {
+        User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        Post post = postRepository.findById(id).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        if (!post.getUser().getUserId().equals(user.getUserId())) {
+            throw new GeneralException(ErrorStatus._FORBIDDEN);
+        }
+        post.markAsDeleted();
+        postRepository.save(post);
     }
+
+    @Transactional
+    @Override
+    public void editPost(String userid, Long id, PostRequestDTO.EditPostDTO editPostDTO) {
+        User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        Post post = postRepository.findById(id).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        if (!post.getUser().getUserId().equals(user.getUserId())) {
+            throw new GeneralException(ErrorStatus._FORBIDDEN);
+        }
+
+        Post updatedPost = PostConverter.toPostEntity(user, editPostDTO, post);
+        postRepository.save(updatedPost);
+
+    }
+
+    @Transactional
+    @Override
+    public void addLikes(String userid, Long id) {
+        User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+    Post post = postRepository.findById(id).orElseThrow(()->new GeneralException(ErrorStatus.POST_NOT_FOUND));
+    PostLike postLikeEntity = PostConverter.toPostLikeEntity(user, post);
+        postLikeRepository.save(postLikeEntity);
+    }
+
+    @Transactional
+    @Override
+    public void deleteLikes(String userid, Long id) {
+        User user = userRepository.findByUserId(userid).orElseThrow(()->new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        PostLike postLike = postLikeRepository.findById(id).orElseThrow(()->new GeneralException(ErrorStatus._BAD_REQUEST));
+        if (!postLike.getUser().getUserId().equals(user.getUserId())) {
+            throw new GeneralException(ErrorStatus._FORBIDDEN);
+        }
+        postLikeRepository.deleteById(id);
+
+    }
+
+    @Transactional
+    @Override
+    public void addScrap(String userid, Long id) {
+        User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        Post post = postRepository.findById(id).orElseThrow(()->new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        PostScrap postScrapEntity = PostConverter.toPostScrapEntity(user, post);
+        postScrapRepository.save(postScrapEntity);
+
+    }
+
+    @Transactional
+    @Override
+    public void deleteScrap(String userid, Long id) {
+        User user = userRepository.findByUserId(userid).orElseThrow(()->new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        PostScrap postScrap = postScrapRepository.findById(id).orElseThrow(()->new GeneralException(ErrorStatus._BAD_REQUEST));
+        if (!postScrap.getUser().getUserId().equals(user.getUserId())) {
+            throw new GeneralException(ErrorStatus._FORBIDDEN);
+        }
+        postScrapRepository.deleteById(id);
+    }
+
 }

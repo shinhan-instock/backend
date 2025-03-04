@@ -1,6 +1,11 @@
 package com.pda.community_module.converter;
 
 import com.pda.community_module.domain.Post;
+import com.pda.community_module.domain.User;
+import com.pda.community_module.domain.WatchList;
+import com.pda.community_module.domain.mapping.PostLike;
+import com.pda.community_module.domain.mapping.PostScrap;
+import com.pda.community_module.web.dto.PostRequestDTO;
 import com.pda.community_module.web.dto.PostResponseDTO;
 
 import java.util.List;
@@ -37,4 +42,34 @@ public class PostConverter {
         );
     }
 
+    public static Post toPostEntity(User user, PostRequestDTO.EditPostDTO editPostDTO, Post existingPost) {
+
+        return Post.builder()
+                .id(existingPost.getId())
+                .user(user)
+                .content(editPostDTO.getContent())
+                .hashtag(editPostDTO.getHashtag())
+                .imageUrl(editPostDTO.getImages())
+                // 기존값
+                .postCount(existingPost.getPostCount())
+                .sentiment(existingPost.getSentiment())
+                .scraps(existingPost.getScraps())
+                .comments(existingPost.getComments())
+                .likes(existingPost.getLikes())
+                .deleted(existingPost.getDeleted())
+                .build();
+    }
+
+    public static PostLike toPostLikeEntity(User user, Post post) {
+        return PostLike.builder()
+                .user(user)
+                .post(post)
+                .build();
+    }
+    public static PostScrap toPostScrapEntity(User user, Post post) {
+        return PostScrap.builder()
+                .user(user)
+                .post(post)
+                .build();
+    }
 }
