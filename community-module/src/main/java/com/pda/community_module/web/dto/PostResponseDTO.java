@@ -2,6 +2,8 @@ package com.pda.community_module.web.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 public class PostResponseDTO {
 
@@ -18,5 +20,7 @@ public class PostResponseDTO {
         private String images;
         private int likes;
         private int comments;
+        private LocalDateTime created_at;
+        private LocalDateTime update_at;
     }
 }
