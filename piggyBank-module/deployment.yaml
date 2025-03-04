@@ -22,12 +22,21 @@ spec:
       - name: be-piggy
         image: jiwonchoe/piggybank-module:v1.1
         imagePullPolicy: Always  # ⭐️ 항상 최신 이미지로 업데이트
-    env:
-      - name: MY_URL
-        value: "jdbc:mysql://mysql-master.db-namespace.svc.cluster.local:3306/test_db"
-      - name: MY_USERNAME
-        value: "root"
-      - name: MY_PASSWORD
-        value: ""
-        ports:
-        - containerPort: 80
+        env:
+          - name: MY_URL
+            valueFrom:
+              configMapKeyRef:
+                name: be-piggy-config
+                key: MY_URL
+          - name: MY_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: be-piggy-config
+                key: MY_USERNAME
+          - name: MY_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: be-piggy-secret
+                key: MY_PASSWORD
+    ports:
+      - containerPort: 8085
