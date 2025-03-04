@@ -52,6 +52,7 @@ public class PostConverter {
                 .imageUrl(editPostDTO.getImages())
                 // 기존값
                 .postCount(existingPost.getPostCount())
+//                .sentiment(existingPost.getSentiment())
                 .sentiment(existingPost.getSentiment())
                 .scraps(existingPost.getScraps())
                 .comments(existingPost.getComments())

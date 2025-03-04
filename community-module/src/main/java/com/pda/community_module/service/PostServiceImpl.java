@@ -35,15 +35,14 @@ public class PostServiceImpl implements PostService {
     private final PostLikeRepository postLikeRepository;
 
     @Override
-    public List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, Long userId) {
+    public List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, String userid) {
         List<Post> posts;
-
+        User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         if (popular) {
             // 인기 게시글 (좋아요 많은 순)
             posts = postRepository.findAllByOrderByLikesDesc();
         } else if (following){
             // 팔로잉한 유저의 게시글
-            User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
             List<Long> followingIdList = user.getFollowingList().stream()
                     .map(follow -> follow.getFollowing().getId()) //
                     .collect(Collectors.toList());
@@ -52,7 +51,6 @@ public class PostServiceImpl implements PostService {
         }
         else if (scrap){
             // 스크랩한 글
-            User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
             List<PostScrap> postScraps = postScrapRepository.findByUser(user); // 내 userId
             posts = postScraps.stream()
                     .map(postScrap -> postScrap.getPost())

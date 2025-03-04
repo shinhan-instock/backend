@@ -30,12 +30,13 @@ public class PostController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "사용자를 찾을 수 없습니다.")
     })
-    public ApiResponse<?> getPosts(@RequestParam Boolean following,
-                                   @RequestParam Boolean popular,
-                                   @RequestParam Boolean scrap,
-                                   @RequestParam Long user_id){
-
-        return ApiResponse.onSuccess( postService.getPosts(following, popular, scrap, user_id));
+    public ApiResponse<?> getPosts(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestParam Boolean following,
+            @RequestParam Boolean popular,
+            @RequestParam Boolean scrap){
+        String userid = authorizationHeader.replace("Bearer ", "");
+        return ApiResponse.onSuccess( postService.getPosts(following, popular, scrap, userid));
     }
 
     // 개별 게시글 보기
