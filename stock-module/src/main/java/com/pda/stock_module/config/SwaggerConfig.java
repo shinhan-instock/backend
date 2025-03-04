@@ -15,8 +15,8 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI helloWorldMVCAPI(){
         Info info = new Info()
-                .title("Instock PiggyBank 모듈 API")
-                .description("Instock PiggyBank 모듈 API 명세서")
+                .title("Instock Stock 모듈 API")
+                .description("Instock Stock 모듈 API 명세서")
                 .version("1.0.0");
 
         String jwtSchemeName = "JWT Token";

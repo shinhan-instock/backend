@@ -22,5 +22,15 @@ spec:
       - name: be-stock
         image: jiwonchoe/stock-module:v1.91
         imagePullPolicy: Always  # ⭐️ 항상 최신 이미지로 업데이트
+        env:
+          - name: REDIS_HOST
+            value: "my-redis.db-namespace.svc.cluster.local"
+          - name: REDIS_PORT
+            value: "6379"
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: my-redis               # 위에서 확인한 secret 이름
+                key: redis-password          # secret 안의 데이터 key (예: redis-password)
         ports:
-        - containerPort: 80
+        - containerPort: 8081
