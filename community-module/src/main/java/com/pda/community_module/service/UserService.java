@@ -1,0 +1,14 @@
+package com.pda.community_module.service;
+
+import com.pda.community_module.web.dto.UserRequestDTO;
+import com.pda.community_module.web.dto.UserResponseDTO;
+
+import java.util.List;
+
+public interface UserService {
+    UserResponseDTO.getUserDTO login(UserRequestDTO.LoginUserDTO requestDTO);
+    UserResponseDTO.getUserInfoDTO getUserInfo(String userId);
+    void updateUser(String userId, UserRequestDTO.UpdateUserDTO requestDTO);
+    List<UserResponseDTO.getUserDTO> searchUser(String userId, String keyword);
+//    void doFollow(String userId, String nickname);
+}
