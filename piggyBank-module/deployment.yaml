@@ -40,5 +40,5 @@ spec:
                 key: MY_PASSWORD
           - name: PORT
             value: "8082"
-    ports:
-      - containerPort: 8082
+        ports:
+          - containerPort: 8082
