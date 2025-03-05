@@ -14,13 +14,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByUserIdIn(List<Long> userIds);
 
-    // 특정 유저가 스크랩한 모든 게시글 ID 조회
-    @Query("SELECT ps.post.id FROM PostScrap ps WHERE ps.user.id = :userId")
-    List<Long> findAllPostIdsByUserId(@Param("userId") Long userId);
+    List<Post> findAllByUserId(Long id);
 
-    // 특정 유저가 팔로우한 모든 게시글 ID 조회
-    @Query("SELECT uf.following.id FROM UserFollows uf WHERE uf.follower.id =:userId")
-    List<Long> findAllFollowingIdsByUserId(@Param("userId") Long userId);
-
-
+    List<Post> findAllByHashtag(String name);
 }

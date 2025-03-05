@@ -12,7 +12,7 @@ public class WatchListRequestDTO {
     @AllArgsConstructor
     @Builder
     public static class AddWatchListDTO {
-        private Long userId;
+        private String userId;
         private String stockCode;
         private String stockName;
     }
@@ -22,7 +22,7 @@ public class WatchListRequestDTO {
     @AllArgsConstructor
     @Builder
     public static class DeleteWatchListDTO {
-        private Long userId;
+        private String userId;
         private String stockName;
     }
 }
