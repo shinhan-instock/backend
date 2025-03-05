@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,31 +38,48 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, String userid) {
         List<Post> posts;
-        User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        if (popular) {
-            // 인기 게시글 (좋아요 많은 순)
-            posts = postRepository.findAllByOrderByLikesDesc();
-        } else if (following){
-            // 팔로잉한 유저의 게시글
-            List<Long> followingIdList = user.getFollowingList().stream()
-                    .map(follow -> follow.getFollowing().getId()) //
-                    .collect(Collectors.toList());
 
-            posts = postRepository.findAllByUserIdIn(followingIdList);
-        }
-        else if (scrap){
-            // 스크랩한 글
-            List<PostScrap> postScraps = postScrapRepository.findByUser(user); // 내 userId
-            posts = postScraps.stream()
-                    .map(postScrap -> postScrap.getPost())
-                    .collect(Collectors.toList());
-        }else {
-            // 모든 게시글 (최신순)
-            posts = postRepository.findAll();
+        // userid가 null일 경우 팔로잉, 스크랩한 글만 빈 리스트 반환
+        if (userid == null) {
+            if (popular) {
+                // 인기 게시글 (좋아요 많은 순)
+                posts = postRepository.findAllByOrderByLikesDesc();
+            } else if (scrap || following) {
+                // 팔로잉한 글이나 스크랩한 글일 때 빈 리스트 반환
+                posts = new ArrayList<>();
+            } else {
+                // 모든 게시글 (최신순)
+                posts = postRepository.findAll();
+            }
+        } else {
+            // userid가 null이 아닌 경우, 정상적으로 사용자 정보 조회
+            User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+            if (popular) {
+                // 인기 게시글 (좋아요 많은 순)
+                posts = postRepository.findAllByOrderByLikesDesc();
+            } else if (following) {
+                // 팔로잉한 유저의 게시글
+                List<Long> followingIdList = user.getFollowingList().stream()
+                        .map(follow -> follow.getFollowing().getId())
+                        .collect(Collectors.toList());
+
+                posts = postRepository.findAllByUserIdIn(followingIdList);
+            } else if (scrap) {
+                // 스크랩한 글
+                List<PostScrap> postScraps = postScrapRepository.findByUser(user); // 내 userId
+                posts = postScraps.stream()
+                        .map(postScrap -> postScrap.getPost())
+                        .collect(Collectors.toList());
+            } else {
+                // 모든 게시글 (최신순)
+                posts = postRepository.findAll();
+            }
         }
 
         return PostConverter.toPostListDto(posts);
     }
+
 
     @Override
     public PostResponseDTO.getPostDTO getPostById(Long postId) {
