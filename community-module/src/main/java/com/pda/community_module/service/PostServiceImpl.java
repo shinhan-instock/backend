@@ -177,4 +177,17 @@ public class PostServiceImpl implements PostService {
         postScrapRepository.deleteById(id);
     }
 
+    @Override
+    public Boolean getLikeByUser(String userid, Long id) {
+        User user = userRepository.findByUserId(userid).orElseThrow(()->new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        // 해당 글에 눌린 모든 좋아요
+        List<PostLike> postLikes = postLikeRepository.findAllByPostId(id);
+
+        boolean isLikedByUser = postLikes.stream()
+                .map(postLike -> postLike.getUser())
+                .anyMatch(likeUser -> likeUser.getId().equals(user.getId()));
+
+        return isLikedByUser;
+    }
+
 }

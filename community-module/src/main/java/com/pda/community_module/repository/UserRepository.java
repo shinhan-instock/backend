@@ -12,4 +12,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserId(@Param("userId") String userId);
     boolean existsByNickname(String nickname);
     List<User> findByNicknameStartingWith(String keyword);
+
+    Optional<User> findByNickname(String nickname);
 }
