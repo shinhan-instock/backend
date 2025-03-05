@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 @RestController
-@RequestMapping("/api/stocks")
+@RequestMapping("/stocks")
 @RequiredArgsConstructor
 public class StockController {
 

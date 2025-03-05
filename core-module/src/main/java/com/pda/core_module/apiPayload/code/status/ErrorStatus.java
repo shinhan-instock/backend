@@ -22,6 +22,8 @@ ErrorStatus implements BaseErrorCode {
 
     // 사용자 관련 응답
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4001", "사용자를 찾을수 없습니다."),
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH4001", "아이디 또는 비밀번호가 올바르지 않습니다"),
+    DUPLICATE_NICKNAME(HttpStatus.UNAUTHORIZED, "USER4009", "이미 사용중인 닉네임입니다."),
 
     // 주식 관련 응답
     WATCHLIST_NOT_FOUND(HttpStatus.BAD_REQUEST, "STOCK4001", "watch list에 해당 주식이 없습니다."),

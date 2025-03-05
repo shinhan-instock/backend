@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-stock
+  namespace: be-namespace
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1  # 한 번에 다운될 수 있는 최대 개수 (1개)
+      maxSurge: 1        # 한 번에 추가로 생성할 수 있는 최대 개수 (1개)
+  selector:
+    matchLabels:
+      app: be-stock
+  template:
+    metadata:
+      labels:
+        app: be-stock
+    spec:
+      containers:
+      - name: be-stock
+        image: jiwonchoe/stock-module:v1.1
+        imagePullPolicy: Always  # ⭐️ 항상 최신 이미지로 업데이트
+        env:
+          - name: REDIS_HOST
+            value: "my-redis.db-namespace.svc.cluster.local"
+          - name: REDIS_PORT
+            value: "6379"
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: my-redis               # 위에서 확인한 secret 이름
+                key: redis-password          # secret 안의 데이터 key (예: redis-password)
+        ports:
+        - containerPort: 8081

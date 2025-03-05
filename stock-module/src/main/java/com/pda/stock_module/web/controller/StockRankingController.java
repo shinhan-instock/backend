@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/stocks/rankings")
+@RequestMapping("/stocks/rankings")
 @RequiredArgsConstructor
 public class StockRankingController {
     private final RankingListService rankingListService;
