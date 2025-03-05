@@ -13,4 +13,5 @@ public class StockDetailModel {
     private final Integer price;
     private final String priceChange;
     private final String sectorName;
+    private final String rank;
 }

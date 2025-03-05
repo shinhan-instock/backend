@@ -31,6 +31,11 @@ ErrorStatus implements BaseErrorCode {
 
     // 게시글 관련 응답
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4002", "게시글을 찾을수 없습니다."),
+
+
+    // 마일리지 관련 응답
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "MILEAGE4001", "계좌 계설을 먼저 하세요.")
+
     ;
 
 

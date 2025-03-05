@@ -1,6 +1,9 @@
 server:
   port: 8081
 spring:
+  batch:
+    jdbc:
+      initialize-schema: always
   datasource:
     url: ${MY_URL}
     username: ${MY_USERNAME}
@@ -30,4 +33,7 @@ spring:
 
 appkey: ${APP_KEY}
 appsecret: ${APP_SECRET}
+
+
+
 

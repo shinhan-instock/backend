@@ -50,4 +50,10 @@ public class Post extends BaseEntity {
 
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private PostCount postCount;
+
+
+    public void markAsDeleted() {
+        this.deleted = true;
+    }
+
 }

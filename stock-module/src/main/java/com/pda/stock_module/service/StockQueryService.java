@@ -1,6 +1,8 @@
 package com.pda.stock_module.service;
 
+import com.pda.stock_module.domain.common.Company;
 import com.pda.stock_module.domain.common.RedisCommon;
+import com.pda.stock_module.repository.StockQueryRepository;
 import com.pda.stock_module.web.dto.DetailStockResponse;
 import com.pda.stock_module.web.dto.StockResponse;
 import com.pda.stock_module.web.dto.TopStockResponse;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StockQueryService {
     private final RedisCommon redisCommon;
+    private final StockQueryRepository stockQueryRepository;
 
     public List<TopStockResponse> getTop10ByTheme(String stockName) {
         try {
@@ -67,10 +70,14 @@ public class StockQueryService {
                 return null;
             }
 
+            Company company = stockQueryRepository.findByStockName(stockName);
+
             return new DetailStockResponse(
                     stockInfo.getStockName(),
+                    stockInfo.getStockCode(),
                     stockInfo.getPrice(),
-                    stockInfo.getPriceChange()
+                    stockInfo.getPriceChange(),
+                    company.getDescription()
             );
         } catch (Exception e) {
             System.err.println("Error while fetching stock details: " + e.getMessage());
@@ -78,5 +85,9 @@ public class StockQueryService {
         }
     }
 
+    // 보유 마일리지에 해당하는 주식 시가총액 순 top10 가져오기.
+    public List<StockDetailModel> getStockByMileage(Long mileage) {
+        return redisCommon.getStockByMileage(mileage);
+    }
 
 }
