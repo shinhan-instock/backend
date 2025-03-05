@@ -80,7 +80,6 @@ public class StockQueryService {
 
     // 보유 마일리지에 해당하는 주식 시가총액 순 top10 가져오기.
     public List<StockDetailModel> getStockByMileage(Long mileage) {
-        redisCommon.syncAllStocksToZSet();
         return redisCommon.getStockByMileage(mileage);
     }
 

@@ -1,6 +1,7 @@
 package com.pda.stock_module.service;
 
 import com.pda.stock_module.domain.common.Company;
+import com.pda.stock_module.domain.common.RedisCommon;
 import com.pda.stock_module.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.openqa.selenium.By;
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 public class FetchStockListService {
     private final StringRedisTemplate redisTemplate;
     private final RestTemplate restTemplate;
-    private final CompanyRepository companyRepository;
+    private final RedisCommon redisCommon;
 
     @Transactional
     public void updateStockData() {
@@ -158,7 +159,9 @@ public class FetchStockListService {
 
                                 // 🔥 Redis에 저장 ("stock:이름" -> rank)
                                 String redisKey = "stock:" + stockName;
-                                redisTemplate.opsForHash().put(redisKey, "rank", String.valueOf(rank));
+                                if (redisTemplate.hasKey(redisKey)) { // 해당하는 redisKey가 존재할 때만, 추가.
+                                    redisTemplate.opsForHash().put(redisKey, "rank", String.valueOf(rank));
+                                }
 
                             }
                         }
@@ -169,6 +172,8 @@ public class FetchStockListService {
                 System.err.println("❌ " + market + " 데이터 크롤링 중 오류 발생: " + e.getMessage());
             }
         }
+        redisCommon.syncAllStocksToZSet();
+        // 시총 순으로 정렬하는 Zset 생성.
     }
 
     private HttpHeaders createHeaders() {
