@@ -32,21 +32,21 @@ public class EmitterRepository {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public List<Long> getUserPortfolioPreferences(Long userId) {
-        return userPortfolioPreferences.getOrDefault(userId, new ArrayList<>());
-    }
+//    public List<Long> getUserPortfolioPreferences(Long userId) {
+//        return userPortfolioPreferences.getOrDefault(userId, new ArrayList<>());
+//    }
 
-    public void saveUserPortfolioPreferences(Long userId, List<Long> portfolioIds) {
-        userPortfolioPreferences.put(userId, portfolioIds);
-    }
+//    public void saveUserPortfolioPreferences(Long userId, List<Long> portfolioIds) {
+//        userPortfolioPreferences.put(userId, portfolioIds);
+//    }
 
-    public boolean isRevenueChanged(Long portfolioId, double newRevenue) {
-        return portfolioRevenueCache.getOrDefault(portfolioId, 0.0) != newRevenue;
-    }
+//    public boolean isRevenueChanged(Long portfolioId, double newRevenue) {
+//        return portfolioRevenueCache.getOrDefault(portfolioId, 0.0) != newRevenue;
+//    }
 
-    public void updateRevenueCache(Long portfolioId, double newRevenue) {
-        portfolioRevenueCache.put(portfolioId, newRevenue);
-    }
+//    public void updateRevenueCache(Long portfolioId, double newRevenue) {
+//        portfolioRevenueCache.put(portfolioId, newRevenue);
+//    }
 
     // priceChangeRate 캐시 값 가져오기
     public String getCachedPriceChangeRate(Long rankingId) {
