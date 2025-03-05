@@ -39,6 +39,6 @@ spec:
                 name: be-piggy-secret
                 key: MY_PASSWORD
           - name: PORT
-            value: "8085"
+            value: "8082"
     ports:
-      - containerPort: 8085
+      - containerPort: 8082
