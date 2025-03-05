@@ -29,6 +29,10 @@ public class StockController {
 
     // 주식 상세 정보
     @GetMapping("/{stockName}")
+    @Operation(summary = "주식 상세정보 검색", description = "검색한 주식의 정보를 보여줍니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
     public ResponseEntity<DetailStockResponse> getStockDetail(
             @PathVariable String stockName
     ) {
