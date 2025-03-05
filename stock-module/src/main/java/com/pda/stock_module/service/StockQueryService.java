@@ -69,6 +69,7 @@ public class StockQueryService {
 
             return new DetailStockResponse(
                     stockInfo.getStockName(),
+                    stockInfo.getStockCode(),
                     stockInfo.getPrice(),
                     stockInfo.getPriceChange()
             );

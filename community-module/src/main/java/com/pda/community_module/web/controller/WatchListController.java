@@ -24,7 +24,7 @@ public class WatchListController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "사용자를 찾을 수 없습니다.")
     })
-    public SseEmitter streamStockPrices(@RequestParam Long userId,
+    public SseEmitter streamStockPrices(@RequestParam String userId,
                                         @RequestParam int page,
                                         @RequestParam int size) {
         return watchListService.streamStockPrices(userId, page, size);

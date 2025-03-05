@@ -8,7 +8,7 @@ import java.util.List;
 public interface PostService {
 
 
-    List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, Long user_id);
+    List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, String userid);
 
     PostResponseDTO.getPostDTO getPostById(Long postId);
 
