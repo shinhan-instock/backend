@@ -66,7 +66,6 @@ public class RedisCommon {
         for (String stockKey : stockKeys) {
             Map<Object, Object> stockData = template.opsForHash().entries(stockKey);
             if (stockData.isEmpty()) continue;
-            System.out.println("stockData = " + stockData);
 
             String stockName = stockData.get("stockName").toString();
             String stockCode = stockData.get("stockCode").toString();
@@ -79,7 +78,6 @@ public class RedisCommon {
             StockDetailModel stock = new StockDetailModel(
                     stockName, stockCode, price, priceChange, sectorName, rank
             );
-            System.out.println("stock = " + stock);
 
             // JSON 변환 후 ZSET에 추가 (marketCapRank를 score로 사용)
             String stockJson = gson.toJson(stock);
