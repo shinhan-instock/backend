@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -65,18 +66,45 @@ public class UserController {
         return ApiResponse.onSuccess(userService.searchUser(userId, keyword));
     }
 
-//    @PostMapping("/follow")
-//    @Operation(summary = "팔로우하기", description = "상대방을 팔로우한다")
-//    @ApiResponses({
-//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "팔로우 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON4003", description = "토큰 누락 또는 유효하지 않음", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "팔로우하려는 유저가 존재하지 않습니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-//    })
-//    public ApiResponse<?> doFollow(@RequestHeader("Authorization") String authorizationHeader,
-//                                     @RequestParam(value = "keyword") String nickname) {
-//        String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
-//        userService.doFollow(userId, nickname);
-//        return ApiResponse.onSuccess(null);
-//    }
+    @GetMapping("/follow")
+    @Operation(summary = "팔로우리스트보기", description = "내가 팔로우하는 사람들 리스트를 보던가, 남이 팔로우하는 사람들 리스트를 확인한다")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "팔로우 리스트 반환 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON4003", description = "토큰 누락 또는 유효하지 않음", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "확인하려는 유저가 존재하지 않습니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+    })
+    public ApiResponse<?> getFollowList(@RequestHeader("Authorization") String authorizationHeader,
+                                   @RequestParam(value = "following") String nickname) {
+        String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
+        return ApiResponse.onSuccess(userService.getFollowList(userId, nickname));
+    }
 
+    @PostMapping("/follow")
+    @Operation(summary = "팔로우하기", description = "상대방을 팔로우한다")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "팔로우 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON4003", description = "토큰 누락 또는 유효하지 않음", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "팔로우하려는 유저가 존재하지 않습니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+    })
+    public ApiResponse<?> doFollow(@RequestHeader("Authorization") String authorizationHeader,
+                                     @RequestParam(value = "Nickname") String nickname) {
+        String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
+        userService.doFollow(userId, nickname);
+        return ApiResponse.onSuccess(null);
+    }
+
+    @DeleteMapping("/follow")
+    @Operation(summary = "팔로우취소", description = "상대방 팔로우 취소")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "팔로우 취소 완료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON4003", description = "토큰 누락 또는 유효하지 않음", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "팔로우 취소 유저가 존재하지 않습니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4008", description = "팔로우 정보가 존재하지 않습니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+    })
+    public ApiResponse<?> unFollow(@RequestHeader("Authorization") String authorizationHeader,
+                                   @RequestParam(value = "Nickname") String nickname) {
+        String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
+        userService.unFollow(userId, nickname);
+        return ApiResponse.onSuccess(null);
+    }
 }
