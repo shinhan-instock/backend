@@ -178,16 +178,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Boolean getLikeByUser(String userid, Long id) {
-        User user = userRepository.findByUserId(userid).orElseThrow(()->new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        // 해당 글에 눌린 모든 좋아요
+    public Long getLikeByUser(String userid, Long id) {
+        User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         List<PostLike> postLikes = postLikeRepository.findAllByPostId(id);
 
-        boolean isLikedByUser = postLikes.stream()
-                .map(postLike -> postLike.getUser())
-                .anyMatch(likeUser -> likeUser.getId().equals(user.getId()));
+        PostLike userPostLike = postLikes.stream()
+                .filter(postLike -> postLike.getUser().getId().equals(user.getId()))
+                .findFirst()
+                .orElse(null);
+        Long likeId = userPostLike != null ? userPostLike.getId() : null;
 
-        return isLikedByUser;
+
+        return likeId;
     }
+
+
 
 }

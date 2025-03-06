@@ -138,6 +138,7 @@ public class PostController {
     })
     public ApiResponse<?> addLikes(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Long id){
         String userid = authorizationHeader.replace("Bearer ", "");
+        System.out.println("auth"+authorizationHeader);
         postService.addLikes(userid, id);
         return ApiResponse.onSuccess(null);
 

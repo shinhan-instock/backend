@@ -14,6 +14,7 @@ public class PostResponseDTO {
     public static class getPostDTO {
         private Long id;
         private String nickname;
+        private String profileImg;
         private String content;
         private String hashtag;
         private Long sentimentScore;
@@ -23,4 +24,8 @@ public class PostResponseDTO {
         private LocalDateTime created_at;
         private LocalDateTime update_at;
     }
+
+
 }
+
+
