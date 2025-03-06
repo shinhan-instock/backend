@@ -1,4 +1,4 @@
-package com.pda.community_module.batch.scheduler;
+package com.pda.stock_module.batch.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-
 @Component
 @RequiredArgsConstructor
 public class BatchScheduler {
@@ -19,7 +18,7 @@ public class BatchScheduler {
     private final JobLauncher jobLauncher;
     private final Job batchJob; //
 
-    @Scheduled(cron = "0 0 * * * *",zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 16 * * *", zone = "Asia/Seoul")
     public void runBatchJob() {
         try {
             JobParameters jobParameters = new JobParametersBuilder()
@@ -34,4 +33,3 @@ public class BatchScheduler {
         }
     }
 }
-

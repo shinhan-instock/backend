@@ -1,5 +1,6 @@
-package com.pda.stock_module.domain.common;
+package com.pda.stock_module.domain;
 
+import com.pda.stock_module.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;

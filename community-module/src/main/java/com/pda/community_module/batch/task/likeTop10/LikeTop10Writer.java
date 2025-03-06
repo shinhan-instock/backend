@@ -14,7 +14,7 @@ public class LikeTop10Writer implements ItemWriter<MileageRequest> {
     @Override
     public void write(Chunk<? extends MileageRequest> items) {
         for (MileageRequest request : items) {
-            mileageFeignClient.addMileage(request); // ✅ Chunk<T>를 순회하면서 처리
+            mileageFeignClient.addMileage(request);
         }
     }
 }
