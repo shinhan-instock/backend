@@ -46,6 +46,9 @@ allprojects {
 		//openfeign
 		implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 		implementation 'io.github.openfeign:feign-jackson:13.3'
+		//batch
+		implementation 'org.springframework.boot:spring-boot-starter-batch'
+		testImplementation 'org.springframework.batch:spring-batch-test'
 	}
 
 
