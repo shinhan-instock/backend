@@ -58,19 +58,15 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public List<UserResponseDTO.getUserDTO> searchUser(String userId, String keyword) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._FORBIDDEN));
-
+    public List<UserResponseDTO.getUserDTO> searchUser(String keyword) {
         List<User> users = userRepository.findByNicknameStartingWith(keyword);
         return UserConverter.toUserResponseDTOList(users);
     }
 
     @Override
     @Transactional
-    public List<UserResponseDTO.getUserDTO> getFollowList(String userId, String nickname) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._FORBIDDEN));
+    public List<UserResponseDTO.getUserDTO> getFollowList( String nickname) {
+
 
         User targetUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
