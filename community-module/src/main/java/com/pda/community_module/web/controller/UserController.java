@@ -60,10 +60,9 @@ public class UserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "회원 검색 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON4003", description = "토큰 누락 또는 유효하지 않음", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
-    public ApiResponse<?> searchUser(@RequestHeader("Authorization") String authorizationHeader,
-                                     @RequestParam(value = "keyword") String keyword) {
-        String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
-        return ApiResponse.onSuccess(userService.searchUser(userId, keyword));
+    public ApiResponse<?> searchUser(@RequestParam(value = "keyword") String keyword) {
+
+        return ApiResponse.onSuccess(userService.searchUser(keyword));
     }
 
     @GetMapping("/follow")
@@ -73,10 +72,10 @@ public class UserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON4003", description = "토큰 누락 또는 유효하지 않음", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "확인하려는 유저가 존재하지 않습니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
-    public ApiResponse<?> getFollowList(@RequestHeader("Authorization") String authorizationHeader,
+    public ApiResponse<?> getFollowList(
                                    @RequestParam(value = "following") String nickname) {
-        String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
-        return ApiResponse.onSuccess(userService.getFollowList(userId, nickname));
+
+        return ApiResponse.onSuccess(userService.getFollowList(nickname));
     }
 
     @PostMapping("/follow")
