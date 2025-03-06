@@ -177,4 +177,21 @@ public class PostServiceImpl implements PostService {
         postScrapRepository.deleteById(id);
     }
 
+    @Override
+    public Long getLikeByUser(String userid, Long id) {
+        User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        List<PostLike> postLikes = postLikeRepository.findAllByPostId(id);
+
+        PostLike userPostLike = postLikes.stream()
+                .filter(postLike -> postLike.getUser().getId().equals(user.getId()))
+                .findFirst()
+                .orElse(null);
+        Long likeId = userPostLike != null ? userPostLike.getId() : null;
+
+
+        return likeId;
+    }
+
+
+
 }

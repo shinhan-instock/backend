@@ -16,4 +16,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByNickname(String nickname);
     @Query("SELECT u FROM User u WHERE u.id = (SELECT uf.following.id FROM UserFollows uf WHERE uf.follower.id = :id)")
     List<User> findByIdAndJoinUserFollows(@Param("id") Long id);
+
 }

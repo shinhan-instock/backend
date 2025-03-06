@@ -16,6 +16,7 @@ public class PostConverter {
        return posts.stream().map(post -> new PostResponseDTO.getPostDTO(
                 post.getId(),
                 post.getUser().getNickname(),
+                post.getUser().getImageUrl(),
                 post.getContent(),
                 post.getHashtag(),
                 post.getSentiment() != null ? post.getSentiment().getSentimentScore() : 50,
@@ -31,6 +32,7 @@ public class PostConverter {
         return new PostResponseDTO.getPostDTO(
                 post.getId(),
                 post.getUser().getNickname(),
+                post.getUser().getImageUrl(),
                 post.getContent(),
                 post.getHashtag(),
                 post.getSentiment() != null ? post.getSentiment().getSentimentScore() : 50,

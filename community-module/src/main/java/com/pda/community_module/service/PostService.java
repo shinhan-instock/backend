@@ -29,4 +29,6 @@ public interface PostService {
     void addScrap(String userid, Long id);
 
     void deleteScrap(String userid, Long id);
+
+    Long getLikeByUser(String userid, Long id);
 }

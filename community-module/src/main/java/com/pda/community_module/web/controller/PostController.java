@@ -138,6 +138,7 @@ public class PostController {
     })
     public ApiResponse<?> addLikes(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Long id){
         String userid = authorizationHeader.replace("Bearer ", "");
+        System.out.println("auth"+authorizationHeader);
         postService.addLikes(userid, id);
         return ApiResponse.onSuccess(null);
 
@@ -155,6 +156,21 @@ public class PostController {
         String userid = authorizationHeader.replace("Bearer ", "");
         postService.deleteLikes(userid, id);
         return ApiResponse.onSuccess(null);
+
+    }
+
+
+    //게시글 좋아요 조회
+    @GetMapping("/{id}/like")
+    @Operation(summary = "게시글 좋아요 조회", description = "로그인한 사용자가 특정 게시글에 좋아요를 눌렀는지 조회")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "사용자를 찾을 수 없습니다.")
+    })
+    public ApiResponse<?> getLikeByUser(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Long id){
+        String userid = authorizationHeader.replace("Bearer ", "");
+
+        return ApiResponse.onSuccess(postService.getLikeByUser(userid, id));
 
     }
 
