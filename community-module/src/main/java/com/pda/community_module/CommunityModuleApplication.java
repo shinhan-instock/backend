@@ -17,5 +17,4 @@ public class CommunityModuleApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CommunityModuleApplication.class, args);
 	}
-
 }
