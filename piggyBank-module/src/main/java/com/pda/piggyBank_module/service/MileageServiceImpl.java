@@ -2,12 +2,13 @@ package com.pda.piggyBank_module.service;
 
 import com.pda.core_module.apiPayload.GeneralException;
 import com.pda.core_module.apiPayload.code.status.ErrorStatus;
+import com.pda.piggyBank_module.config.UserFeignClient;
 import com.pda.piggyBank_module.converter.MileageConverter;
 import com.pda.piggyBank_module.domain.Piggy;
-import com.pda.piggyBank_module.repository.MileageRepository;
 import com.pda.piggyBank_module.repository.PiggyRepository;
 import com.pda.piggyBank_module.web.dto.MileageRequest;
 import com.pda.piggyBank_module.web.dto.MileageResponseDto;
+import com.pda.piggyBank_module.web.dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +20,8 @@ import java.util.Optional;
 public class MileageServiceImpl implements MileageService {
 
     private final PiggyRepository piggyRepository;
-    private final MileageRepository mileageRepository;
     private final MileageConverter mileageConverter;
+    private final UserFeignClient userFeignClient;
 
 
     @Override
@@ -34,12 +35,16 @@ public class MileageServiceImpl implements MileageService {
             piggyRepository.save(piggy);
         });
     }
+
+
     @Override
     public MileageResponseDto getMileageByUserId(String userId) {
-        Optional<Piggy> mileage = mileageRepository.findMileageByUserId(userId);
+        // OpenFeign을 통해 로그인용 userId(문자열)로 실제 사용자 엔티티 정보를 조회합니다.
+        UserResponseDTO.UserRealPKResponseDto userResponse = userFeignClient.getUserByUserId(userId);
+        Long actualUserId = userResponse.getId();
+
+        Optional<Piggy> mileage = piggyRepository.findMileageByUserId(actualUserId);
         return mileage.map(mileageConverter::toDTO)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.ACCOUNT_NOT_FOUND)); // 값이 없으면 null 반환
-
-
+                .orElseThrow(() -> new GeneralException(ErrorStatus.ACCOUNT_NOT_FOUND));
     }
 }

@@ -14,20 +14,20 @@ public class Piggy extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "user_id", length = 20)
     private Long userId;
 
     @Column(name = "mileage")
-    private long mileage;
+    private int mileage;
 
-    public Piggy(Long userId, long mileage) {
+    public Piggy(Long userId, int mileage) {
         this.userId = userId;
         this.mileage = mileage;
     }
 
-    public void addMileage(long amount) {
+    public void addMileage(int amount) {
         this.mileage += amount;
     }
 }

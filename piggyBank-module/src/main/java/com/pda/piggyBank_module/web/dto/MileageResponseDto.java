@@ -7,9 +7,9 @@ import lombok.Setter;
 @Setter
 public class MileageResponseDto {
     private Long userId;
-    private Long mileage;
+    private int mileage;
 
-    public MileageResponseDto(Long userId, Long mileage) {
+    public MileageResponseDto(Long userId, int mileage) {
         this.userId = userId;
         this.mileage = mileage;
     }

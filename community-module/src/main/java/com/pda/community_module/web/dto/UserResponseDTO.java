@@ -1,9 +1,6 @@
 package com.pda.community_module.web.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 public class UserResponseDTO {
     @Getter
@@ -27,5 +24,13 @@ public class UserResponseDTO {
         private String nickname;
         private String imageUrl;
         private String introduction;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class UserRealPKResponseDto {
+        private Long id;        // 실제 DB에서 사용하는 PK
     }
 }

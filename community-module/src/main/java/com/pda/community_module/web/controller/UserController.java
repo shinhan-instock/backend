@@ -2,6 +2,7 @@ package com.pda.community_module.web.controller;
 
 import com.pda.community_module.service.UserService;
 import com.pda.community_module.web.dto.UserRequestDTO;
+import com.pda.community_module.web.dto.UserResponseDTO;
 import com.pda.community_module.web.dto.WatchListRequestDTO;
 import com.pda.core_module.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -107,4 +109,9 @@ public class UserController {
         userService.unFollow(userId, nickname);
         return ApiResponse.onSuccess(null);
     }
+    @GetMapping("/getPK/{userId}")
+    public ResponseEntity<UserResponseDTO.UserRealPKResponseDto> getUserByUserId(@PathVariable String userId) {
+        return ResponseEntity.ok(userService.getUserByUserId(userId));
+    }
+
 }

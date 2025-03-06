@@ -41,4 +41,10 @@ public class UserConverter {
                 .following(following)
                 .build();
     }
+
+    public static UserResponseDTO.UserRealPKResponseDto getUserRealPK(User user) {
+        return UserResponseDTO.UserRealPKResponseDto.builder()
+                .id(user.getId())
+                .build();
+    }
 }

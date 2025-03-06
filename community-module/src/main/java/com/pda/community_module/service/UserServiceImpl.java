@@ -9,9 +9,10 @@ import com.pda.community_module.web.dto.UserRequestDTO;
 import com.pda.community_module.web.dto.UserResponseDTO;
 import com.pda.core_module.apiPayload.GeneralException;
 import com.pda.core_module.apiPayload.code.status.ErrorStatus;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -103,6 +104,16 @@ public class UserServiceImpl implements UserService{
         UserFollows userFollowsEntity = userFollowsRepository.findByFollowerIdAndFollowingId(user.getId(), followingUser.getId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NO_FOLLOW_INFO));
         userFollowsRepository.delete(userFollowsEntity);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponseDTO.UserRealPKResponseDto getUserByUserId(String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        // 필요한 경우 추가적인 필드를 매핑
+        return UserConverter.getUserRealPK(user);
     }
 
 }

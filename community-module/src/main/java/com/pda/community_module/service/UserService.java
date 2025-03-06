@@ -13,4 +13,5 @@ public interface UserService {
     List<UserResponseDTO.getUserDTO> getFollowList(String userId, String nickname);
     void doFollow(String userId, String nickname);
     void unFollow(String userId, String nickname);
+    UserResponseDTO.UserRealPKResponseDto getUserByUserId(String userId);
 }
