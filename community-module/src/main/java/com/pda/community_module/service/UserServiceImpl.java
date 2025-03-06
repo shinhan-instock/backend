@@ -2,6 +2,8 @@ package com.pda.community_module.service;
 
 import com.pda.community_module.converter.UserConverter;
 import com.pda.community_module.domain.User;
+import com.pda.community_module.domain.mapping.UserFollows;
+import com.pda.community_module.repository.UserFollowsRepository;
 import com.pda.community_module.repository.UserRepository;
 import com.pda.community_module.web.dto.UserRequestDTO;
 import com.pda.community_module.web.dto.UserResponseDTO;
@@ -18,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
+    private final UserFollowsRepository userFollowsRepository;
 
     @Override
     @Transactional
@@ -62,13 +65,44 @@ public class UserServiceImpl implements UserService{
         return UserConverter.toUserResponseDTOList(users);
     }
 
-//    @Override
-//    @Transactional
-//    public void doFollow(String userId, String nickname) {
-//        User user = userRepository.findByUserId(userId)
-//                .orElseThrow(() -> new GeneralException(ErrorStatus._FORBIDDEN));
-//
-//        userRepository.findByUserNickname(nickname)
-//                .orElseThrow()
-//    }
+    @Override
+    @Transactional
+    public List<UserResponseDTO.getUserDTO> getFollowList(String userId, String nickname) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._FORBIDDEN));
+
+        User targetUser = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        List<User> users = userRepository.findByIdAndJoinUserFollows(targetUser.getId());
+        return UserConverter.toUserResponseDTOList(users);
+    }
+
+    @Override
+    @Transactional
+    public void doFollow(String userId, String nickname) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._FORBIDDEN));
+
+        User followingUser = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        UserFollows userFollowsEntity = UserConverter.toUserFollowsEntity(user, followingUser);
+        userFollowsRepository.save(userFollowsEntity);
+    }
+
+    @Override
+    @Transactional
+    public void unFollow(String userId, String nickname) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._FORBIDDEN));
+
+        User followingUser = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        UserFollows userFollowsEntity = userFollowsRepository.findByFollowerIdAndFollowingId(user.getId(), followingUser.getId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NO_FOLLOW_INFO));
+        userFollowsRepository.delete(userFollowsEntity);
+    }
+
 }

@@ -10,5 +10,7 @@ public interface UserService {
     UserResponseDTO.getUserInfoDTO getUserInfo(String userId);
     void updateUser(String userId, UserRequestDTO.UpdateUserDTO requestDTO);
     List<UserResponseDTO.getUserDTO> searchUser(String userId, String keyword);
-//    void doFollow(String userId, String nickname);
+    List<UserResponseDTO.getUserDTO> getFollowList(String userId, String nickname);
+    void doFollow(String userId, String nickname);
+    void unFollow(String userId, String nickname);
 }
