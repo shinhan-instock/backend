@@ -31,11 +31,11 @@ public class BatchJobConfiguration {
             Flow splitFlow
     ) {
         return new JobBuilder("batchJob", jobRepository)
-                .validator(new TimeFormatJobParametersValidator(new String[]{"targetTime"})) // ✅ Validator 적용
+                .validator(new TimeFormatJobParametersValidator(new String[]{"targetTime"}))
                 .incrementer(new RunIdIncrementer())
-                .start(midnightDecider) // ✅ Decider 적용
-                .on("MIDNIGHT").to(splitFlow) // ✅ 자정이면 병렬 실행
-                .from(midnightDecider).on("NOT_MIDNIGHT").to(stockSentimentAnalysisStep) // ✅ 아니면 종목 감정 분석만 실행
+                .start(midnightDecider)
+                .on("MIDNIGHT").to(splitFlow) // 자정이면 병렬 실행
+                .from(midnightDecider).on("NOT_MIDNIGHT").to(stockSentimentAnalysisStep) // 아니면 종목 감정 분석만 실행
                 .end()
                 .build();
     }
@@ -43,16 +43,16 @@ public class BatchJobConfiguration {
     @Bean
     public Flow splitFlow(Flow flow1, Flow flow2) {
         return new FlowBuilder<SimpleFlow>("splitFlow")
-                .split(new SimpleAsyncTaskExecutor()) // ✅ 병렬 실행
+                .split(new SimpleAsyncTaskExecutor())
                 .add(flow1, flow2)
                 .build();
     }
 
     @Bean
-    public Flow flow1(Step likeTop10Step, Step sentimentAnalysisStep) {
+    public Flow flow1(Step likeTop10Step ) {
         return new FlowBuilder<SimpleFlow>("flow1")
                 .start(likeTop10Step)
-                .next(sentimentAnalysisStep)
+//                .next(sentimentAnalysisStep)
                 .build();
     }
 
