@@ -51,14 +51,8 @@ public class FetchRankingService {
                 .ifPresentOrElse(
                         existingRanking -> {
                             // 기존 값이 존재하면 업데이트
-                            existingRanking.setVolumeRank(
-                                    ranking.getVolumeRank() != null ? ranking.getVolumeRank() : existingRanking.getVolumeRank());
                             existingRanking.setFluctuationRank(
                                     ranking.getFluctuationRank() != null ? ranking.getFluctuationRank() : existingRanking.getFluctuationRank());
-                            existingRanking.setProfitAssetIndexRank(
-                                    ranking.getProfitAssetIndexRank() != null ? ranking.getProfitAssetIndexRank() : existingRanking.getProfitAssetIndexRank());
-                            existingRanking.setMarketCapRank(
-                                    ranking.getMarketCapRank() != null ? ranking.getMarketCapRank() : existingRanking.getMarketCapRank());
                             existingRanking.setCurrentPrice(ranking.getCurrentPrice());
                             rankingRepository.save(existingRanking);
                         },
@@ -70,27 +64,6 @@ public class FetchRankingService {
                 );
     }
 
-
-    public void updateVolumeRanking() {
-        HttpHeaders headers = createHeaders("FHPST01710000");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        String url = VOLUME_RANK_API_URL +
-                "?FID_COND_MRKT_DIV_CODE=J" +
-                "&FID_COND_SCR_DIV_CODE=20171" +
-                "&FID_INPUT_ISCD=0000" +
-                "&FID_DIV_CLS_CODE=0" +
-                "&FID_BLNG_CLS_CODE=0" +
-                "&FID_TRGT_CLS_CODE=111111111" +
-                "&FID_TRGT_EXLS_CLS_CODE=0000000000" +
-                "&FID_INPUT_PRICE_1=0" +
-                "&FID_INPUT_PRICE_2=0" +
-                "&FID_VOL_CNT=0" +
-                "&FID_INPUT_DATE_1=0";
-
-        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-        processResponse(response, "volume");
-    }
 
     public void updateFluctuationRanking() {
         HttpHeaders headers = createHeaders("FHPST01700000");
@@ -116,47 +89,6 @@ public class FetchRankingService {
         processResponse(response, "fluctuation");
     }
 
-    public void updateProfitAssetRanking() {
-        HttpHeaders headers = createHeaders("FHPST01730000");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        String url = PROFIT_ASSET_RANK_API_URL +
-                "?fid_cond_mrkt_div_code=J" +
-                "&fid_cond_scr_div_code=20173" +
-                "&fid_input_iscd=0000" +
-                "&fid_div_cls_code=0" +
-                "&fid_input_price_1=" +
-                "&fid_input_price_2=" +
-                "&fid_vol_cnt=" +
-                "&fid_input_option_1=2023" +
-                "&fid_input_option_2=0" +
-                "&fid_rank_sort_cls_code=0" +
-                "&fid_blng_cls_code=0" +
-                "&fid_trgt_exls_cls_code=0" +
-                "&fid_trgt_cls_code=0";
-
-        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-        processResponse(response, "profit");
-    }
-
-    public void updateMarketCapRanking() {
-        HttpHeaders headers = createHeaders("FHPST01740000");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        String url = MARKET_CAP_RANK_API_URL +
-                "?fid_cond_mrkt_div_code=J" +
-                "&fid_cond_scr_div_code=20174" +
-                "&fid_div_cls_code=0" +
-                "&fid_input_iscd=0000" +
-                "&fid_trgt_cls_code=0" +
-                "&fid_trgt_exls_cls_code=0" +
-                "&fid_input_price_1=" +
-                "&fid_input_price_2=" +
-                "&fid_vol_cnt=";
-
-        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-        processResponse(response, "market_cap");
-    }
 
     private void processResponse(ResponseEntity<Map> response, String rankType) {
         List<Map<String, Object>> output = (List<Map<String, Object>>) ((Map<String, Object>) response.getBody()).get("output");
@@ -187,7 +119,7 @@ public class FetchRankingService {
 
                 if (stockName == null || currentPriceStr == null || rankStr == null) {
                     System.out.println("Missing critical data for stock: " + stockName);
-                    continue; // Skip incomplete data
+                    continue; // Skip incomplete datax
                 }
 
                 Ranking ranking = rankingRepository.findByStockCode(stockCode)
@@ -199,17 +131,8 @@ public class FetchRankingService {
                 ranking.setPriceChangeRate(priceChangeRate); // 전일 대비율 저장
 
                 switch (rankType) {
-                    case "volume":
-                        ranking.setVolumeRank(parseRank(rankStr));
-                        break;
                     case "fluctuation":
                         ranking.setFluctuationRank(parseRank(rankStr));
-                        break;
-                    case "profit":
-                        ranking.setProfitAssetIndexRank(parseRank(rankStr));
-                        break;
-                    case "market_cap":
-                        ranking.setMarketCapRank(parseRank(rankStr));
                         break;
                     default:
                         throw new IllegalArgumentException("Unknown rank type: " + rankType);
@@ -226,17 +149,8 @@ public class FetchRankingService {
         List<Ranking> rankings = rankingRepository.findAll();
         for (Ranking ranking : rankings) {
             switch (rankType) {
-                case "volume":
-                    ranking.setVolumeRank(null);
-                    break;
                 case "fluctuation":
                     ranking.setFluctuationRank(null);
-                    break;
-                case "profit":
-                    ranking.setProfitAssetIndexRank(null);
-                    break;
-                case "market_cap":
-                    ranking.setMarketCapRank(null);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown rank type: " + rankType);

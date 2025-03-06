@@ -17,13 +17,15 @@ public class SchedulerConfig {
     private final FetchStockListService fetchStockListService;
     private final FetchStockThemeService fetchStockThemeService;
 
+
     /**
-     * 매 1분마다 거래량 순위 업데이트
+     * 매 1분 15초마다 등락률 순위 업데이트
      */
-    @Scheduled(cron = "0 */1 * * * ?")
-    public void scheduleVolumeRankUpdate() {
-        fetchRankingService.updateVolumeRanking();
+    @Scheduled(cron = "15 */1 * * * ?")
+    public void scheduleFluctuationRankUpdate() {
+        fetchRankingService.updateFluctuationRanking();
     }
+
 
     @Scheduled(fixedRate = 5000) // 5초마다 실행
     public void scheduleStockDataUpdate() {
