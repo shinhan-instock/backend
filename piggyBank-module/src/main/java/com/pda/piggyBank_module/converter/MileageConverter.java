@@ -1,6 +1,6 @@
 package com.pda.piggyBank_module.converter;
 
-import com.pda.piggyBank_module.domain.common.Piggy;
+import com.pda.piggyBank_module.domain.Piggy;
 import com.pda.piggyBank_module.web.dto.MileageResponseDto;
 import lombok.Getter;
 import lombok.Setter;

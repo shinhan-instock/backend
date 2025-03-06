@@ -6,10 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MileageResponseDto {
-    private String userId;
-    private Long mileage;
+    private Long userId;
+    private int mileage;
 
-    public MileageResponseDto(String userId, Long mileage) {
+    public MileageResponseDto(Long userId, int mileage) {
         this.userId = userId;
         this.mileage = mileage;
     }

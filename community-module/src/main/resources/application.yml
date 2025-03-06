@@ -1,6 +1,11 @@
 server:
   port: ${PORT}
 spring:
+  batch:
+    jdbc:
+      initialize-schema: always  # 스키마를 항상 초기화
+    job:
+      enabled: false
   datasource:
     url: ${MY_URL}
     username: ${MY_USERNAME}
