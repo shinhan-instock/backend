@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/stock/search")
+@RequestMapping("/stocks/search")
 public class StockSearchController {
     private final StockSearchService stockSearchService;
 

@@ -2,9 +2,12 @@ package com.pda.stock_module.config;
 import com.pda.stock_module.service.FetchRankingService;
 import com.pda.stock_module.service.FetchStockListService;
 import com.pda.stock_module.service.FetchStockThemeService;
+import io.lettuce.core.resource.Delay;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -22,34 +25,14 @@ public class SchedulerConfig {
         fetchRankingService.updateVolumeRanking();
     }
 
-    /**
-     * 매 1분 15초마다 등락률 순위 업데이트
-     */
-    @Scheduled(cron = "15 */1 * * * ?")
-    public void scheduleFluctuationRankUpdate() {
-        fetchRankingService.updateFluctuationRanking();
-    }
-
-    /**
-     * 매 1분 30초마다 수익자산지표 순위 업데이트
-     */
-    @Scheduled(cron = "30 */1 * * * ?")
-    public void scheduleProfitAssetRankUpdate() {
-        fetchRankingService.updateProfitAssetRanking();
-    }
-
-    /**
-     * 매 1분 45초마다 시가총액 순위 업데이트
-     */
-    @Scheduled(cron = "45 */1 * * * ?")
-    public void scheduleMarketCapRankUpdate() {
-        fetchRankingService.updateMarketCapRanking();
-    }
-
-
     @Scheduled(fixedRate = 5000) // 5초마다 실행
     public void scheduleStockDataUpdate() {
-        fetchStockListService.updateStockData();
+        fetchStockListService.updateStockData(); // stockName, stockCode, price, priceChange, sectorName
         fetchStockThemeService.updateStockThemeData();
+    }
+
+    @Scheduled(fixedRate = 3600000, initialDelay = 5000) // 1시간마다 실행 , 5초 지연 후 시작.
+    public void scheduledStockRankUpdate() {
+        fetchStockListService.fetchAndSaveStockRank(); // 시가총액(rank) 저장.
     }
 }

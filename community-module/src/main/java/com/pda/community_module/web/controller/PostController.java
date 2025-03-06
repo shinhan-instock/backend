@@ -1,10 +1,8 @@
 package com.pda.community_module.web.controller;
 
 
-import com.pda.community_module.domain.User;
 import com.pda.community_module.service.PostService;
 import com.pda.community_module.web.dto.PostRequestDTO;
-import com.pda.community_module.web.dto.WatchListRequestDTO;
 import com.pda.core_module.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,7 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -30,12 +29,20 @@ public class PostController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "사용자를 찾을 수 없습니다.")
     })
-    public ApiResponse<?> getPosts(@RequestParam Boolean following,
-                                   @RequestParam Boolean popular,
-                                   @RequestParam Boolean scrap,
-                                   @RequestParam Long user_id){
+    public ApiResponse<?> getPosts(
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+            @RequestParam Boolean following,
+            @RequestParam Boolean popular,
+            @RequestParam Boolean scrap){
 
-        return ApiResponse.onSuccess( postService.getPosts(following, popular, scrap, user_id));
+        String userid;
+        if (authorizationHeader==null) {
+            userid = null;
+        } else {
+            userid = authorizationHeader.replace("Bearer ", "");
+        }
+
+        return ApiResponse.onSuccess( postService.getPosts(following, popular, scrap, userid));
     }
 
     // 개별 게시글 보기
