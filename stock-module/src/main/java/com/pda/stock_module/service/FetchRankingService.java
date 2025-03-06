@@ -1,5 +1,5 @@
 package com.pda.stock_module.service;
-import com.pda.stock_module.domain.common.Ranking;
+import com.pda.stock_module.domain.Ranking;
 import com.pda.stock_module.repository.RankingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;

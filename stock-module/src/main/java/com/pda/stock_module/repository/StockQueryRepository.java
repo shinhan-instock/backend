@@ -1,6 +1,6 @@
 package com.pda.stock_module.repository;
 
-import com.pda.stock_module.domain.common.Company;
+import com.pda.stock_module.domain.Company;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

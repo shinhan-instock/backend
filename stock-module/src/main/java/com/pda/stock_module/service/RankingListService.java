@@ -2,7 +2,7 @@ package com.pda.stock_module.service;
 
 
 
-import com.pda.stock_module.domain.common.Ranking;
+import com.pda.stock_module.domain.Ranking;
 import com.pda.stock_module.repository.EmitterRepository;
 import com.pda.stock_module.repository.RankingRepository;
 import com.pda.stock_module.web.dto.StockRankResponse;
@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
