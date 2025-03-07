@@ -38,3 +38,16 @@ spring:
 stock:
   api:
     base-url: "http://localhost:8081"
+cloud:
+  aws:
+    s3:
+      bucket: inst00ck-icebucket
+      path:
+        user : user
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY_ID}
+      secretKey: ${AWS_SECRET_ACCESS_KEY}

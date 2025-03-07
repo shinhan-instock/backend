@@ -1,11 +1,13 @@
 package com.pda.community_module.converter;
 
+import com.pda.community_module.domain.File;
 import com.pda.community_module.domain.Post;
 import com.pda.community_module.domain.User;
 import com.pda.community_module.domain.mapping.PostScrap;
 import com.pda.community_module.domain.mapping.UserFollows;
 import com.pda.community_module.web.dto.UserResponseDTO;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.List;
 
@@ -14,19 +16,31 @@ public class UserConverter {
         return new UserResponseDTO.getUserDTO(
                 user.getUserId(),
                 user.getNickname(),
-                user.getImageUrl(),
+                user.getFile().getUrl(),
                 user.getIntroduction()
         );
     }
 
     public static UserResponseDTO.getUserInfoDTO toUserDetailResponseDTO(User user) {
-        return new UserResponseDTO.getUserInfoDTO(
-                user.getUserId(),
-                user.getName(),
-                user.getNickname(),
-                user.getImageUrl(),
-                user.getIntroduction()
-        );
+        String imgUrl = null;
+        Optional<File> userFileOptional = Optional.ofNullable(user.getFile());
+        if (userFileOptional.isPresent()) {
+            imgUrl = userFileOptional.get().getUrl();
+        }
+//        return new UserResponseDTO.getUserInfoDTO(
+//                user.getUserId(),
+//                user.getName(),
+//                user.getNickname(),
+//                user.getFile().getUrl(),
+//                user.getIntroduction()
+//        );
+        return UserResponseDTO.getUserInfoDTO.builder()
+                .userId(user.getUserId())
+                .name(user.getName())
+                .nickname(user.getNickname())
+                .imageUrl(imgUrl)
+                .introduction(user.getIntroduction())
+                .build();
     }
 
     public static List<UserResponseDTO.getUserDTO> toUserResponseDTOList(List<User> users) {

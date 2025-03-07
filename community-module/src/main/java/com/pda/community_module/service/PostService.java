@@ -31,4 +31,6 @@ public interface PostService {
     void deleteScrap(String userid, Long id);
 
     Long getLikeByUser(String userid, Long id);
+
+    PostResponseDTO.CreatePostResponseDTO createPost(PostRequestDTO.CreatePostDTO createPostDTO);
 }
