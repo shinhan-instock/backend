@@ -1,5 +1,8 @@
 package com.pda.community_module.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import com.pda.community_module.converter.CommentConverter;
 import com.pda.community_module.domain.Comment;
 import com.pda.community_module.domain.Post;
@@ -28,15 +31,31 @@ public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final PostCountRepository postCountRepository;
+
     /**
      * 특정 게시글의 댓글 목록 조회
      */
-    @Override
-    public List<CommentResponseDTO.getCommentDTO> getCommentsByPostId(Long postId) {
-        List<Comment> comments = commentRepository.findAllByPost_Id(postId);
-        return CommentConverter.toCommentListEntity(comments);
-    }
+//    @Override
+//    public List<CommentResponseDTO.getCommentDTO> getCommentsByPostId(Long postId) {
+//        List<Comment> comments = commentRepository.findAllByPost_Id(postId);
+//        return CommentConverter.toCommentListEntity(comments);
+//    }
 
+    @Override
+    public Page<CommentResponseDTO.getCommentDTO> getCommentsByPostIdWithCursor(Long postId, Long lastCommentId, int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        Page<Comment> commentPage;
+
+        if (lastCommentId == null) {
+            // 초기 요청: 커서가 없으므로 최신 데이터 조회
+            commentPage = commentRepository.findByPost_IdOrderByIdDesc(postId, pageable);
+        } else {
+            // 커서가 있는 경우: lastCommentId보다 작은 값 조회 (내림차순)
+            commentPage = commentRepository.findByPost_IdAndIdLessThanOrderByIdDesc(postId, lastCommentId, pageable);
+        }
+
+        return commentPage.map(CommentConverter::toCommentEntity);
+    }
     /**
      * 특정 댓글 단건 조회
      */
