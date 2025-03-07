@@ -19,11 +19,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Slf4j
 public class CommentServiceImpl implements CommentService {
 
@@ -35,12 +34,6 @@ public class CommentServiceImpl implements CommentService {
     /**
      * 특정 게시글의 댓글 목록 조회
      */
-//    @Override
-//    public List<CommentResponseDTO.getCommentDTO> getCommentsByPostId(Long postId) {
-//        List<Comment> comments = commentRepository.findAllByPost_Id(postId);
-//        return CommentConverter.toCommentListEntity(comments);
-//    }
-
     @Override
     public Page<CommentResponseDTO.getCommentDTO> getCommentsByPostIdWithCursor(Long postId, Long lastCommentId, int limit) {
         Pageable pageable = PageRequest.of(0, limit);
@@ -78,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
         // 1. 전달받은 postId, userId로 Post, User 엔티티 조회
         Post post = postRepository.findById(requestDTO.getPostId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
-        User user = userRepository.findById(requestDTO.getUserId())
+        User user = userRepository.findByUserId(requestDTO.getUserId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
         log.debug("조회된 Post: {}", post);
 
@@ -88,16 +81,16 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
         // 4. 저장된 엔티티 -> DTO 변환 후 반환
 
-        // 3. PostCount 엔티티 조회 후 commentCount 증가
-        PostCount postCount = postCountRepository.findByPost(post)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+    // 3. PostCount 엔티티 조회 후 commentCount 증가
+            PostCount postCount = postCountRepository.findByPost(post)
+            .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
         postCount.incrementCommentCount();
         postCountRepository.save(postCount);
 
         commentRepository.flush();
 
         return CommentConverter.toCommentEntity(comment);
-    }
+}
 
     /**
      * 댓글 수정
@@ -107,7 +100,13 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponseDTO.getCommentDTO updateComment(Long commentId, CommentResponseDTO.updateCommentDTO requestDTO) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
-        // 엔티티에 setter가 필요합니다. BaseEntity 상속 시 setter가 없다면 아래 메서드를 추가하거나 엔티티에 @Setter를 추가하세요.
+
+        // 요청된 userId가 null이거나 댓글 작성자의 비즈니스 아이디와 다르면 수정 불가
+        if (requestDTO.getUserId() == null || !comment.getUser().getUserId().equals(requestDTO.getUserId())) {
+            throw new GeneralException(ErrorStatus._UNAUTHORIZED); // 적절한 에러 코드 사용
+        }
+
+        // userId가 일치하면 댓글 내용만 업데이트
         comment.updateContent(requestDTO.getContent());
         return CommentConverter.toCommentEntity(comment);
     }
@@ -117,9 +116,14 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional
-    public void deleteComment(Long commentId) {
+    public void deleteComment(Long commentId, Long requestUserId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
-        commentRepository.delete(comment);
+        User requestUser = userRepository.findById(requestUserId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        // 소프트 딜리트 방식으로 삭제 처리
+        comment.delete(requestUser);
+        // 필요한 경우, 업데이트를 DB에 반영하기 위해 flush() 호출
+        commentRepository.flush();
     }
 }

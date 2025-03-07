@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface CommentService {
 
@@ -18,5 +19,8 @@ public interface CommentService {
 
     Page<CommentResponseDTO.getCommentDTO> getCommentsByPostIdWithCursor(Long postId, Long lastCommentId, int limit);
 
-    void deleteComment(Long commentId);
+//    void deleteComment(Long commentId);
+
+    @Transactional
+    void deleteComment(Long commentId, Long requestUserId);
 }

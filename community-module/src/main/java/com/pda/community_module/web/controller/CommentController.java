@@ -7,10 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
 @RestController
-@RequestMapping("/comments")
+@RequestMapping("/comment")
 @RequiredArgsConstructor
+@Slf4j
 public class CommentController {
 
     private final CommentService commentService;
@@ -19,14 +20,11 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<CommentResponseDTO.getCommentDTO> createComment(
             @RequestBody CommentResponseDTO.createCommentDTO requestDTO) {
+        log.info("댓글 생성 API 호출됨 - postId: {}, userId: {}", requestDTO.getPostId(), requestDTO.getUserId());
         return ResponseEntity.ok(commentService.createComment(requestDTO));
     }
 
-    // 특정 게시글의 댓글 목록 조회
-//    @GetMapping("/post/{postId}")
-//    public ResponseEntity<List<CommentResponseDTO.getCommentDTO>> getCommentsByPostId(@PathVariable Long postId) {
-//        return ResponseEntity.ok(commentService.getCommentsByPostId(postId));
-//    }
+    // 댓글 조회 여러개
     @GetMapping("/post/{postId}/infinite")
     public ResponseEntity<Page<CommentResponseDTO.getCommentDTO>> getCommentsByPostIdWithCursor(
             @PathVariable Long postId,
@@ -53,8 +51,9 @@ public class CommentController {
 
     // 댓글 삭제
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
-        commentService.deleteComment(commentId);
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId,
+                                              @RequestParam("userId") Long requestUserId) {
+        commentService.deleteComment(commentId, requestUserId);
         return ResponseEntity.noContent().build();
     }
 }
