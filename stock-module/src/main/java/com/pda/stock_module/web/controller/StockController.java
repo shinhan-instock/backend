@@ -53,4 +53,18 @@ public class StockController {
         return ResponseEntity.ok(stockQueryService.getStockByMileage(mileage));
     }
 
+//    사용자가 마일리지를 통해 주식을 구매하는 요청 처리
+//    @PostMapping("/pigs")
+//    public ResponseEntity<String> addStockByMileage(@RequestHeader("Authorization") String authorizationHeader,
+//                                                    @RequestBody StockPurchaseRequest request) {
+//        boolean success = stockService.purchaseStockWithMileage(request.getUserId(), request.getStockId(), request.getMileageAmount());
+//
+//        if (success) {
+//            return ResponseEntity.ok("주식이 성공적으로 구매되었습니다.");
+//        } else {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("구매 실패: 마일리지가 부족하거나 오류가 발생했습니다.");
+//        }
+//    }
+
+
 }

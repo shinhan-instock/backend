@@ -1,4 +1,5 @@
 package com.pda.stock_module.config;
+import com.pda.stock_module.domain.common.RedisCommon;
 import com.pda.stock_module.service.FetchRankingService;
 import com.pda.stock_module.service.FetchStockListService;
 import com.pda.stock_module.service.FetchStockThemeService;
@@ -16,7 +17,7 @@ public class SchedulerConfig {
     private final FetchRankingService fetchRankingService;
     private final FetchStockListService fetchStockListService;
     private final FetchStockThemeService fetchStockThemeService;
-
+    private final RedisCommon redisCommon;
 
     /**
      * 매 1분 15초마다 등락률 순위 업데이트
@@ -36,5 +37,8 @@ public class SchedulerConfig {
     @Scheduled(fixedRate = 3600000, initialDelay = 5000) // 1시간마다 실행 , 5초 지연 후 시작.
     public void scheduledStockRankUpdate() {
         fetchStockListService.fetchAndSaveStockRank(); // 시가총액(rank) 저장.
+        redisCommon.syncAllStocksToZSet(); // 시총 순으로 정렬하는 Zset 생성.
     }
+
+
 }
