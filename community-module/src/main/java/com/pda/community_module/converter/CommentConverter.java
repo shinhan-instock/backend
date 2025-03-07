@@ -1,9 +1,11 @@
 package com.pda.community_module.converter;
 
 import com.pda.community_module.domain.Comment;
+import com.pda.community_module.domain.File;
 import com.pda.community_module.web.dto.CommentResponseDTO;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CommentConverter {
@@ -16,8 +18,23 @@ public class CommentConverter {
         dto.setId(comment.getId());
         // ManyToOne 매핑이므로 Post, User 객체에서 ID를 가져옴
         dto.setPostId(comment.getPost().getId());
-        dto.setUserId(comment.getUser().getId());
+        dto.setUserId(comment.getUser().getUserId());
         dto.setContent(comment.getContent());
+
+        // 추가 정보 설정
+        dto.setUserNickname(comment.getUser().getNickname());
+//        dto.setUserImage(comment.getUser().getImageUrl());
+        dto.setCreatedAt(comment.getCreatedAt());  // BaseEntity에 정의된 createdAt 값
+
+
+        // Optional을 사용하여 user의 파일(File) 정보가 있는지 확인한 후 URL을 설정합니다.
+        String imgUrl = null;
+        Optional<File> userFileOptional = Optional.ofNullable(comment.getUser().getFile());
+        if (userFileOptional.isPresent()) {
+            imgUrl = userFileOptional.get().getUrl();
+        }
+        dto.setUserImage(imgUrl);
+
         return dto;
     }
 

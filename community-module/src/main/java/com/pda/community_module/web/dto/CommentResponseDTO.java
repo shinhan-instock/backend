@@ -3,6 +3,7 @@ package com.pda.community_module.web.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
 
 public class CommentResponseDTO {
 
@@ -14,9 +15,14 @@ public class CommentResponseDTO {
     public static class getCommentDTO {
         private Long id;
         private Long postId;
-        private Long userId;
+        private String userId;
         private String content;
         // 필요시 BaseEntity의 createdAt, updatedAt도 추가 가능
+
+        // 추가 필드
+        private String userNickname;
+        private String userImage;
+        private LocalDateTime createdAt;  // BaseEntity의 createdAt 필드 사용 (import java.time.LocalDateTime)
     }
 
     /**
@@ -26,7 +32,7 @@ public class CommentResponseDTO {
     @Setter
     public static class createCommentDTO {
         private Long postId;
-        private Long userId;
+        private String userId;
         private String content;
     }
 
@@ -38,5 +44,6 @@ public class CommentResponseDTO {
     @NoArgsConstructor
     public static class updateCommentDTO {
         private String content;
+        private String userId;
     }
 }
