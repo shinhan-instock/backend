@@ -1,11 +1,10 @@
 package com.pda.stock_module.web.dto;
 
-public record StockRankResponse (
+public record StockPopularRankResponse(
         String stockCode,
         String stockName,
         Long price,
-        String priceChangeRate
-
+        String priceChangeRate,
+        Double score
 ) {
-
 }
