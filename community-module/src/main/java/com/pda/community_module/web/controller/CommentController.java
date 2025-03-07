@@ -5,7 +5,7 @@ import com.pda.community_module.web.dto.CommentResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.domain.Page;
 import java.util.List;
 
 @RestController
@@ -23,10 +23,19 @@ public class CommentController {
     }
 
     // 특정 게시글의 댓글 목록 조회
-    @GetMapping("/post/{postId}")
-    public ResponseEntity<List<CommentResponseDTO.getCommentDTO>> getCommentsByPostId(@PathVariable Long postId) {
-        return ResponseEntity.ok(commentService.getCommentsByPostId(postId));
+//    @GetMapping("/post/{postId}")
+//    public ResponseEntity<List<CommentResponseDTO.getCommentDTO>> getCommentsByPostId(@PathVariable Long postId) {
+//        return ResponseEntity.ok(commentService.getCommentsByPostId(postId));
+//    }
+    @GetMapping("/post/{postId}/infinite")
+    public ResponseEntity<Page<CommentResponseDTO.getCommentDTO>> getCommentsByPostIdWithCursor(
+            @PathVariable Long postId,
+            @RequestParam(value = "lastCommentId", required = false) Long lastCommentId,
+            @RequestParam(value = "limit", defaultValue = "5") int limit) {
+        Page<CommentResponseDTO.getCommentDTO> comments = commentService.getCommentsByPostIdWithCursor(postId, lastCommentId, limit);
+        return ResponseEntity.ok(comments);
     }
+
 
     // 특정 댓글 단건 조회
     @GetMapping("/{commentId}")
