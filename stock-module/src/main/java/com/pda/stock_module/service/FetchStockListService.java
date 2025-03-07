@@ -18,6 +18,7 @@ public class FetchStockListService {
     private final StringRedisTemplate redisTemplate;
     private final RestTemplate restTemplate;
     private final RedisCommon redisCommon;
+    final String SetKeyForSync = "stocks:keys";
 
     @Transactional
     public void updateStockData() {
@@ -76,7 +77,6 @@ public class FetchStockListService {
                                 }
                                 processedStockNames.add(stockName);
 
-
                                 // Redis에 저장 (stockName을 키로 사용)
                                 String redisKey = "stock:" + stockName;
                                 redisTemplate.opsForHash().put(redisKey, "stockName", stockName);
@@ -87,12 +87,14 @@ public class FetchStockListService {
 
                                 // Redis 데이터에 TTL(Time-To-Live) 설정 (예: 1일)
                                 redisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
+
+
                             }
                         }
                     }
-                    System.out.println("processedStockNames = " + processedStockNames);
+                    // 종목 추가되거나 없어지면 zset sync 맞추기.
+//                    redisTemplate.opsForSet().add(SetKeyForSync, processedStockNames.toArray(new String[0]));
                 }
-
             } catch (HttpServerErrorException e) {
                 if (e.getMessage().contains("초당 거래건수를 초과")) {
                     System.err.println("API 요청 제한 초과: " + e.getMessage());
