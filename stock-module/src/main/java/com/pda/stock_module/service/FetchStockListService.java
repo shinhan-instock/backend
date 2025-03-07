@@ -156,8 +156,7 @@ public class FetchStockListService {
                 System.err.println("❌ " + market + " 데이터 크롤링 중 오류 발생: " + e.getMessage());
             }
         }
-        redisCommon.syncAllStocksToZSet();
-        // 시총 순으로 정렬하는 Zset 생성.
+        redisCommon.syncAllStocksToZSetWithScore();
     }
 
     private HttpHeaders createHeaders() {

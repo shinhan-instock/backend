@@ -1,6 +1,7 @@
 package com.pda.stock_module.service;
 
 import com.pda.stock_module.converter.StockSearchConverter;
+import com.pda.stock_module.domain.common.RedisCommon;
 import com.pda.stock_module.service.StockSearchService;
 import com.pda.stock_module.web.dto.StockSearchResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 public class StockSearchServiceImpl implements StockSearchService {
 
     private final StringRedisTemplate redisTemplate;
-
+    private final RedisCommon redisCommon;
     @Override
     public List<StockSearchResponseDTO.StockSearchRes> getStockData(List<String> stockNames) {
         HashOperations<String, Object, Object> hashOps = redisTemplate.opsForHash();
@@ -28,4 +29,10 @@ public class StockSearchServiceImpl implements StockSearchService {
 
         return StockSearchConverter.toStockSearchResList(stockNames, stockDataList);
     }
+
+    @Override
+    public List<String> searchStockName(String stockName) {
+        return redisCommon.searchStocks(stockName);
+    }
+
 }

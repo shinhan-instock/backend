@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface StockSearchService {
     List<StockSearchResponseDTO.StockSearchRes> getStockData(List<String> stockNames);
+
+    List<String> searchStockName(String stockName);
 }

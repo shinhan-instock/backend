@@ -1,9 +1,11 @@
 package com.pda.stock_module.domain.common;
 
+import com.google.common.collect.Range;
 import com.google.gson.Gson;
 import com.pda.stock_module.web.model.StockDetailModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class RedisCommon {
 
 
     public <T> T getEntriesFromHash(String key, Class<T> clazz) {
+
         Map<Object, Object> entries = template.opsForHash().entries("stock:" + key);
         if (entries != null) {
             String jsonValue = gson.toJson(entries);
@@ -54,6 +57,8 @@ public class RedisCommon {
     }
 
     public void syncAllStocksToZSet() {
+        template.delete("stocks:rank");
+
         Set<String> stockKeys = template.keys("stock:*"); // 모든 주식 키 가져오기
 
         if (stockKeys == null || stockKeys.isEmpty()) {
@@ -107,5 +112,52 @@ public class RedisCommon {
                 .limit(10) // Top 10 가져오기
                 .collect(Collectors.toList());
     }
+
+    public void syncAllStocksToZSetWithScore() {
+        String STOCK_ZSET_KEY = "stocks:autoComplete";
+        template.delete(STOCK_ZSET_KEY); // 기존 데이터 초기화
+
+        Set<String> stockKeys = template.keys("stock:*"); // 모든 주식 키 가져오기
+        if (stockKeys == null || stockKeys.isEmpty()) {
+            log.info("⚠️ Redis에 저장된 주식 데이터가 없습니다.");
+            return;
+        }
+
+        ZSetOperations<String, String> zSetOperations = template.opsForZSet();
+
+        for (String stockKey : stockKeys) {
+            String stockName = stockKey.replace("stock:", ""); // "stock:삼성전자" -> "삼성전자"
+            zSetOperations.add(STOCK_ZSET_KEY, stockName, 0); // 동일한 score 설정하여 사전순 정렬
+        }
+
+        log.info("✅ 모든 주식 데이터를 Redis ZSET에 동기화 완료.");
+    }
+
+    // 🔹 자동완성 검색 및 TTL 기반 캐시 조회
+    public List<String> searchStocks(String stockName) {
+        String STOCK_ZSET_KEY = "stocks:autoComplete";
+
+        if (stockName == null || stockName.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        ZSetOperations<String, String> zSetOperations = template.opsForZSet();
+
+        Set<String> allStocks = zSetOperations.rangeByScore(STOCK_ZSET_KEY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+        if (allStocks == null || allStocks.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return allStocks.stream()
+                .filter(stock -> stock.startsWith(stockName))  // 검색어 기준 필터링
+                .sorted()
+                .limit(20)
+                .collect(Collectors.toList());
+
+    }
+
+
+
 
 }
