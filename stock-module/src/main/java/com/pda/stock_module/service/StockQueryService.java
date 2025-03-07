@@ -1,21 +1,17 @@
 package com.pda.stock_module.service;
 
-import com.pda.stock_module.domain.common.Company;
+import com.pda.stock_module.domain.Company;
 import com.pda.stock_module.domain.common.RedisCommon;
 import com.pda.stock_module.repository.StockQueryRepository;
 import com.pda.stock_module.web.dto.DetailStockResponse;
-import com.pda.stock_module.web.dto.StockResponse;
 import com.pda.stock_module.web.dto.TopStockResponse;
 import com.pda.stock_module.web.model.ListModel;
 import com.pda.stock_module.web.model.StockDetailModel;
-import com.pda.stock_module.web.model.StockListModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j

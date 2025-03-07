@@ -17,20 +17,20 @@ import java.time.format.DateTimeFormatter;
 public class BatchScheduler {
 
     private final JobLauncher jobLauncher;
-    private final Job batchJob; // ✅ batchJob 자동 주입
+    private final Job batchJob; //
 
-    @Scheduled(cron = "0 0 * * * *") // ✅ 매 정각 실행 (1시간마다)
+    @Scheduled(cron = "0 0 * * * *",zone = "Asia/Seoul")
     public void runBatchJob() {
         try {
             JobParameters jobParameters = new JobParametersBuilder()
                     .addString("targetTime", LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm")))
                     .toJobParameters();
 
-            jobLauncher.run(batchJob, jobParameters); // ✅ 배치 실행
-            System.out.println("✅ 배치 실행 완료: " + jobParameters.getString("targetTime"));
+            jobLauncher.run(batchJob, jobParameters); //
+            System.out.println("배치 실행 완료: " + jobParameters.getString("targetTime"));
 
         } catch (Exception e) {
-            System.err.println("❌ 배치 실행 중 오류 발생: " + e.getMessage());
+            System.err.println("배치 실행 중 오류 발생: " + e.getMessage());
         }
     }
 }

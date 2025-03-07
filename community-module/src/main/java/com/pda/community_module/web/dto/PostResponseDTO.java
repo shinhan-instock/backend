@@ -25,7 +25,18 @@ public class PostResponseDTO {
         private LocalDateTime update_at;
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class CreatePostResponseDTO {
+        private Long id;
+        private String content;
+        private String imageUrl;
+        private String hashtag;
+        private String nickname;
 
+    }
 }
 
 
