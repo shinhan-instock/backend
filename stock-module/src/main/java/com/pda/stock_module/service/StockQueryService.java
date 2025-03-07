@@ -1,5 +1,7 @@
 package com.pda.stock_module.service;
 
+import com.pda.core_module.apiPayload.GeneralException;
+import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import com.pda.stock_module.domain.Company;
 import com.pda.stock_module.domain.common.RedisCommon;
 import com.pda.stock_module.repository.StockQueryRepository;
@@ -9,7 +11,9 @@ import com.pda.stock_module.web.model.ListModel;
 import com.pda.stock_module.web.model.StockDetailModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +23,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StockQueryService {
     private final RedisCommon redisCommon;
+    private final StringRedisTemplate redisTemplate;
+
     private final StockQueryRepository stockQueryRepository;
 
     public List<TopStockResponse> getTop10ByTheme(String stockName) {
@@ -62,11 +68,18 @@ public class StockQueryService {
         try {
             StockDetailModel stockInfo = redisCommon.getEntriesFromHash(stockName, StockDetailModel.class);
 
-            if (stockInfo == null) {
-                return null;
+            if (stockInfo.getStockCode() == null) {
+                throw new GeneralException(ErrorStatus.STOCK_NOT_FOUND); // ✅ 서비스에서 예외 발생
             }
 
+            String key = "stocks:popular";
+
             Company company = stockQueryRepository.findByStockName(stockName);
+            Double score = redisTemplate.opsForZSet().score(key, stockName);
+
+            if (score != null) {
+                redisTemplate.opsForZSet().incrementScore(key, stockName, 1); // stockName의 score +1
+            }
 
             return new DetailStockResponse(
                     stockInfo.getStockName(),
@@ -75,9 +88,11 @@ public class StockQueryService {
                     stockInfo.getPriceChange(),
                     company.getDescription()
             );
+
+
         } catch (Exception e) {
             System.err.println("Error while fetching stock details: " + e.getMessage());
-            return null;
+            throw e;
         }
     }
 

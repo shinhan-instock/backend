@@ -23,8 +23,6 @@ public class FetchStockListService {
     public void updateStockData() {
         String[] markets = {"KOSPI", "KOSDAQ"}; // 시장 배열
 
-        // 배치 크롤링을 위한 Map 정의. (종목명 + stockCode 전달)
-        Map<String, String> stockDataMap = new HashMap<>();
 
         for (String market : markets) {
             String apiUrl = "https://finance.daum.net/api/quotes/sectors?fieldName=&order=&perPage=&market="
@@ -92,6 +90,7 @@ public class FetchStockListService {
                             }
                         }
                     }
+                    System.out.println("processedStockNames = " + processedStockNames);
                 }
 
             } catch (HttpServerErrorException e) {
@@ -156,7 +155,6 @@ public class FetchStockListService {
                 System.err.println("❌ " + market + " 데이터 크롤링 중 오류 발생: " + e.getMessage());
             }
         }
-        redisCommon.syncAllStocksToZSetWithScore();
     }
 
     private HttpHeaders createHeaders() {

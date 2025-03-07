@@ -3,8 +3,10 @@ package com.pda.stock_module.web.controller;
 import com.pda.stock_module.service.RankingListService;
 import com.pda.stock_module.service.StockQueryService;
 import com.pda.stock_module.web.dto.DetailStockResponse;
+import com.pda.stock_module.web.dto.StockPopularRankResponse;
 import com.pda.stock_module.web.dto.StockRankResponse;
 import com.pda.stock_module.web.dto.TopStockResponse;
+import com.pda.stock_module.web.model.StockPopularModel;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,11 @@ public class StockRankingController {
         return ResponseEntity.ok(stockQueryService.getTop10ByTheme(stockName));
     }
 
+    // TOP 10 언급 많은 종목 확인
+    @GetMapping("/top10")
+    public ResponseEntity<List<StockPopularRankResponse>> getTop10ByPopularity() {
+        return ResponseEntity.ok(rankingListService.getTop10ByPopularity());
+    }
 
 }
 

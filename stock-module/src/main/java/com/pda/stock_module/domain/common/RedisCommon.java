@@ -2,13 +2,17 @@ package com.pda.stock_module.domain.common;
 
 import com.google.common.collect.Range;
 import com.google.gson.Gson;
+import com.pda.core_module.apiPayload.GeneralException;
+import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import com.pda.stock_module.web.model.StockDetailModel;
+import com.pda.stock_module.web.model.StockPopularModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.ObjectError;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,13 +39,13 @@ public class RedisCommon {
     public <T> T getEntriesFromHash(String key, Class<T> clazz) {
 
         Map<Object, Object> entries = template.opsForHash().entries("stock:" + key);
+        System.out.println("entries = " + entries);
         if (entries != null) {
             String jsonValue = gson.toJson(entries);
             return gson.fromJson(jsonValue, clazz);
         }
         return null;
     }
-
 
     public <T> List<T> getAllList(String key, Class<T> clazz) {
         List<String> jsonValues = template.opsForList().range(key, 0, -1);
@@ -157,7 +161,55 @@ public class RedisCommon {
 
     }
 
+    public void syncAllStocksToZSetWithReference() {
+        String STOCK_ZSET_KEY = "stocks:popular";
+        template.delete(STOCK_ZSET_KEY); // 기존 데이터 초기화
 
+        Set<String> stockKeys = template.keys("stock:*"); // 모든 주식 키 가져오기
+        if (stockKeys == null || stockKeys.isEmpty()) {
+            log.info("⚠️ Redis에 저장된 주식 데이터가 없습니다.");
+            return;
+        }
 
+        ZSetOperations<String, String> zSetOperations = template.opsForZSet();
+
+        for (String stockKey : stockKeys) {
+            String stockName = stockKey.replace("stock:", ""); // "stock:삼성전자" -> "삼성전자"
+            zSetOperations.add(STOCK_ZSET_KEY, stockName, 0); // 동일한 score 설정하여 사전순 정렬
+        }
+
+        log.info("✅ 모든 주식 데이터를 Redis ZSET에 동기화 완료.");
+    }
+
+    public List<StockPopularModel> getStockByPopularity() {
+        String STOCK_ZSET_KEY = "stocks:popular";
+        Set<String> topStocks = template.opsForZSet().reverseRange(STOCK_ZSET_KEY, 0, 9);
+
+        List<StockPopularModel> stockDetails = new ArrayList<>();
+
+        if (topStocks != null) {
+            for (String stock : topStocks) {
+                String key = "stock:" + stock;
+                Double score = template.opsForZSet().score(STOCK_ZSET_KEY, stock);
+
+                Map<Object, Object> stockData = template.opsForHash().entries(key);
+                //{stockName=Tesla, price=890.50, volume=50000} 이런 형태로 저장됨.
+
+                if (!stockData.isEmpty()) {
+                    // Redis에서 가져온 데이터를 StockPopularModel 매핑하여 리스트에 추가
+                    stockDetails.add(new StockPopularModel(
+                            (String) stockData.get("stockName"),
+                            (String) stockData.get("stockCode"),
+                            stockData.get("price") != null ? Integer.parseInt((String) stockData.get("price")) : null,
+                            (String) stockData.get("priceChange"),
+                            (String) stockData.get("sectorName"),
+                            (String) stockData.get("rank"),
+                            score
+                    ));
+                }
+            }
+        }
+        return stockDetails;
+    }
 
 }

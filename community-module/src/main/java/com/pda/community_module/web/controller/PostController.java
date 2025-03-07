@@ -22,8 +22,8 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequestMapping("/posts")
 public class PostController {
 
-    private final PostService postService;
 
+    private final PostService postService;
 
     // 조건에 맞는 게시글 전체 리스트 보기
     @GetMapping("/")

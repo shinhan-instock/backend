@@ -14,6 +14,7 @@ import com.pda.community_module.web.dto.PostResponseDTO;
 import com.pda.core_module.apiPayload.GeneralException;
 import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,7 +35,7 @@ public class PostServiceImpl implements PostService {
     private final PostScrapRepository postScrapRepository;
     private final S3Service s3Service;
     private final PostLikeRepository postLikeRepository;
-
+    private final StringRedisTemplate redisTemplate;
     @Override
     public List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, String userid) {
         List<Post> posts;
@@ -206,6 +207,13 @@ public class PostServiceImpl implements PostService {
                 .deleted(false)
                 .build();
 
+        String key = "stocks:popular";
+        String hashtag = createPostDTO.getHashtag();
+        Double score = redisTemplate.opsForZSet().score(key, hashtag);
+
+        if (score != null) {
+            redisTemplate.opsForZSet().incrementScore(key, hashtag, 1); // stockName의 score +1
+        }
         postRepository.save(post); // ✅ 먼저 저장
 
         // 📌 그 후 파일이 있으면 이미지 저장
