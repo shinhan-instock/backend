@@ -33,4 +33,8 @@ public interface PostService {
     Long getLikeByUser(String userid, Long id);
 
     PostResponseDTO.CreatePostResponseDTO createPost(PostRequestDTO.CreatePostDTO createPostDTO);
+
+    void finalizePost(Long postId, Long sentimentScore);
+
+    void rollbackPost(Long postId, String reason);
 }

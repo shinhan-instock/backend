@@ -2,10 +2,7 @@ package com.pda.community_module.service;
 
 import com.pda.community_module.converter.PostConverter;
 import com.pda.community_module.converter.WatchListConverter;
-import com.pda.community_module.domain.File;
-import com.pda.community_module.domain.Post;
-import com.pda.community_module.domain.User;
-import com.pda.community_module.domain.WatchList;
+import com.pda.community_module.domain.*;
 import com.pda.community_module.domain.mapping.PostLike;
 import com.pda.community_module.domain.mapping.PostScrap;
 import com.pda.community_module.repository.*;
@@ -13,7 +10,9 @@ import com.pda.community_module.web.dto.PostRequestDTO;
 import com.pda.community_module.web.dto.PostResponseDTO;
 import com.pda.core_module.apiPayload.GeneralException;
 import com.pda.core_module.apiPayload.code.status.ErrorStatus;
+import com.pda.core_module.events.CheckStockEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +36,11 @@ public class PostServiceImpl implements PostService {
     private final S3Service s3Service;
     private final PostLikeRepository postLikeRepository;
     private final StringRedisTemplate redisTemplate;
+    private final SentimentRepository sentimentRepository;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+//    private final SentimentService sentimentService;
+
     @Override
     public List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, String userid) {
         List<Post> posts;
@@ -212,17 +217,69 @@ public class PostServiceImpl implements PostService {
         Double score = redisTemplate.opsForZSet().score(key, hashtag);
 
         if (score != null) {
-            redisTemplate.opsForZSet().incrementScore(key, hashtag, 1); // stockName의 score +1
+            redisTemplate.opsForZSet().incrementScore(key, hashtag, 1);
         }
-        postRepository.save(post); // ✅ 먼저 저장
+        postRepository.save(post);
 
-        // 📌 그 후 파일이 있으면 이미지 저장
         String imageUrl = null;
         if (createPostDTO.getFile() != null && !createPostDTO.getFile().isEmpty()) {
-            File file = s3Service.setPostImage(createPostDTO.getFile(), post); // ✅ 저장된 post를 넘김
+            File file = s3Service.setPostImage(createPostDTO.getFile(), post);
             imageUrl = file.getUrl();
+        }
+
+        if (post.getHashtag() != null && !post.getHashtag().isEmpty()) {
+            CheckStockEvent checkStockEvent = CheckStockEvent.builder()
+                    .postId(post.getId())
+                    .hashtag(post.getHashtag())
+                    .userId(user.getId())
+                    .correlationId(UUID.randomUUID().toString())
+                    .build();
+            kafkaTemplate.send("community.check-stock-topic", checkStockEvent);
+            System.out.println(post.getHashtag()+"  : community -> stock으로 검증 publish");
         }
 
         return PostConverter.toPostResponseDTO(post);
     }
+
+
+    @Override
+    @Transactional
+    public void finalizePost(Long postId, Long sentimentScore) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            Sentiment sentiment = Sentiment.builder()
+                    .post(post)
+                    .sentimentScore(sentimentScore)
+                    .build();
+
+//            Long analyzedSentimentScore = sentimentService.analyzeSentiment(post.getContent());
+//            Sentiment sentiment = Sentiment.builder()
+//                    .post(post)
+//                    .sentimentScore(analyzedSentimentScore)
+//                    .build();
+
+            sentimentRepository.save(sentiment);
+//            post.setFinalized(true); // 최종 상태 플래그
+            postRepository.save(post);
+            System.out.println("***** 글 작성 완료. 감정 점수 부여 완료");
+        } else {
+            throw new RuntimeException("***** 글 작성 실패");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void rollbackPost(Long postId, String reason) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            postRepository.delete(post);
+            System.out.println("DB에서 글 삭제 postId: " + postId);
+        } else {
+            throw new RuntimeException("글을 찾을 수 없습니다. 글 작성 취소");
+        }
+    }
+
+
 }

@@ -1,3 +1,4 @@
+#stock module
 server:
   port: 8081
 spring:
@@ -32,6 +33,43 @@ spring:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
     password:
+  kafka:
+    producer:
+      bootstrap-servers: "localhost:9092,localhost:9094"
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 10
+      properties:
+        retry.backoff.ms: 1000
+        delivery.timeout.ms: 12000
+        linger.ms: 0
+        request.timeout.ms: 3000
+        max.in.flight.requests.per.connection: 5
+        enable.idempotence: true
+      transaction-id-prefix: "stock-service-${random.value}-"
+    consumer:
+      bootstrap-servers: "localhost:9092,localhost:9094"
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: stock-group
+      properties:
+        spring.json.trusted.packages: "*"
+
+community:
+  commands:
+    topic:
+      checkStock: community.check-stock-topic
+
+stock:
+  events:
+    topic:
+      finishedPost: community.finished-post-topic
+      rollback: community.rollback-topic
+  commands:
+    topic:
+      setMileage: stock.set-mileage-topic
+
 
 appkey: ${APP_KEY}
 appsecret: ${APP_SECRET}
