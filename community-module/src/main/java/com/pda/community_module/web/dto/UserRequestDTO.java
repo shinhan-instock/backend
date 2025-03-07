@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 public class UserRequestDTO {
     @Getter
@@ -22,7 +23,7 @@ public class UserRequestDTO {
     public static class UpdateUserDTO {
         private String name;
         private String nickname;
-        private String imageUrl;
+        private MultipartFile image;
         private String introduction;
     }
 }

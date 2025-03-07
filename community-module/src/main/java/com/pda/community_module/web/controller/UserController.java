@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,7 @@ public class UserController {
         return ApiResponse.onSuccess(userService.getUserInfo(userId));
     }
 
-    @PutMapping("/")
+    @PutMapping(value = "/",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "내 계정수정", description = "로그인한 사용자의 프로필 이미지, 닉네임, 한줄소개, 이름을 수정한다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "내 계정 정보 수정 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
@@ -49,7 +50,7 @@ public class UserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4009", description = "이미 사용 중인 닉네임입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
     public ApiResponse<?> updateUser(@RequestHeader("Authorization") String authorizationHeader,
-                                     @RequestBody UserRequestDTO.UpdateUserDTO requestDTO) {
+                                     @ModelAttribute UserRequestDTO.UpdateUserDTO requestDTO) {
         String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
         userService.updateUser(userId, requestDTO);
         return ApiResponse.onSuccess(null);

@@ -2,15 +2,13 @@ package com.pda.community_module.service;
 
 import com.pda.community_module.converter.PostConverter;
 import com.pda.community_module.converter.WatchListConverter;
+import com.pda.community_module.domain.File;
 import com.pda.community_module.domain.Post;
 import com.pda.community_module.domain.User;
 import com.pda.community_module.domain.WatchList;
 import com.pda.community_module.domain.mapping.PostLike;
 import com.pda.community_module.domain.mapping.PostScrap;
-import com.pda.community_module.repository.PostLikeRepository;
-import com.pda.community_module.repository.PostRepository;
-import com.pda.community_module.repository.PostScrapRepository;
-import com.pda.community_module.repository.UserRepository;
+import com.pda.community_module.repository.*;
 import com.pda.community_module.web.dto.PostRequestDTO;
 import com.pda.community_module.web.dto.PostResponseDTO;
 import com.pda.core_module.apiPayload.GeneralException;
@@ -18,9 +16,11 @@ import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,9 +30,9 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-
+    private final FileRepository fileRepository;
     private final PostScrapRepository postScrapRepository;
-
+    private final S3Service s3Service;
     private final PostLikeRepository postLikeRepository;
 
     @Override
@@ -130,7 +130,7 @@ public class PostServiceImpl implements PostService {
             throw new GeneralException(ErrorStatus._FORBIDDEN);
         }
 
-        Post updatedPost = PostConverter.toPostEntity(user, editPostDTO, post);
+        Post updatedPost = PostConverter.toPostEntity(user, editPostDTO, post, s3Service);
         postRepository.save(updatedPost);
 
     }
@@ -192,6 +192,29 @@ public class PostServiceImpl implements PostService {
         return likeId;
     }
 
+    @Override
+    @Transactional
+    public PostResponseDTO.CreatePostResponseDTO createPost(PostRequestDTO.CreatePostDTO createPostDTO) {
+        User user = userRepository.findByUserId(createPostDTO.getUserId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
+        // 📌 먼저 Post 객체 생성 및 저장
+        Post post = Post.builder()
+                .user(user)
+                .content(createPostDTO.getContent())
+                .hashtag(createPostDTO.getHashtag())
+                .deleted(false)
+                .build();
 
+        postRepository.save(post); // ✅ 먼저 저장
+
+        // 📌 그 후 파일이 있으면 이미지 저장
+        String imageUrl = null;
+        if (createPostDTO.getFile() != null && !createPostDTO.getFile().isEmpty()) {
+            File file = s3Service.setPostImage(createPostDTO.getFile(), post); // ✅ 저장된 post를 넘김
+            imageUrl = file.getUrl();
+        }
+
+        return PostConverter.toPostResponseDTO(post);
+    }
 }

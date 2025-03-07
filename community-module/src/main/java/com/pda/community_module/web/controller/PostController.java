@@ -9,9 +9,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @Slf4j
 @RestController
@@ -73,7 +76,7 @@ public class PostController {
     }
 
     // 개별 게시글 수정
-    @PutMapping("/{id}")
+    @PutMapping(value="/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "개별 게시글 수정", description = "개별 게시글을 수정하기")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
@@ -81,7 +84,7 @@ public class PostController {
     })
     public ApiResponse editPost(
             @RequestHeader("Authorization") String authorizationHeader,
-            @PathVariable Long id, @RequestBody PostRequestDTO.EditPostDTO editPostDTO ){
+            @PathVariable Long id, @ModelAttribute PostRequestDTO.EditPostDTO editPostDTO ){
         String userid = authorizationHeader.replace("Bearer ", "");
         postService.editPost(userid, id, editPostDTO);
         return ApiResponse.onSuccess(null);
@@ -204,4 +207,18 @@ public class PostController {
         return ApiResponse.onSuccess(null);
 
     }
+
+    @PostMapping(value = "",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "게시글 등록", description = "이미지를 포함한 게시글 등록")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "사용자를 찾을 수 없습니다.")
+    })
+    public ApiResponse<?> addPost(
+            @ModelAttribute PostRequestDTO.CreatePostDTO createPostDTO) {  // DTO로 요청 받음
+
+        return ApiResponse.onSuccess(postService.createPost(createPostDTO));
+    }
+
+
 }
