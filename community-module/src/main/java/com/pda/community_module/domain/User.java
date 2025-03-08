@@ -67,6 +67,8 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
+    @Column(name = "is_influencer", columnDefinition = "TINYINT(1)")
+    private Boolean isInfluencer;
 
 
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
