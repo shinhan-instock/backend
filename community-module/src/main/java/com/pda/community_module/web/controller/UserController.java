@@ -87,6 +87,7 @@ public class UserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "팔로우 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON4003", description = "토큰 누락 또는 유효하지 않음", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "팔로우하려는 유저가 존재하지 않습니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4010", description = "이미 팔로우한 사용자입니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
     public ApiResponse<?> doFollow(@RequestHeader("Authorization") String authorizationHeader,
                                      @RequestParam(value = "Nickname") String nickname) {
