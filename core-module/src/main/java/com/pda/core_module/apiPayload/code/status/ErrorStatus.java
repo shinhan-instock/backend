@@ -25,11 +25,14 @@ ErrorStatus implements BaseErrorCode {
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH4001", "아이디 또는 비밀번호가 올바르지 않습니다"),
     DUPLICATE_NICKNAME(HttpStatus.UNAUTHORIZED, "USER4009", "이미 사용중인 닉네임입니다."),
     NO_FOLLOW_INFO(HttpStatus.NOT_FOUND, "USER4008", "팔로우 정보가 존재하지 않습니다"),
+    STOCK_ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4010", "유저의 계좌가 존재하지않습니다."),
 
     // 주식 관련 응답
     WATCHLIST_NOT_FOUND(HttpStatus.BAD_REQUEST, "STOCK4001", "watch list에 해당 주식이 없습니다."),
-    OWN_STOCK_NOT_FOUND(HttpStatus.BAD_REQUEST, "STOCK4002", "보유주식 list에 해당 주식이 없습니다."),
     STOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "STOCK4002", "주식을 찾을수 없습니다."),
+    OWN_STOCK_NOT_FOUND(HttpStatus.BAD_REQUEST, "STOCK4003", "보유주식 list에 해당 주식이 없습니다."),
+    OWN_ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "STOCK4004", "계좌 계설을 먼저 하세요."),
+
 
     // 게시글 관련 응답
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4002", "게시글을 찾을수 없습니다."),

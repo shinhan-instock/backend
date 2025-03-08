@@ -1,5 +1,6 @@
 package com.pda.community_module.service;
 
+import com.pda.community_module.web.dto.AccountRequestDTO;
 import com.pda.community_module.web.dto.UserRequestDTO;
 import com.pda.community_module.web.dto.UserResponseDTO;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,25 +1,28 @@
 package com.pda.community_module.web.controller;
 
+import com.pda.community_module.service.AccountService;
 import com.pda.community_module.service.UserService;
-import com.pda.community_module.web.dto.UserRequestDTO;
-import com.pda.community_module.web.dto.UserResponseDTO;
-import com.pda.community_module.web.dto.WatchListRequestDTO;
+import com.pda.community_module.web.dto.*;
 import com.pda.core_module.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final AccountService accountService;
 
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "아이디, 비밀번호를 입력해 로그인을 한다")
@@ -112,6 +115,18 @@ public class UserController {
     @GetMapping("/getPK/{userId}")
     public ResponseEntity<UserResponseDTO.UserRealPKResponseDto> getUserByUserId(@PathVariable String userId) {
         return ResponseEntity.ok(userService.getUserByUserId(userId));
+    }
+
+    @PostMapping("/account")
+    public ResponseEntity<List<AccountResponseDTO>> getUsersStock(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestBody AccountRequestDTO accountRequestDTO) {
+        String myUserId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
+        String userId = accountRequestDTO.getUserId();
+
+        List<AccountResponseDTO> response = accountService.getAccount(myUserId, userId);
+        return ResponseEntity.ok(response);
+
     }
 
 }

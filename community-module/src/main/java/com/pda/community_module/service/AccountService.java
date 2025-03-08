@@ -7,4 +7,5 @@ import java.util.List;
 public interface AccountService {
     List<AccountResponseDTO> getMyAccount(String userId);
 
+    List<AccountResponseDTO> getAccount(String myUserId, String userId);
 }
