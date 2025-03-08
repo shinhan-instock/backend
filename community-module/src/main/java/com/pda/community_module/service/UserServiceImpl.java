@@ -99,6 +99,9 @@ public class UserServiceImpl implements UserService{
         User followingUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
+        userFollowsRepository.findByFollowerIdAndFollowingId(user.getId(), followingUser.getId())
+                .ifPresent(f -> {throw new GeneralException(ErrorStatus.ALREADY_FOLLOWING);});
+
         UserFollows userFollowsEntity = UserConverter.toUserFollowsEntity(user, followingUser);
         userFollowsRepository.save(userFollowsEntity);
     }
