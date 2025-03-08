@@ -21,9 +21,16 @@ public class OwnStock extends BaseEntity {
     private Account account;
 
     @Column(length = 20)
+    private String stockName;
+
+    @Column(length = 20)
     private String stockCode;
 
     private Long stockCount;
 
     private Long avgPrice;
+
+    private Long stockCost;
+
+    private Long profit;
 }

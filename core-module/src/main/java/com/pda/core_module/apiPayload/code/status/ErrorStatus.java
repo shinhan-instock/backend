@@ -28,6 +28,7 @@ ErrorStatus implements BaseErrorCode {
 
     // 주식 관련 응답
     WATCHLIST_NOT_FOUND(HttpStatus.BAD_REQUEST, "STOCK4001", "watch list에 해당 주식이 없습니다."),
+    OWN_STOCK_NOT_FOUND(HttpStatus.BAD_REQUEST, "STOCK4002", "보유주식 list에 해당 주식이 없습니다."),
     STOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "STOCK4002", "주식을 찾을수 없습니다."),
 
     // 게시글 관련 응답
