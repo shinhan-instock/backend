@@ -43,6 +43,8 @@ public class MileageServiceImpl implements MileageService {
         UserResponseDTO.UserRealPKResponseDto userResponse = userFeignClient.getUserByUserId(userId);
         Long actualUserId = userResponse.getId();
 
+        System.out.println("actualUserId = " + actualUserId);
+
         Optional<Piggy> mileage = piggyRepository.findMileageByUserId(actualUserId);
         return mileage.map(mileageConverter::toDTO)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.ACCOUNT_NOT_FOUND));

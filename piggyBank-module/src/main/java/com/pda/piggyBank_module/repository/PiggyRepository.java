@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface PiggyRepository extends JpaRepository<Piggy, Long> {
     Optional<Piggy> findByUserId(Long userId);
-    Optional<Piggy> findMileageByUserId(Long userId);
+    Optional<Piggy> findMileageByUserId(Long Id);
 }
