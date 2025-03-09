@@ -43,10 +43,25 @@ public class MileageServiceImpl implements MileageService {
         UserResponseDTO.UserRealPKResponseDto userResponse = userFeignClient.getUserByUserId(userId);
         Long actualUserId = userResponse.getId();
 
-        System.out.println("actualUserId = " + actualUserId);
 
         Optional<Piggy> mileage = piggyRepository.findMileageByUserId(actualUserId);
         return mileage.map(mileageConverter::toDTO)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.ACCOUNT_NOT_FOUND));
+    }
+
+    @Override
+    public MileageResponseDto updateMileageByUserId(String userId, Integer updatedMileage) {
+        // OpenFeign을 통해 로그인용 userId(문자열)로 실제 사용자 엔티티 정보를 조회합니다.
+        UserResponseDTO.UserRealPKResponseDto userResponse = userFeignClient.getUserByUserId(userId);
+        Long actualUserId = userResponse.getId();
+
+
+        piggyRepository.updateMileageByUserId(actualUserId, updatedMileage);
+
+        Piggy updatedMileageEntity = piggyRepository.findMileageByUserId(actualUserId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.ACCOUNT_NOT_FOUND));
+
+        return new MileageResponseDto(actualUserId, updatedMileageEntity.getMileage());
+
     }
 }

@@ -1,5 +1,6 @@
 package com.pda.community_module.service;
 
+import com.pda.community_module.config.MileageClient;
 import com.pda.community_module.domain.Account;
 import com.pda.community_module.domain.OwnStock;
 import com.pda.community_module.domain.User;
@@ -7,6 +8,8 @@ import com.pda.community_module.repository.AccountRepository;
 import com.pda.community_module.repository.OwnStockRepository;
 import com.pda.community_module.repository.UserRepository;
 import com.pda.community_module.web.dto.AccountResponseDTO;
+import com.pda.community_module.web.dto.MileageRequestDTO;
+import com.pda.community_module.web.dto.StockRequestDTO;
 import com.pda.core_module.apiPayload.GeneralException;
 import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import feign.Param;
@@ -27,6 +30,7 @@ public class AccountServiceImpl implements AccountService{
     private final AccountRepository accountRepository;
     private final OwnStockRepository ownStockRepository;
     private final UserRepository userRepository;
+    private final MileageClient mileageClient;
 
 
     @Override
@@ -109,5 +113,78 @@ public class AccountServiceImpl implements AccountService{
                     ))
                     .collect(Collectors.toList());
         }
+    }
+
+    @Override
+    public List<AccountResponseDTO> addMyAccount(String userId, StockRequestDTO stockRequestDTO, Integer mileage) {
+        Account account = accountRepository.findByUserId_UserId(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.OWN_ACCOUNT_NOT_FOUND)); // 계좌 개설 필수
+
+
+        Long accountId = account.getId();
+        List<OwnStock> stocks = ownStockRepository.findByAccountId(accountId);
+
+        String requestStockCode = stockRequestDTO.getStockCode();
+        String requestStockName = stockRequestDTO.getStockName();
+        Integer requestPrice = stockRequestDTO.getPrice();
+
+        if (mileage < requestPrice) {
+            throw new GeneralException(ErrorStatus.MILEAGE_NOT_ENOUGH);
+        }
+
+        Optional<OwnStock> existingStockOpt = stocks.stream()
+                .filter(stock -> stock.getStockCode().equals(requestStockCode))
+                .findFirst();
+
+        if (existingStockOpt.isPresent()) {
+            // 기존 주식이 있으면 업데이트
+            OwnStock existingStock = existingStockOpt.get();
+            Long newStockCount = existingStock.getStockCount() + 1;
+            Long newAvgPrice = (existingStock.getAvgPrice() * existingStock.getStockCount() + requestPrice) / newStockCount;
+            Double profit = Math.round(((double) (requestPrice - newAvgPrice) / newAvgPrice) * 100 * 100) / 100.0;
+
+            existingStock = OwnStock.builder()
+                    .id(existingStock.getId())
+                    .account(account)
+                    .stockName(existingStock.getStockName())
+                    .stockCode(existingStock.getStockCode())
+                    .stockCount(newStockCount)
+                    .avgPrice(newAvgPrice)
+                    .profit(profit)
+                    .build();
+
+            ownStockRepository.updateStock(existingStock.getId(), newStockCount, newAvgPrice, profit);
+
+        } else {
+            // 새로운 주식 추가 (수익률 계산 적용)
+            Double profit = ((double) (requestPrice - requestPrice) / requestPrice) * 100; // 첫 구매이므로 수익률 0%
+
+            OwnStock newStock = OwnStock.builder()
+                    .account(account)
+                    .stockName(requestStockName)
+                    .stockCode(requestStockCode)
+                    .stockCount(1L) // 처음 추가되는 주식이므로 1주
+                    .avgPrice(requestPrice.longValue()) // 첫 구매가 그대로 평균 단가
+                    .profit(profit)
+                    .build();
+
+                ownStockRepository.save(newStock);
+        }
+
+        // 마일리지 차감
+        MileageRequestDTO updateMileage = new MileageRequestDTO(userId, mileage - requestPrice);
+        mileageClient.updateMileage(updateMileage);
+
+        // 업데이트된 주식 리스트 반환
+        List<OwnStock> updatedStocks = ownStockRepository.findByAccountId(accountId);
+        return updatedStocks.stream()
+                .map(stock -> new AccountResponseDTO(
+                        stock.getStockName(),
+                        stock.getStockCode(),
+                        stock.getStockCount(),
+                        stock.getAvgPrice(),
+                        stock.getProfit()
+                ))
+                .collect(Collectors.toList());
     }
 }
