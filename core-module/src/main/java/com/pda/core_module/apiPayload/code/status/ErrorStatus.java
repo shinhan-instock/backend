@@ -41,8 +41,8 @@ ErrorStatus implements BaseErrorCode {
 
 
     // 마일리지 관련 응답
-    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "MILEAGE4001", "계좌 계설을 먼저 하세요.")
-
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "MILEAGE4001", "계좌 계설을 먼저 하세요."),
+    MILEAGE_NOT_ENOUGH(HttpStatus.UNAUTHORIZED, "MILEAGE4002", "마일리지가 부족합니다.")
     ;
 
 

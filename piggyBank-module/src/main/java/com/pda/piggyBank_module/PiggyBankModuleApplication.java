@@ -14,7 +14,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients
 @EnableJpaAuditing
 @ComponentScan(basePackages = {"com.pda.piggyBank_module", "com.pda.core_module"})
-
 public class PiggyBankModuleApplication {
 
 	public static void main(String[] args) {

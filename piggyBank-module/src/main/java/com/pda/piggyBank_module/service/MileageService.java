@@ -8,4 +8,6 @@ public interface MileageService {
     @Transactional
     public void addMileage(MileageRequest request);
     public MileageResponseDto getMileageByUserId(String userId);
+
+    MileageResponseDto updateMileageByUserId(String userId, Integer updatedMileage);
 }

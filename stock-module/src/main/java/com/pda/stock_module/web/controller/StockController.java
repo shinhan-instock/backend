@@ -4,19 +4,15 @@ package com.pda.stock_module.web.controller;
 import com.pda.stock_module.domain.client.MileageClient;
 import com.pda.stock_module.service.StockQueryService;
 import com.pda.stock_module.web.dto.DetailStockResponse;
-import com.pda.stock_module.web.dto.MileageResponseDto;
-import com.pda.stock_module.web.dto.StockResponse;
+import com.pda.stock_module.web.dto.MileageResponseDTO;
 import com.pda.stock_module.web.model.StockDetailModel;
-import feign.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 @RestController
 @RequestMapping("/stocks")
@@ -46,25 +42,12 @@ public class StockController {
     })
     public ResponseEntity<List<StockDetailModel>> getStockByMileage(@RequestHeader("Authorization") String authorizationHeader) {
 
-        MileageResponseDto res = mileageClient.getMileage(authorizationHeader); // 마일리지 조회
+        MileageResponseDTO res = mileageClient.getMileage(authorizationHeader); // 마일리지 조회
         Long mileage = res.getMileage();
-        System.out.println("mileage = " + mileage);
 
         return ResponseEntity.ok(stockQueryService.getStockByMileage(mileage));
     }
 
-//    사용자가 마일리지를 통해 주식을 구매하는 요청 처리
-//    @PostMapping("/pigs")
-//    public ResponseEntity<String> addStockByMileage(@RequestHeader("Authorization") String authorizationHeader,
-//                                                    @RequestBody StockPurchaseRequest request) {
-//        boolean success = stockService.purchaseStockWithMileage(request.getUserId(), request.getStockId(), request.getMileageAmount());
-//
-//        if (success) {
-//            return ResponseEntity.ok("주식이 성공적으로 구매되었습니다.");
-//        } else {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("구매 실패: 마일리지가 부족하거나 오류가 발생했습니다.");
-//        }
-//    }
 
 
 }

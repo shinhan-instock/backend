@@ -26,7 +26,6 @@ public class MileageController {
     @GetMapping("")
     public ResponseEntity<MileageResponseDto> getMileage(@RequestHeader("Authorization") String authorizationHeader) {
         String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
-
         return ResponseEntity.ok(mileageService.getMileageByUserId(userId));
     }
 
@@ -34,5 +33,12 @@ public class MileageController {
     public com.pda.core_module.apiPayload.ApiResponse<String> addMileage(@RequestBody MileageRequest request) {
         mileageService.addMileage(request);
         return com.pda.core_module.apiPayload.ApiResponse.onSuccess("마일리지 지급 완료");
+    }
+
+    @PostMapping("")
+    public ResponseEntity<MileageResponseDto> updateMileage(@RequestBody MileageRequest.UpdateMileageRequest request) {
+        String userId = request.getUserId();
+        Integer updatedMileage = request.getMileage();
+        return ResponseEntity.ok(mileageService.updateMileageByUserId(userId, updatedMileage));
     }
 }

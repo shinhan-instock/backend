@@ -17,4 +17,12 @@ public class MileageRequest {
         private Long userId;
         private int mileage;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateMileageRequest {
+        private String userId;
+        private Integer mileage;
+    }
 }

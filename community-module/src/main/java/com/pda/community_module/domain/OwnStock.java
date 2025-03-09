@@ -30,7 +30,6 @@ public class OwnStock extends BaseEntity {
 
     private Long avgPrice;
 
-    private Long stockCost;
 
     private Double profit;
 }
