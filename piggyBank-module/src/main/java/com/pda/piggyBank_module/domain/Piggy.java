@@ -4,6 +4,8 @@ import com.pda.piggyBank_module.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "Pig")
 @NoArgsConstructor
@@ -21,6 +23,9 @@ public class Piggy extends BaseEntity {
 
     @Column(name = "mileage")
     private int mileage;
+
+    @Column(name = "last_mileage_date")
+    private LocalDate lastMileageDate;
 
     public Piggy(Long userId, int mileage) {
         this.userId = userId;
