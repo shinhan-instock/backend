@@ -22,7 +22,7 @@ public class PostConverter {
                 post.getContent(),
                 post.getHashtag(),
                 post.getSentiment() != null ? post.getSentiment().getSentimentScore() : 50,
-                post.getFile().getUrl(),
+                post.getFile()!=null ? post.getFile().getUrl() : null,
                 post.getLikes().size(),
                 post.getComments().size(),
                post.getCreatedAt(),

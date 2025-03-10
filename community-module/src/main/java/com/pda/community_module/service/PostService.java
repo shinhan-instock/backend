@@ -26,7 +26,7 @@ public interface PostService {
 
     void deleteLikes(String userid, Long id);
 
-    void addScrap(String userid, Long id);
+    Long addScrap(String userid, Long id);
 
     void deleteScrap(String userid, Long id);
 

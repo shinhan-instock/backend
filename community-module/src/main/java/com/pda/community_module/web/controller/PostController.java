@@ -188,8 +188,8 @@ public class PostController {
     })
     public ApiResponse<?> addScrap(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Long id){
         String userid = authorizationHeader.replace("Bearer ", "");
-        postService.addScrap(userid, id);
-        return ApiResponse.onSuccess(null);
+
+        return ApiResponse.onSuccess( postService.addScrap(userid, id));
 
     }
 

@@ -164,11 +164,12 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     @Override
-    public void addScrap(String userid, Long id) {
+    public Long addScrap(String userid, Long id) {
         User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         Post post = postRepository.findById(id).orElseThrow(()->new GeneralException(ErrorStatus.POST_NOT_FOUND));
         PostScrap postScrapEntity = PostConverter.toPostScrapEntity(user, post);
         postScrapRepository.save(postScrapEntity);
+        return postScrapEntity.getId();
 
     }
 

@@ -130,4 +130,10 @@ public class UserServiceImpl implements UserService{
         return UserConverter.getUserRealPK(user);
     }
 
+    @Override
+    public List<UserResponseDTO.getUserDTO> getInfluencerList() {
+        List<User> users = userRepository.findAllByIsInfluencer(true);
+        return UserConverter.toUserResponseDTOList(users);
+    }
+
 }
