@@ -16,7 +16,7 @@ public class UserConverter {
         return new UserResponseDTO.getUserDTO(
                 user.getUserId(),
                 user.getNickname(),
-                user.getFile().getUrl(),
+                user.getFile() != null ? user.getFile().getUrl() : null,
                 user.getIntroduction()
         );
     }
@@ -27,20 +27,20 @@ public class UserConverter {
         if (userFileOptional.isPresent()) {
             imgUrl = userFileOptional.get().getUrl();
         }
-//        return new UserResponseDTO.getUserInfoDTO(
-//                user.getUserId(),
-//                user.getName(),
-//                user.getNickname(),
-//                user.getFile().getUrl(),
-//                user.getIntroduction()
-//        );
-        return UserResponseDTO.getUserInfoDTO.builder()
-                .userId(user.getUserId())
-                .name(user.getName())
-                .nickname(user.getNickname())
-                .imageUrl(imgUrl)
-                .introduction(user.getIntroduction())
-                .build();
+        return new UserResponseDTO.getUserInfoDTO(
+                user.getUserId(),
+                user.getName(),
+                user.getNickname(),
+                user.getFile() != null ? user.getFile().getUrl() : null,
+                user.getIntroduction()
+        );
+//        return UserResponseDTO.getUserInfoDTO.builder()
+//                .userId(user.getUserId())
+//                .name(user.getName())
+//                .nickname(user.getNickname())
+//                .imageUrl(imgUrl)
+//                .introduction(user.getIntroduction())
+//                .build();
     }
 
     public static List<UserResponseDTO.getUserDTO> toUserResponseDTOList(List<User> users) {
