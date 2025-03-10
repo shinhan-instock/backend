@@ -12,6 +12,7 @@ import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.support.SimpleFlow;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
@@ -27,8 +28,8 @@ public class BatchJobConfiguration {
 
     @Bean
     public Job batchJob(
-            Step likeTop10Step,
-            Step stockSentimentAnalysisStep
+            @Qualifier("likeTop10Step") Step likeTop10Step,
+            @Qualifier("stockSentimentAnalysisStep") Step stockSentimentAnalysisStep
     ) {
         return new JobBuilder("batchJob", jobRepository)
                 .validator(new TimeFormatJobParametersValidator(new String[]{"targetTime"}))

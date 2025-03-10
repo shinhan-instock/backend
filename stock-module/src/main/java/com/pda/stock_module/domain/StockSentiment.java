@@ -24,4 +24,7 @@ public class StockSentiment extends BaseEntity {
 
     @Column(name = "sentiment_score")
     private Long sentimentScore;
+
+    @Column(name = "processed_post_count")
+    private Long processedPostCount;
 }

@@ -3,8 +3,11 @@ package com.pda.stock_module.web.controller;
 
 import com.pda.stock_module.domain.client.MileageClient;
 import com.pda.stock_module.service.StockQueryService;
+import com.pda.stock_module.service.StockSentimentService;
 import com.pda.stock_module.web.dto.DetailStockResponse;
 import com.pda.stock_module.web.dto.MileageResponseDTO;
+import com.pda.stock_module.web.dto.StockRequest;
+import com.pda.stock_module.web.dto.StockResponse;
 import com.pda.stock_module.web.model.StockDetailModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,6 +23,7 @@ import java.util.List;
 public class StockController {
 
     private final StockQueryService stockQueryService;
+    private final StockSentimentService stockSentimentService;
     private final MileageClient mileageClient;
 
 
@@ -48,6 +52,11 @@ public class StockController {
         return ResponseEntity.ok(stockQueryService.getStockByMileage(mileage));
     }
 
+    @PostMapping("/sentiment")
+    public com.pda.core_module.apiPayload.ApiResponse<String> addStockSentiment(@RequestBody List<StockRequest> stockRequestList) {
+        stockSentimentService.addStockSentiment(stockRequestList);
+        return com.pda.core_module.apiPayload.ApiResponse.onSuccess("주식 감정 저장 완료.");
+    }
 
 
 }
