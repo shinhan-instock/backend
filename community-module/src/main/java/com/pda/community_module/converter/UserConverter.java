@@ -16,7 +16,7 @@ public class UserConverter {
         return new UserResponseDTO.getUserDTO(
                 user.getUserId(),
                 user.getNickname(),
-                user.getFile().getUrl(),
+                (user.getFile() != null ? user.getFile().getUrl() : null),
                 user.getIntroduction()
         );
     }
