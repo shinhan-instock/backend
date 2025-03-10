@@ -18,7 +18,7 @@ public class PostConverter {
        return posts.stream().map(post -> new PostResponseDTO.getPostDTO(
                 post.getId(),
                 post.getUser().getNickname(),
-                post.getUser().getFile().getUrl(),
+               (post.getUser().getFile() != null ? post.getUser().getFile().getUrl() : null),
                 post.getContent(),
                 post.getHashtag(),
                 post.getSentiment() != null ? post.getSentiment().getSentimentScore() : 50,
