@@ -47,15 +47,20 @@ public class S3Service {
     public File setUserImage(MultipartFile file, User user) {
         String pictureUrl = uploadFile(file); // ✅ 수정된 부분
 
-        File newFile = File.builder()
-                .url(pictureUrl)
-                .user(user)
-                .post(null)
-                .build();
+        File existingFile = fileRepository.findByUser(user);
+        if (existingFile != null) {
+            existingFile.setUrl(pictureUrl);
+            return fileRepository.save(existingFile);
+        } else {
+            File newFile = File.builder()
+                    .url(pictureUrl)
+                    .user(user)
+                    .post(null)
+                    .build();
 
-        fileRepository.save(newFile);
-        user.setFile(newFile);
-        return fileRepository.save(newFile);
+            user.setFile(newFile);
+            return fileRepository.save(newFile);
+        }
     }
 
     public Uuid createFileName() {

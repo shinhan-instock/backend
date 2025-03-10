@@ -45,7 +45,7 @@ public class UserController {
         return ApiResponse.onSuccess(userService.getUserInfo(userId));
     }
 
-    @PutMapping(value = "/",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "내 계정수정", description = "로그인한 사용자의 프로필 이미지, 닉네임, 한줄소개, 이름을 수정한다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "내 계정 정보 수정 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class))),

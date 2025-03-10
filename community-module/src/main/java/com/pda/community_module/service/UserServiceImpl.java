@@ -53,13 +53,13 @@ public class UserServiceImpl implements UserService{
                 .ifPresent(nickname -> { throw new GeneralException(ErrorStatus.DUPLICATE_NICKNAME); });
 
         // 기존 값 유지, 변경된 값만 업데이트
-        if (requestDTO.getName() != null) {
+        if (!user.getName().equals(requestDTO.getName())) {
             user.setName(requestDTO.getName());
         }
-        if (requestDTO.getNickname() != null) {
+        if (!user.getNickname().equals(requestDTO.getNickname())) {
             user.setNickname(requestDTO.getNickname());
         }
-        if (requestDTO.getIntroduction() != null) {
+        if (!user.getIntroduction().equals(requestDTO.getIntroduction())) {
             user.setIntroduction(requestDTO.getIntroduction());
         }
 
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService{
         if (requestDTO.getImage() != null && !requestDTO.getImage().isEmpty()) {
             s3Service.setUserImage(requestDTO.getImage(), user);
         }
-//        userRepository.save(user);
+        userRepository.save(user);
     }
 
 

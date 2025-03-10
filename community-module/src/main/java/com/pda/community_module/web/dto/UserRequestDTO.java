@@ -1,9 +1,6 @@
 package com.pda.community_module.web.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 public class UserRequestDTO {
@@ -20,6 +17,7 @@ public class UserRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    @Setter
     public static class UpdateUserDTO {
         private String name;
         private String nickname;
