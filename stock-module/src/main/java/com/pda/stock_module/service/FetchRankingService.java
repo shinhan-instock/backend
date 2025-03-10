@@ -22,10 +22,7 @@ public class FetchRankingService {
     private final RestTemplate restTemplate;
     private final AuthService authService;
 
-    private static final String VOLUME_RANK_API_URL = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/volume-rank";
     private static final String FLUCTUATION_RANK_API_URL = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/ranking/fluctuation";
-    private static final String PROFIT_ASSET_RANK_API_URL = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/ranking/profit-asset-index";
-    private static final String MARKET_CAP_RANK_API_URL = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/ranking/market-cap";
 
 
     @Value("${APP_KEY}")
