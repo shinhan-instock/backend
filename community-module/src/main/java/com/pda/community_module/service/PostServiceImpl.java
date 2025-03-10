@@ -39,7 +39,7 @@ public class PostServiceImpl implements PostService {
     private final SentimentRepository sentimentRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-//    private final SentimentService sentimentService;
+    private final SentimentService sentimentService;
 
     @Override
     public List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, String userid) {
@@ -204,13 +204,24 @@ public class PostServiceImpl implements PostService {
         User user = userRepository.findByUserId(createPostDTO.getUserId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        // 📌 먼저 Post 객체 생성 및 저장
+        // 먼저 Post 객체 생성 및 저장
         Post post = Post.builder()
                 .user(user)
                 .content(createPostDTO.getContent())
                 .hashtag(createPostDTO.getHashtag())
                 .deleted(false)
                 .build();
+
+        // PostCount 도 맞춰서 생성
+        PostCount postCount = PostCount.builder()
+                .post(post)
+                .likeCount(0L)
+                .commentCount(0L)
+                .build();
+
+        // 양방향 연관관계 설정
+        post.setPostCount(postCount);
+        postRepository.save(post);
 
         String key = "stocks:popular";
         String hashtag = createPostDTO.getHashtag();
@@ -248,17 +259,17 @@ public class PostServiceImpl implements PostService {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isPresent()) {
             Post post = optionalPost.get();
-            Sentiment sentiment = Sentiment.builder()
-                    .post(post)
-                    .sentimentScore(sentimentScore)
-                    .build();
-
-//            Long analyzedSentimentScore = sentimentService.analyzeSentiment(post.getContent());
 //            Sentiment sentiment = Sentiment.builder()
 //                    .post(post)
-//                    .sentimentScore(analyzedSentimentScore)
+//                    .sentimentScore(sentimentScore)
 //                    .build();
 
+            Long analyzedSentimentScore = sentimentService.analyzeSentiment(post.getContent());
+            Sentiment sentiment = Sentiment.builder()
+                    .post(post)
+                    .sentimentScore(analyzedSentimentScore)
+                    .build();
+            System.out.println("GPT based score: "+analyzedSentimentScore);
             sentimentRepository.save(sentiment);
 //            post.setFinalized(true); // 최종 상태 플래그
             postRepository.save(post);
@@ -274,12 +285,16 @@ public class PostServiceImpl implements PostService {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isPresent()) {
             Post post = optionalPost.get();
+            if (post.getPostCount() != null) {
+                post.setPostCount(null);
+            }
             postRepository.delete(post);
             System.out.println("DB에서 글 삭제 postId: " + postId);
         } else {
             throw new RuntimeException("글을 찾을 수 없습니다. 글 작성 취소");
         }
     }
+
 
 
 }
