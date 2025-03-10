@@ -1,5 +1,6 @@
 package com.pda.community_module.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,8 @@ import java.util.List;
 public class GPTRequestDTO {
     private String model;
     private List<Message> messages;
+
+    @JsonProperty("max_tokens")
     private int maxTokens;
 
     @Data
