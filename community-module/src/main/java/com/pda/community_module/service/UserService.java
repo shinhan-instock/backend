@@ -17,4 +17,6 @@ public interface UserService {
     void doFollow(String userId, String nickname);
     void unFollow(String userId, String nickname);
     UserResponseDTO.UserRealPKResponseDto getUserByUserId(String userId);
+
+    List<UserResponseDTO.getUserDTO> getInfluencerList();
 }

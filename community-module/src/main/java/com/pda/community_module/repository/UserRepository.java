@@ -18,4 +18,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByIdAndJoinUserFollows(@Param("id") Long id);
 
 
+    List<User> findAllByIsInfluencer(Boolean isInfluencer);
 }
