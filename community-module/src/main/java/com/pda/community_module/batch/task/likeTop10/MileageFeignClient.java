@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import feign.Headers;
 
-@FeignClient(name = "mileage-service", url = "http://localhost:8082/mileage"
+@FeignClient(name = "mileage-service", url = "${feign.piggyBank-url}"
         ,configuration = MileageFeignConfig.class)
 public interface MileageFeignClient {
-    @PostMapping(value = "/add", consumes = "application/json")
+    @PostMapping(value = "/mileage/add", consumes = "application/json")
     @Headers("Content-Type: application/json")  // JSON 요청으로 명시
     void addMileage(@RequestBody MileageRequest request);
 }

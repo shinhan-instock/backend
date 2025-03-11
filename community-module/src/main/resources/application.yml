@@ -86,3 +86,8 @@ cloud:
 openai:
   api:
     key: ${OPENAI_KEY}
+
+feign:
+  piggyBank-url: ${PIGGYBANK_URL:localhost:8082}
+  stock-url: ${STOCK_URL:localhost:8081}
+  community-url: ${COMMUNITY_URL:localhost:8080}

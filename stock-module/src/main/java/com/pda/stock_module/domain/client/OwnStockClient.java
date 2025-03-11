@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
-@FeignClient(name = "ownStock-service", url = "http://localhost:8080/accounts")
+@FeignClient(name = "ownStock-service", url = "${feign.community-url}")
 
 public interface OwnStockClient {
-    @GetMapping("")
+    @GetMapping("/accounts")
     List<AccountResponseDTO> getMyAccount(@RequestHeader("Authorization") String authorizationHeader);
 
 }
