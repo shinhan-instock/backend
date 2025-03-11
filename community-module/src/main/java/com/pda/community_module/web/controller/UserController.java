@@ -143,4 +143,13 @@ public class UserController {
         return ApiResponse.onSuccess(userService.getInfluencerList());
     }
 
+    @PostMapping("/openAccount")
+    public ApiResponse<String> changeAccountState(@RequestHeader("Authorization") String authorizationHeader) {
+        String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
+
+        userService.changeAccountState(userId);
+
+        return ApiResponse.onSuccess("유저 계좌 공개 여부 수정.");
+    }
+
 }

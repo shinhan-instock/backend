@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
-@StepScope
 @RequiredArgsConstructor
+@StepScope
 public class StockSentimentAnalysisReader implements ItemReader<List<Sentiment>> {
 
     private final SentimentRepository sentimentRepository;
