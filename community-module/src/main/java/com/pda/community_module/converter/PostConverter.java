@@ -79,6 +79,7 @@ public class PostConverter {
                 .comments(existingPost.getComments()) // 유지
                 .likes(existingPost.getLikes()) // 유지
                 .deleted(existingPost.getDeleted()) // 유지
+//                .createdAt(existingPost.getCreatedAt())
                 .build();
     }
 

@@ -138,6 +138,7 @@ public class PostServiceImpl implements PostService {
         }
 
         Post updatedPost = PostConverter.toPostEntity(user, editPostDTO, post, s3Service);
+        updatedPost.setCreatedAt(post.getCreatedAt());
         postRepository.save(updatedPost);
 
     }
