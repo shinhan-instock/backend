@@ -29,4 +29,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     """)
     List<Post> findTop10LikedPosts(@Param("startTime") LocalDateTime startTime,
                                    @Param("endTime") LocalDateTime endTime);
+
+
+    @Query("SELECT p FROM Post p ORDER BY p.createdAt DESC")
+    List<Post> findAllByOrderByCreatedAtDesc();
 }
