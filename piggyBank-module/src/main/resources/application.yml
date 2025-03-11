@@ -51,6 +51,11 @@ piggyBank:
   commands:
     topic:
       setMileage: stock.set-mileage-topic
+
+feign:
+  piggyBank-url: ${PIGGYBANK_URL:localhost:8082}
+  stock-url: ${STOCK_URL:localhost:8081}
+  community-url: ${COMMUNITY_URL:localhost:8080}
 #  redis:
 #    host: ${REDIS_HOST}
 #    port: ${REDIS_PORT}

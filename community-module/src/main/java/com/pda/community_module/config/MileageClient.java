@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name = "piggy-service", url = "http://localhost:8082/mileage", configuration = MileageFeignConfig.class)
+@FeignClient(name = "piggy-service", url = "${feign.piggyBank-url}", configuration = MileageFeignConfig.class)
 public interface MileageClient {
 
-    @GetMapping("")
+    @GetMapping("/mileage")
     MileageResponseDTO getMileage(@RequestHeader("Authorization") String authorizationHeader);
 
-    @PostMapping(value = "", consumes = "application/json")
+    @PostMapping(value = "/mileage", consumes = "application/json")
     void updateMileage(@RequestBody MileageRequestDTO mileageRequestDTO);
 
 }

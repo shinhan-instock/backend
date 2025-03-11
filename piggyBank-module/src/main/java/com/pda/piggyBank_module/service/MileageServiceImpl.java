@@ -39,7 +39,6 @@ public class MileageServiceImpl implements MileageService {
 
     @Override
     public MileageResponseDto getMileageByUserId(String userId) {
-        // OpenFeign을 통해 로그인용 userId(문자열)로 실제 사용자 엔티티 정보를 조회합니다.
         UserResponseDTO.UserRealPKResponseDto userResponse = userFeignClient.getUserByUserId(userId);
         Long actualUserId = userResponse.getId();
 
@@ -51,7 +50,6 @@ public class MileageServiceImpl implements MileageService {
 
     @Override
     public MileageResponseDto updateMileageByUserId(String userId, Integer updatedMileage) {
-        // OpenFeign을 통해 로그인용 userId(문자열)로 실제 사용자 엔티티 정보를 조회합니다.
         UserResponseDTO.UserRealPKResponseDto userResponse = userFeignClient.getUserByUserId(userId);
         Long actualUserId = userResponse.getId();
 
