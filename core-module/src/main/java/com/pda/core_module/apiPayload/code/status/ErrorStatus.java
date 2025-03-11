@@ -27,6 +27,9 @@ ErrorStatus implements BaseErrorCode {
     NO_FOLLOW_INFO(HttpStatus.NOT_FOUND, "USER4008", "팔로우 정보가 존재하지 않습니다"),
     ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "USER4010", "이미 팔로우한 사용자입니다."), // 새로운 에러 추가,
     STOCK_ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4011", "유저의 계좌가 존재하지않습니다."),
+    NO_CHANGE_USER_STATUS(HttpStatus.UNAUTHORIZED, "USER4012", "인플루언서는 계좌를 공개해야 합니다."),
+    NOT_GET_ACCOUNT(HttpStatus.UNAUTHORIZED, "USER4013", "계좌를 공개한 사람만 다른 사람의 계좌를 볼 수 있습니다."),
+    DO_NOT_WANT_ACCOUNT(HttpStatus.NOT_FOUND, "USER4014", "계좌가 비공개인 유저입니다."),
 
 
     // 주식 관련 응답

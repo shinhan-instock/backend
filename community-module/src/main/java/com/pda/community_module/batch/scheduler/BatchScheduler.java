@@ -23,7 +23,7 @@ public class BatchScheduler {
     public void runBatchJob() {
         try {
             JobParameters jobParameters = new JobParametersBuilder()
-                    .addString("targetTime", LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm")))
+                    .addString("targetTime", LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmmss")))
                     .toJobParameters();
 
             jobLauncher.run(batchJob, jobParameters); //
