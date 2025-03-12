@@ -4,7 +4,7 @@ metadata:
   name: be-piggy
   namespace: be-namespace
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -26,17 +26,17 @@ spec:
           - name: MY_URL
             valueFrom:
               configMapKeyRef:
-                name: be-piggy-config
+                name: piggy-config
                 key: MY_URL
           - name: MY_USERNAME
             valueFrom:
               configMapKeyRef:
-                name: be-piggy-config
+                name: piggy-config
                 key: MY_USERNAME
           - name: MY_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: be-piggy-secret
+                name: piggy-secrets
                 key: MY_PASSWORD
           - name: PORT
             value: "8082"
