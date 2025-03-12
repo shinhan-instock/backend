@@ -4,10 +4,7 @@ package com.pda.stock_module.web.controller;
 import com.pda.stock_module.domain.client.MileageClient;
 import com.pda.stock_module.service.StockQueryService;
 import com.pda.stock_module.service.StockSentimentService;
-import com.pda.stock_module.web.dto.DetailStockResponse;
-import com.pda.stock_module.web.dto.MileageResponseDTO;
-import com.pda.stock_module.web.dto.StockRequest;
-import com.pda.stock_module.web.dto.StockResponse;
+import com.pda.stock_module.web.dto.*;
 import com.pda.stock_module.web.model.StockDetailModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -60,6 +57,14 @@ public class StockController {
         stockSentimentService.addStockSentiment(stockRequestList);
         return com.pda.core_module.apiPayload.ApiResponse.onSuccess("주식 감정 저장 완료.");
     }
-
-
+    
+    @GetMapping("/chart/{stockName}")
+    @Operation(summary = "선그래프를 그리기 위해 감정지수와 종가데이터 반환", description = "감정지수와 종가데이터를 반환합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    public ResponseEntity<List<ChartResponseDTO>> getSentimentAndStockData(
+            @PathVariable String stockName) {
+        return ResponseEntity.ok(stockSentimentService.getClosingSentimentAndClosingStockData(stockName));
+    }
 }

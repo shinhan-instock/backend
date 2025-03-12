@@ -4,6 +4,8 @@ import com.pda.stock_module.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 
 @Getter
 @Setter
@@ -26,5 +28,4 @@ public class StockClosingSentiment extends BaseEntity {
 
     @Column(name = "closing_sentiment_score")
     private Long closingSentimentScore;
-
 }
