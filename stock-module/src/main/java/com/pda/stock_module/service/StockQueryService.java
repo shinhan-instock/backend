@@ -82,7 +82,9 @@ public class StockQueryService {
             if (score != null) {
                 redisTemplate.opsForZSet().incrementScore(key, stockName, 1); // stockName의 score +1
             }
-            boolean watchListAdded = communityClient.isStockInWatchList(userId, stockInfo.getStockCode());
+            boolean watchListAdded;
+            if(userId==null)watchListAdded=false;
+            else watchListAdded = communityClient.isStockInWatchList(userId, stockInfo.getStockCode());
 
             return new DetailStockResponse(
                     stockInfo.getStockName(),
