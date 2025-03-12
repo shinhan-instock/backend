@@ -14,9 +14,10 @@ public interface WatchListRepository extends JpaRepository<WatchList, Long> {
     // 기존 메서드
     List<WatchList> findByUserId(Long userId);
 
-    // ✅ 페이징 지원하는 메서드 추가
+    // 페이징 지원하는 메서드 추가
     Page<WatchList> findByUserId(Long userId, Pageable pageable);
 
     Optional<WatchList> findByUserAndStockName(User user, String stockName);
+    boolean existsByUser_UserIdAndStockCode(String userId, String stockCode);
 
 }

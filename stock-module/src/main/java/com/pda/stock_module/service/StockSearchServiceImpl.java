@@ -3,7 +3,7 @@ package com.pda.stock_module.service;
 import com.pda.core_module.apiPayload.GeneralException;
 import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import com.pda.stock_module.converter.StockSearchConverter;
-import com.pda.stock_module.domain.client.OwnStockClient;
+import com.pda.stock_module.domain.client.CommunityClient;
 import com.pda.stock_module.domain.common.RedisCommon;
 import com.pda.stock_module.web.dto.AccountResponseDTO;
 import com.pda.stock_module.web.dto.StockSearchResponseDTO;
@@ -22,7 +22,7 @@ public class StockSearchServiceImpl implements StockSearchService {
 
     private final StringRedisTemplate redisTemplate;
     private final RedisCommon redisCommon;
-    private final OwnStockClient ownStockClient;
+    private final CommunityClient communityClient;
 
     @Override
     public List<StockSearchResponseDTO.StockSearchRes> getStockData(List<String> stockNames) {
@@ -42,7 +42,7 @@ public class StockSearchServiceImpl implements StockSearchService {
 
     @Override
     public List<String> searchMyStockName(String authorizationHeader) {
-        List<AccountResponseDTO> res = ownStockClient.getMyAccount(authorizationHeader);
+        List<AccountResponseDTO> res = communityClient.getMyAccount(authorizationHeader);
 
         if (!res.isEmpty()) {
             return res.stream()
