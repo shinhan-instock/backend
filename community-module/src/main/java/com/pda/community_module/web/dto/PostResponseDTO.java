@@ -43,6 +43,7 @@ public class PostResponseDTO {
         private LocalDateTime update_at;
         boolean isLiked;
         boolean isScrapped;
+        private boolean deleted;
     }
     @Getter
     @NoArgsConstructor
