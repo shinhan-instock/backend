@@ -69,9 +69,9 @@ public class AccountServiceImpl implements AccountService{
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND)); // 사용자 존재 여부 확인
 
-        if (myAccount.getUser().getOpenAccount() == false) {
-            throw new GeneralException(ErrorStatus.NOT_GET_ACCOUNT);
-        }
+//        if (myAccount.getUser().getOpenAccount() == false) {
+//            throw new GeneralException(ErrorStatus.NOT_GET_ACCOUNT);
+//        }
 
         if (user.getIsInfluencer()) {
             Account userAccount = accountRepository.findByUserId_UserId(userId)
