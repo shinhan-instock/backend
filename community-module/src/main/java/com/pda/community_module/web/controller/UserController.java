@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -118,16 +119,25 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByUserId(userId));
     }
 
-    @PostMapping("/account")
-    public ResponseEntity<List<AccountResponseDTO>> getUsersStock(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @RequestBody AccountRequestDTO accountRequestDTO) {
-        String myUserId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
+//    @PostMapping("/account")
+//    public ResponseEntity<List<AccountResponseDTO>> getUsersStock(
+//            @RequestHeader("Authorization") String authorizationHeader,
+//            @RequestBody AccountRequestDTO accountRequestDTO) {
+//        String myUserId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
+//        String userId = accountRequestDTO.getUserId();
+//
+//        List<AccountResponseDTO> response = accountService.getAccount(myUserId, userId);
+//        return ResponseEntity.ok(response);
+//
+//    }
+
+    // SSE 스트리밍 API (POST 방식 유지)
+    @PostMapping(value = "/account/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter streamUsersStock(@RequestHeader("Authorization") String authorizationHeader,
+                                       @RequestBody AccountRequestDTO accountRequestDTO) {
+        String myUserId = authorizationHeader.replace("Bearer ", "");
         String userId = accountRequestDTO.getUserId();
-
-        List<AccountResponseDTO> response = accountService.getAccount(myUserId, userId);
-        return ResponseEntity.ok(response);
-
+        return accountService.streamUserStock(myUserId, userId);
     }
 
 
