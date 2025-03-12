@@ -12,7 +12,7 @@ public interface PostService {
 
     PostResponseDTO.getPostDTO getPostById(Long postId,String userId);
 
-    List<PostResponseDTO.toPostDTO> getMyPosts(String userid);
+    List<PostResponseDTO.getPostDTO> getMyPosts(String userid);
 
     List<PostResponseDTO.toPostDTO> getPostsByUser(String nickname);
 

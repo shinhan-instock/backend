@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface PostScrapRepository extends JpaRepository<PostScrap, Long> {
     List<PostScrap> findByUser(User user);
+
+    List<PostScrap> findAllByPostId(Long id);
 }

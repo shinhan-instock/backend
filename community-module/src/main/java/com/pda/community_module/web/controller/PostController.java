@@ -156,7 +156,7 @@ public class PostController {
 
 
     //게시글 좋아요 삭제
-    @DeleteMapping("/like/{id}")
+    @DeleteMapping("/{id}/like")
     @Operation(summary = "게시글 좋아요 삭제", description = "특정 게시글에 대한 좋아요를 삭제")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
@@ -202,7 +202,7 @@ public class PostController {
 
 
     //게시글 스크랩 삭제
-    @DeleteMapping("/scrap/{id}")
+    @DeleteMapping("{id}/scrap")
     @Operation(summary = "게시글 스크랩 삭제", description = "특정 게시글에 대한 스크랩을 삭제")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
