@@ -73,7 +73,7 @@ spec:
     stages {   
         stage ('Git Clone') {
             steps {
-                checkout scmGit(branches: [[name: 'main']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
+                checkout scmGit(branches: [[name: 'develop']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
             }
         }
 
@@ -276,7 +276,7 @@ spec:
                                 sh 'git config --global user.name "jiwonchoe12"'
                                 sh 'git checkout argocd'
                                 sh 'git pull origin argocd'
-                                sh 'git merge origin/main'
+                                sh 'git merge origin/develop'
                                 sh "sed -i 's|image: jiwonchoe/${lowerModule}:v1.*|image: jiwonchoe/${lowerModule}:v1.${BUILD_ID}|' ${module}/deployment.yaml"
                                 sh 'git add .'
                                 sh 'git commit -m "Update Docker Image Version"'
