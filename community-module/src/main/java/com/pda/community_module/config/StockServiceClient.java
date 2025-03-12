@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "stock-service", url = "http://localhost:8081/stock/search")
+@FeignClient(name = "stock-service", url = "${feign.stock-url}",
+        configuration = FeignConfig.class)
 public interface StockServiceClient {
-    @GetMapping("/data")
+    @GetMapping("/stocks/search/data")
     StockResponseDTO getStockData(@RequestParam List<String> stockNames);
 }

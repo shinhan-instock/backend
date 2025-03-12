@@ -24,7 +24,7 @@ public class WatchListController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "사용자를 찾을 수 없습니다.")
     })
-    public SseEmitter streamStockPrices(@RequestParam Long userId,
+    public SseEmitter streamStockPrices(@RequestParam String userId,
                                         @RequestParam int page,
                                         @RequestParam int size) {
         return watchListService.streamStockPrices(userId, page, size);
@@ -56,4 +56,20 @@ public class WatchListController {
         watchListService.deleteWatchList(requestDTO);
         return ApiResponse.onSuccess(null);
     }
+
+    // 관심 종목 여부 확인(openfeign 응답)
+    @GetMapping("/exists")
+    @Operation(summary = "관심종목 여부 확인", description = "사용자의 관심종목 여부를 확인합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "STOCK4001", description = "해당 주식이 관심목록에 없습니다.")
+    })
+    public Boolean checkWatchList(
+            @RequestParam String userId,
+            @RequestParam String stockCode) {
+        boolean exists = watchListService.isStockInWatchList(userId, stockCode);
+        return watchListService.isStockInWatchList(userId, stockCode);
+    }
 }
+

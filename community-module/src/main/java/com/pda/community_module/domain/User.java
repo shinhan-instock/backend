@@ -11,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -33,12 +34,17 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 30)
     private String nickname;
 
-    @Column(length = 50)
-    private String imageUrl;
+//    @Column(length = 50)
+//    private String imageUrl;
 
     @Column(length = 255)
     private String introduction;
 
+    @Builder.Default
+    private Boolean openAccount = true;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private File file;
 
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
     private List<UserFollows> followingList;
@@ -63,6 +69,10 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments;
+
+    @Column(name = "is_influencer", columnDefinition = "TINYINT(1)")
+    private Boolean isInfluencer;
+
 
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 //    private List<Sentiment> sentiments;

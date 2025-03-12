@@ -2,10 +2,14 @@ package com.pda.stock_module.service;
 
 
 
-import com.pda.stock_module.domain.common.Ranking;
+import com.pda.stock_module.domain.Ranking;
+import com.pda.stock_module.domain.common.RedisCommon;
 import com.pda.stock_module.repository.EmitterRepository;
 import com.pda.stock_module.repository.RankingRepository;
+import com.pda.stock_module.web.dto.StockPopularRankResponse;
 import com.pda.stock_module.web.dto.StockRankResponse;
+import com.pda.stock_module.web.model.StockDetailModel;
+import com.pda.stock_module.web.model.StockPopularModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,13 +18,13 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RankingListService {
     private final RankingRepository rankingRepository;
     private final EmitterRepository emitterRepository;
+    private final RedisCommon redisCommon;
     // SSE 연결 설정
     public SseEmitter subscribeToStockUpdates() {
         String id = "stock_updates_" + System.currentTimeMillis();
@@ -71,6 +75,16 @@ public class RankingListService {
         );
     }
 
+    private StockPopularRankResponse convertToStockResponseByModel(StockPopularModel stockPopularModel) {
+        return new StockPopularRankResponse(
+                stockPopularModel.getStockCode(),
+                stockPopularModel.getStockName(),
+                stockPopularModel.getPrice() != null ? stockPopularModel.getPrice() : 0L,
+                stockPopularModel.getPriceChange(),
+                stockPopularModel.getScore()
+        );
+    }
+
     public List<StockRankResponse> getTop20ByFluctuation() {
         return rankingRepository.findTop20ByFluctuationRank()
                 .stream()
@@ -79,4 +93,11 @@ public class RankingListService {
                 .collect(Collectors.toList());
     }
 
+    public List<StockPopularRankResponse> getTop10ByPopularity() {
+        return redisCommon.getStockByPopularity()
+                .stream()
+                .map(this::convertToStockResponseByModel)
+                .collect(Collectors.toList());
+
+    }
 }

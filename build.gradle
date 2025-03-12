@@ -46,6 +46,12 @@ allprojects {
 		//openfeign
 		implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 		implementation 'io.github.openfeign:feign-jackson:13.3'
+		//batch
+		implementation 'org.springframework.boot:spring-boot-starter-batch'
+		testImplementation 'org.springframework.batch:spring-batch-test'
+		//kafka
+		implementation 'org.springframework.kafka:spring-kafka'
+		testImplementation 'org.springframework.kafka:spring-kafka-test'
 	}
 
 
@@ -78,6 +84,10 @@ project(':community-module') {
 		implementation project(':core-module')
 		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 		implementation 'com.mysql:mysql-connector-j'
+		//s3 설정
+		implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+		implementation platform('software.amazon.awssdk:bom:2.20.56')
+		implementation 'software.amazon.awssdk:s3'
 	}
 }
 project(':piggyBank-module') {
@@ -93,6 +103,9 @@ project(':stock-module') {
 		implementation 'com.google.code.gson:gson'
 		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 		implementation 'com.mysql:mysql-connector-j'
+		implementation 'org.seleniumhq.selenium:selenium-java'
+		implementation 'org.springframework.boot:spring-boot-starter-batch'
+
 
 	}
 }

@@ -10,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -29,8 +30,11 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private Boolean deleted;
 
-    @Column(length = 255)
-    private String imageUrl;
+//    @Column(length = 255)
+//    private String imageUrl;
+
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private File file;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -50,4 +54,11 @@ public class Post extends BaseEntity {
 
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private PostCount postCount;
+
+
+    public void markAsDeleted() {
+        this.deleted = true;
+    }
+
+
 }

@@ -28,4 +28,9 @@ public class PostCount extends BaseEntity {
     @Column(nullable = false)
     @Builder.Default
     private Long commentCount=0L;
+
+    // commentCount 업데이트 메서드
+    public void incrementCommentCount() {
+        this.commentCount = this.commentCount + 1;
+    }
 }

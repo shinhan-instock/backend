@@ -1,3 +1,4 @@
+#piggybank module
 server:
   port: ${PORT}
 spring:
@@ -17,12 +18,44 @@ spring:
         format_sql: true
         use_sql_comments: true
         hbm2ddl:
-          auto: create
+          auto: update
         default_batch_fetch_size: 1000
   servlet:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+
+  kafka:
+    producer:
+      bootstrap-servers: ${SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS:localhost:9092,localhost:9094}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 10
+      properties:
+        retry.backoff.ms: 1000
+        delivery.timeout.ms: 12000
+        linger.ms: 0
+        request.timeout.ms: 3000
+        max.in.flight.requests.per.connection: 5
+        enable.idempotence: true
+    consumer:
+      bootstrap-servers: ${SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS:localhost:9092,localhost:9094}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: piggyBank-group
+      properties:
+        spring.json.trusted.packages: "*"
+
+piggyBank:
+  commands:
+    topic:
+      setMileage: stock.set-mileage-topic
+
+feign:
+  piggyBank-url: ${PIGGYBANK_URL:localhost:8082}
+  stock-url: ${STOCK_URL:localhost:8081}
+  community-url: ${COMMUNITY_URL:localhost:8080}
 #  redis:
 #    host: ${REDIS_HOST}
 #    port: ${REDIS_PORT}

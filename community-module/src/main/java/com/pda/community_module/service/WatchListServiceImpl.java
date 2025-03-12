@@ -34,13 +34,14 @@ public class WatchListServiceImpl implements WatchListService {
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public SseEmitter streamStockPrices(Long userId, int page, int size) {
+    public SseEmitter streamStockPrices(String userId, int page, int size) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             try {
                 // 관심종목을 페이징하여 가져옴
-                Page<WatchList> watchListsPage = watchListRepository.findByUserId(userId, PageRequest.of(page, size));
+                User user = userRepository.findByUserId(userId).orElseThrow(()->new GeneralException(ErrorStatus.USER_NOT_FOUND));
+                Page<WatchList> watchListsPage = watchListRepository.findByUserId(user.getId(), PageRequest.of(page, size));
                 List<String> stockNames = watchListsPage.getContent().stream()
                         .map(WatchList::getStockName)
                         .collect(Collectors.toList());
@@ -66,16 +67,16 @@ public class WatchListServiceImpl implements WatchListService {
             } catch (Exception e) {
                 emitter.completeWithError(e);
             }
-        }, 0, 3, TimeUnit.SECONDS); // 3초마다 갱신
+        }, 0, 3, TimeUnit.SECONDS); // 3초 -> 5초마다 갱신으로 수정함
 
         return emitter;
     }
 
     @Transactional
     @Override
-    public void addWatchList(Long userId, String stockCode, String stockName) {
+    public void addWatchList(String userId, String stockCode, String stockName) {
         // 사용자 확인
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         // 관심 종목 등록 (Converter 사용)
@@ -86,12 +87,18 @@ public class WatchListServiceImpl implements WatchListService {
     @Override
     @Transactional
     public void deleteWatchList(WatchListRequestDTO.DeleteWatchListDTO requestDTO) {
-        User user = userRepository.findById(requestDTO.getUserId())
+        User user = userRepository.findByUserId(requestDTO.getUserId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         WatchList watchList = watchListRepository.findByUserAndStockName(user, requestDTO.getStockName())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.WATCHLIST_NOT_FOUND));
 
         watchListRepository.delete(watchList);
+    }
+
+    @Override
+    public boolean isStockInWatchList(String userId, String stockCode) {
+        return watchListRepository.existsByUser_UserIdAndStockCode(userId, stockCode);
+
     }
 }

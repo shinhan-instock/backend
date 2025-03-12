@@ -5,4 +5,7 @@ public record StockRankResponse (
         String stockName,
         Long price,
         String priceChangeRate
-) {}
+
+) {
+
+}

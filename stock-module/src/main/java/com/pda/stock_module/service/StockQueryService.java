@@ -1,19 +1,23 @@
 package com.pda.stock_module.service;
 
+import com.pda.core_module.apiPayload.GeneralException;
+import com.pda.core_module.apiPayload.code.status.ErrorStatus;
+import com.pda.stock_module.domain.Company;
+import com.pda.stock_module.domain.client.CommunityClient;
 import com.pda.stock_module.domain.common.RedisCommon;
+import com.pda.stock_module.repository.StockQueryRepository;
 import com.pda.stock_module.web.dto.DetailStockResponse;
-import com.pda.stock_module.web.dto.StockResponse;
 import com.pda.stock_module.web.dto.TopStockResponse;
 import com.pda.stock_module.web.model.ListModel;
 import com.pda.stock_module.web.model.StockDetailModel;
-import com.pda.stock_module.web.model.StockListModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,6 +25,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StockQueryService {
     private final RedisCommon redisCommon;
+    private final StringRedisTemplate redisTemplate;
+    private final CommunityClient communityClient;
+    private final StockQueryRepository stockQueryRepository;
 
     public List<TopStockResponse> getTop10ByTheme(String stockName) {
         try {
@@ -59,24 +66,45 @@ public class StockQueryService {
     }
 
     // 주식 상세 정보 조회
-    public DetailStockResponse getStockDetail(String stockName) {
+    public DetailStockResponse getStockDetail(String userId, String stockName) {
         try {
             StockDetailModel stockInfo = redisCommon.getEntriesFromHash(stockName, StockDetailModel.class);
 
-            if (stockInfo == null) {
-                return null;
+            if (stockInfo.getStockCode() == null) {
+                throw new GeneralException(ErrorStatus.STOCK_NOT_FOUND); // ✅ 서비스에서 예외 발생
             }
+
+            String key = "stocks:popular";
+
+            Company company = stockQueryRepository.findByStockName(stockName);
+            Double score = redisTemplate.opsForZSet().score(key, stockName);
+
+            if (score != null) {
+                redisTemplate.opsForZSet().incrementScore(key, stockName, 1); // stockName의 score +1
+            }
+            boolean watchListAdded;
+            if(userId==null)watchListAdded=false;
+            else watchListAdded = communityClient.isStockInWatchList(userId, stockInfo.getStockCode());
 
             return new DetailStockResponse(
                     stockInfo.getStockName(),
+                    stockInfo.getStockCode(),
                     stockInfo.getPrice(),
-                    stockInfo.getPriceChange()
+                    stockInfo.getPriceChange(),
+                    company.getDescription(),
+                    watchListAdded
+
             );
+
+
         } catch (Exception e) {
             System.err.println("Error while fetching stock details: " + e.getMessage());
-            return null;
+            throw e;
         }
     }
 
-
+    // 보유 마일리지에 해당하는 주식 시가총액 순 top10 가져오기.
+    public List<StockDetailModel> getStockByMileage(Long mileage) {
+        return redisCommon.getStockByMileage(mileage);
+    }
 }

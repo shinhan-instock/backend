@@ -9,12 +9,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+@SpringBootApplication
 @EnableScheduling
 @EnableFeignClients
-//@EnableJpaAuditing
+@EnableJpaAuditing
 @ComponentScan(basePackages = {"com.pda.piggyBank_module", "com.pda.core_module"})
-
 public class PiggyBankModuleApplication {
 
 	public static void main(String[] args) {

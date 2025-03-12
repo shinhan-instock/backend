@@ -51,7 +51,6 @@ public class FetchStockThemeService {
                         List<Map<String, Object>> includedStocks = (List<Map<String, Object>>) sector.get("includedStocks");
 
                         int size = includedStocks.size();
-                        System.out.println("size = " + size);
                         List<Map<String, Object>> maxTop5 = new ArrayList<>(includedStocks.subList(0, Math.min(6, size)));
                         List<Map<String, Object>> minTop5 = new ArrayList<>(includedStocks.subList(Math.max(size - 5, 0), size));
 
