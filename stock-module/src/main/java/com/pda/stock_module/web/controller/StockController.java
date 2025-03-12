@@ -31,11 +31,15 @@ public class StockController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
     public ResponseEntity<DetailStockResponse> getStockDetail(
-            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestHeader(value="Authorization", required = false) String authorizationHeader,
             @PathVariable String stockName
     ) {
-        String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
-
+        String userId;
+        if (authorizationHeader==null) {
+            userId = null;
+        } else {
+            userId = authorizationHeader.replace("Bearer ", "");
+        }
         return ResponseEntity.ok(stockQueryService.getStockDetail(userId,stockName));
     }
 
