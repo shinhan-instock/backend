@@ -93,24 +93,24 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponseDTO.toPostDTO> getMyPosts(String userid) {
+    public List<PostResponseDTO.getPostDTO> getMyPosts(String userid) {
         User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         List<Post> posts = postRepository.findAllByUserId(user.getId());
-        return PostConverter.toPostListDto(posts);
+        return PostConverter.getPostListDto(posts,userid);
     }
 
     @Override
-    public List<PostResponseDTO.toPostDTO> getPostsByUser(String nickname) {
+    public List<PostResponseDTO.getPostDTO> getPostsByUser(String nickname, String userid) {
         User user =  userRepository.findByNickname(nickname).orElseThrow(()->new GeneralException(ErrorStatus.USER_NOT_FOUND));
         List<Post> posts = postRepository.findAllByUserId(user.getId());
 
-        return PostConverter.toPostListDto(posts);
+        return PostConverter.getPostListDto(posts, userid);
     }
 
     @Override
-    public List<PostResponseDTO.toPostDTO> getPostsByStock(String name) {
+    public List<PostResponseDTO.getPostDTO> getPostsByStock(String name, String userid) {
         List<Post> posts = postRepository.findAllByHashtag(name);
-        return PostConverter.toPostListDto(posts);
+        return  PostConverter.getPostListDto(posts, userid);
     }
 
     @Transactional
@@ -153,11 +153,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deleteLikes(String userid, Long id) {
         User user = userRepository.findByUserId(userid).orElseThrow(()->new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        PostLike postLike = postLikeRepository.findById(id).orElseThrow(()->new GeneralException(ErrorStatus._BAD_REQUEST));
-        if (!postLike.getUser().getUserId().equals(user.getUserId())) {
-            throw new GeneralException(ErrorStatus._FORBIDDEN);
-        }
-        postLikeRepository.deleteById(id);
+        List<PostLike> postLikes  = postLikeRepository.findAllByPostId(id);
+        PostLike postLikeToDelete = postLikes.stream()
+                .filter(postLike -> postLike.getUser().getUserId().equals(user.getUserId()))
+                .findFirst()
+                .orElseThrow(() -> new GeneralException(ErrorStatus._FORBIDDEN));
+        postLikeRepository.delete(postLikeToDelete);
 
     }
 
@@ -176,11 +177,14 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deleteScrap(String userid, Long id) {
         User user = userRepository.findByUserId(userid).orElseThrow(()->new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        PostScrap postScrap = postScrapRepository.findById(id).orElseThrow(()->new GeneralException(ErrorStatus._BAD_REQUEST));
-        if (!postScrap.getUser().getUserId().equals(user.getUserId())) {
-            throw new GeneralException(ErrorStatus._FORBIDDEN);
-        }
+
         postScrapRepository.deleteById(id);
+        List<PostScrap> postScraps  = postScrapRepository.findAllByPostId(id);
+        PostScrap postScrapToDelete = postScraps.stream()
+                .filter(postScrap -> postScrap.getUser().getUserId().equals(user.getUserId()))
+                .findFirst()
+                .orElseThrow(() -> new GeneralException(ErrorStatus._FORBIDDEN));
+        postScrapRepository.delete(postScrapToDelete);
     }
 
     @Override

@@ -23,6 +23,7 @@ public class PostResponseDTO {
         private int comments;
         private LocalDateTime created_at;
         private LocalDateTime update_at;
+
     }
 
     @Getter
