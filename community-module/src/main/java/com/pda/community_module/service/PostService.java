@@ -10,13 +10,13 @@ public interface PostService {
 
     List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, String userid);
 
-    PostResponseDTO.getPostDTO getPostById(Long postId);
+    PostResponseDTO.getPostDTO getPostById(Long postId,String userId);
 
-    List<PostResponseDTO.getPostDTO> getMyPosts(String userid);
+    List<PostResponseDTO.toPostDTO> getMyPosts(String userid);
 
-    List<PostResponseDTO.getPostDTO> getPostsByUser(String nickname);
+    List<PostResponseDTO.toPostDTO> getPostsByUser(String nickname);
 
-    List<PostResponseDTO.getPostDTO> getPostsByStock(String name);
+    List<PostResponseDTO.toPostDTO> getPostsByStock(String name);
 
     void deletePost(String userid, Long id);
 

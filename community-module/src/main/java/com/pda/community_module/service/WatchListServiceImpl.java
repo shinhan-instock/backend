@@ -67,7 +67,7 @@ public class WatchListServiceImpl implements WatchListService {
             } catch (Exception e) {
                 emitter.completeWithError(e);
             }
-        }, 0, 3, TimeUnit.SECONDS); // 3초마다 갱신
+        }, 0, 3, TimeUnit.SECONDS); // 3초 -> 5초마다 갱신으로 수정함
 
         return emitter;
     }
@@ -94,5 +94,11 @@ public class WatchListServiceImpl implements WatchListService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.WATCHLIST_NOT_FOUND));
 
         watchListRepository.delete(watchList);
+    }
+
+    @Override
+    public boolean isStockInWatchList(String userId, String stockCode) {
+        return watchListRepository.existsByUser_UserIdAndStockCode(userId, stockCode);
+
     }
 }

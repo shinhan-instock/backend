@@ -40,6 +40,9 @@ public class User extends BaseEntity {
     @Column(length = 255)
     private String introduction;
 
+    @Builder.Default
+    private Boolean openAccount = true;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private File file;
 

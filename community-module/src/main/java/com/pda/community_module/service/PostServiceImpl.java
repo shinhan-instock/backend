@@ -1,7 +1,6 @@
 package com.pda.community_module.service;
 
 import com.pda.community_module.converter.PostConverter;
-import com.pda.community_module.converter.WatchListConverter;
 import com.pda.community_module.domain.*;
 import com.pda.community_module.domain.mapping.PostLike;
 import com.pda.community_module.domain.mapping.PostScrap;
@@ -12,12 +11,10 @@ import com.pda.core_module.apiPayload.GeneralException;
 import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import com.pda.core_module.events.CheckStockEvent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,14 +46,14 @@ public class PostServiceImpl implements PostService {
         // userid가 null일 경우 팔로잉, 스크랩한 글만 빈 리스트 반환
         if (userid == null) {
             if (popular) {
-                // 인기 게시글 (좋아요 많은 순)
+                // 인기 게시글 ( 좋아요 많은 순)
                 posts = postRepository.findAllByOrderByLikesDesc();
             } else if (scrap || following) {
                 // 팔로잉한 글이나 스크랩한 글일 때 빈 리스트 반환
                 posts = new ArrayList<>();
             } else {
                 // 모든 게시글 (최신순)
-                posts = postRepository.findAll();
+                posts = postRepository.findAllByOrderByCreatedAtDesc();
             }
         } else {
             // userid가 null이 아닌 경우, 정상적으로 사용자 정보 조회
@@ -80,30 +77,30 @@ public class PostServiceImpl implements PostService {
                         .collect(Collectors.toList());
             } else {
                 // 모든 게시글 (최신순)
-                posts = postRepository.findAll();
+                posts = postRepository.findAllByOrderByCreatedAtDesc();
             }
         }
 
-        return PostConverter.toPostListDto(posts);
+        return PostConverter.getPostListDto(posts,userid);
     }
 
 
     @Override
-    public PostResponseDTO.getPostDTO getPostById(Long postId) {
+    public PostResponseDTO.getPostDTO getPostById(Long postId,String userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
-        return PostConverter.toPostDto(post);
+        return PostConverter.toPostDto(post,userId);
     }
 
     @Override
-    public List<PostResponseDTO.getPostDTO> getMyPosts(String userid) {
+    public List<PostResponseDTO.toPostDTO> getMyPosts(String userid) {
         User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         List<Post> posts = postRepository.findAllByUserId(user.getId());
         return PostConverter.toPostListDto(posts);
     }
 
     @Override
-    public List<PostResponseDTO.getPostDTO> getPostsByUser(String nickname) {
+    public List<PostResponseDTO.toPostDTO> getPostsByUser(String nickname) {
         User user =  userRepository.findByNickname(nickname).orElseThrow(()->new GeneralException(ErrorStatus.USER_NOT_FOUND));
         List<Post> posts = postRepository.findAllByUserId(user.getId());
 
@@ -111,7 +108,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponseDTO.getPostDTO> getPostsByStock(String name) {
+    public List<PostResponseDTO.toPostDTO> getPostsByStock(String name) {
         List<Post> posts = postRepository.findAllByHashtag(name);
         return PostConverter.toPostListDto(posts);
     }
@@ -138,6 +135,7 @@ public class PostServiceImpl implements PostService {
         }
 
         Post updatedPost = PostConverter.toPostEntity(user, editPostDTO, post, s3Service);
+        updatedPost.setCreatedAt(post.getCreatedAt());
         postRepository.save(updatedPost);
 
     }

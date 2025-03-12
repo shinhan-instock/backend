@@ -31,7 +31,7 @@ spring:
       max-request-size: 5MB
   kafka:
     producer:
-      bootstrap-servers: "localhost:9092,localhost:9094"
+      bootstrap-servers: ${SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS:localhost:9092,localhost:9094}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       acks: all
@@ -44,7 +44,7 @@ spring:
         max.in.flight.requests.per.connection: 5
         enable.idempotence: true
     consumer:
-      bootstrap-servers: "localhost:9092,localhost:9094"
+      bootstrap-servers: ${SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS:localhost:9092,localhost:9094}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       group-id: community-group
@@ -86,3 +86,8 @@ cloud:
 openai:
   api:
     key: ${OPENAI_KEY}
+
+feign:
+  piggyBank-url: ${PIGGYBANK_URL:localhost:8082}
+  stock-url: ${STOCK_URL:localhost:8081}
+  community-url: ${COMMUNITY_URL:localhost:8080}

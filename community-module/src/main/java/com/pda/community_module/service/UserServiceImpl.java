@@ -136,4 +136,17 @@ public class UserServiceImpl implements UserService{
         return UserConverter.toUserResponseDTOList(users);
     }
 
+    @Override
+    public void changeAccountState(String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        if (user.getIsInfluencer()) {
+            throw new GeneralException(ErrorStatus.NO_CHANGE_USER_STATUS);
+        }
+
+        user.setOpenAccount(!user.getOpenAccount());
+
+        userRepository.save(user);
+    }
 }

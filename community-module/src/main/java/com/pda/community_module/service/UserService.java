@@ -19,4 +19,6 @@ public interface UserService {
     UserResponseDTO.UserRealPKResponseDto getUserByUserId(String userId);
 
     List<UserResponseDTO.getUserDTO> getInfluencerList();
+
+    void changeAccountState(String userId);
 }

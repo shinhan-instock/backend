@@ -7,5 +7,6 @@ public interface WatchListService {
     SseEmitter streamStockPrices(String userId, int page, int size);
     void addWatchList(String userId, String stockCode, String stockName);
     void deleteWatchList(WatchListRequestDTO.DeleteWatchListDTO requestDTO);
+    boolean isStockInWatchList(String userId, String stockCode);
 
 }
