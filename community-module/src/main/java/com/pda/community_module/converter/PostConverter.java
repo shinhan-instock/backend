@@ -50,7 +50,8 @@ public class PostConverter {
                         (userId != null) && post.getLikes().stream()
                                 .anyMatch(like -> like.getUser().getUserId().equals(userId)),
                         (userId != null) && post.getScraps().stream()
-                                .anyMatch(scrap -> scrap.getUser().getUserId().equals(userId))
+                                .anyMatch(scrap -> scrap.getUser().getUserId().equals(userId)),
+                        post.getDeleted()
                 ))
                 .collect(Collectors.toList());
     }
@@ -72,8 +73,8 @@ public class PostConverter {
                 (userId != null) && post.getLikes().stream()
                         .anyMatch(like -> like.getUser().getUserId().equals(userId)),
                 (userId != null) && post.getScraps().stream()
-                        .anyMatch(scrap -> scrap.getUser().getUserId().equals(userId))
-
+                        .anyMatch(scrap -> scrap.getUser().getUserId().equals(userId)),
+                post.getDeleted()
         );
     }
 
