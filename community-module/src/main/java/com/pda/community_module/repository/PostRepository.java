@@ -11,7 +11,14 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    @Query("""
+    SELECT p FROM Post p
+    LEFT JOIN p.likes l
+    GROUP BY p
+    ORDER BY COUNT(l) DESC
+""")
     List<Post> findAllByOrderByLikesDesc();
+
 
     List<Post> findAllByUserIdIn(List<Long> userIds);
 
