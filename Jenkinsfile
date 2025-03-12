@@ -73,7 +73,7 @@ spec:
     stages {   
         stage ('Git Clone') {
             steps {
-                checkout scmGit(branches: [[name: 'main']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
+                checkout scmGit(branches: [[name: 'develop']], userRemoteConfigs: [[credentialsId: 'jiwonchoe12', url: 'https://github.com/shinhan-instock/backend.git']])
             }
         }
 
