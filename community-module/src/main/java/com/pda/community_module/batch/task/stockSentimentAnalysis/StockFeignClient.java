@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "stockSentiment-service", url = "http://localhost:8081/stocks", configuration = StockFeignConfig.class)
+@FeignClient(name = "stockSentiment-service", url = "${feign.stock-url}", configuration = StockFeignConfig.class)
 public interface StockFeignClient {
-    @PostMapping(value = "/sentiment", consumes = "application/json")
+    @PostMapping(value = "/stocks/sentiment", consumes = "application/json")
     @Headers("Content-Type: application/json")  // JSON 요청으로 명시
     void addStockSentiment(@RequestBody List<StockRequest> stockRequestList);
 }
