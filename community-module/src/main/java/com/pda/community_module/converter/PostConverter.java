@@ -47,9 +47,9 @@ public class PostConverter {
                         post.getComments().size(),
                         post.getCreatedAt(),
                         post.getUpdateAt(),
-                        post.getLikes().stream()
+                        (userId != null) && post.getLikes().stream()
                                 .anyMatch(like -> like.getUser().getUserId().equals(userId)),
-                        post.getScraps().stream()
+                        (userId != null) && post.getScraps().stream()
                                 .anyMatch(scrap -> scrap.getUser().getUserId().equals(userId))
                 ))
                 .collect(Collectors.toList());
@@ -57,8 +57,8 @@ public class PostConverter {
 
 
 
-    public static PostResponseDTO.toPostDTO toPostDto(Post post) {
-        return new PostResponseDTO.toPostDTO(
+    public static PostResponseDTO.getPostDTO toPostDto(Post post, String userId) {
+        return new PostResponseDTO.getPostDTO(
                 post.getId(),
                 post.getUser().getNickname(),
                 (post.getUser().getFile() != null ? post.getUser().getFile().getUrl() : null),
@@ -68,7 +68,11 @@ public class PostConverter {
                 (post.getFile() != null ? post.getFile().getUrl() : null),
                 post.getLikes().size(),
                 post.getComments().size(), post.getCreatedAt(),
-                post.getUpdateAt()
+                post.getUpdateAt(),
+                (userId != null) && post.getLikes().stream()
+                        .anyMatch(like -> like.getUser().getUserId().equals(userId)),
+                (userId != null) && post.getScraps().stream()
+                        .anyMatch(scrap -> scrap.getUser().getUserId().equals(userId))
 
         );
     }

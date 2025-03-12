@@ -86,10 +86,10 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public PostResponseDTO.toPostDTO getPostById(Long postId) {
+    public PostResponseDTO.getPostDTO getPostById(Long postId,String userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
-        return PostConverter.toPostDto(post);
+        return PostConverter.toPostDto(post,userId);
     }
 
     @Override

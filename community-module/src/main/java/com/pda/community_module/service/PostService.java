@@ -10,7 +10,7 @@ public interface PostService {
 
     List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, String userid);
 
-    PostResponseDTO.toPostDTO getPostById(Long postId);
+    PostResponseDTO.getPostDTO getPostById(Long postId,String userId);
 
     List<PostResponseDTO.toPostDTO> getMyPosts(String userid);
 
