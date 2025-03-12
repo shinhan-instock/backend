@@ -55,8 +55,15 @@ public class PostController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "사용자를 찾을 수 없습니다.")
     })
-    public ApiResponse<?> getPostsById( @PathVariable Long postId){
-        return  ApiResponse.onSuccess(postService.getPostById(postId));
+    public ApiResponse<?> getPostsById( @PathVariable Long postId,
+                                        @RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+        String userid;
+        if (authorizationHeader==null) {
+            userid = null;
+        } else {
+            userid = authorizationHeader.replace("Bearer ", "");
+        }
+        return  ApiResponse.onSuccess(postService.getPostById(postId,userid));
 
     }
 
