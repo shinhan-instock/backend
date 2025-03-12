@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: be-piggy
-        image: jiwonchoe/piggybank-module:v1.108
+        image: jiwonchoe/piggybank-module:v1.5
         imagePullPolicy: Always  # ⭐️ 항상 최신 이미지로 업데이트
         env:
           - name: MY_URL
