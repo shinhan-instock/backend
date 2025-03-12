@@ -7,9 +7,11 @@ import com.pda.community_module.web.dto.MileageResponseDTO;
 import com.pda.community_module.web.dto.StockRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.parser.Authorization;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -22,12 +24,19 @@ public class AccountController {
     private final MileageClient mileageClient;
 
 
-    @GetMapping("")
-    public ResponseEntity<List<AccountResponseDTO>> getMyAccount(@RequestHeader("Authorization") String authorizationHeader) {
-        String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
-        List<AccountResponseDTO> response = accountService.getMyAccount(userId);
+//    @GetMapping("")
+//    public ResponseEntity<List<AccountResponseDTO>> getMyAccount(@RequestHeader("Authorization") String authorizationHeader) {
+//        String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
+//        List<AccountResponseDTO> response = accountService.getMyAccount(userId);
+//
+//        return ResponseEntity.ok(response);
+//    }
 
-        return ResponseEntity.ok(response);
+    // SSE 스트리밍 API (REST API 제거)
+    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter streamMyAccount(@RequestHeader("Authorization") String authorizationHeader) {
+        String userId = authorizationHeader.replace("Bearer ", "");
+        return accountService.streamMyAccount(userId);
     }
 
     @PostMapping("")
