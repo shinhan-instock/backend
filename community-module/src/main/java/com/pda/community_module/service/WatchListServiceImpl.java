@@ -95,4 +95,10 @@ public class WatchListServiceImpl implements WatchListService {
 
         watchListRepository.delete(watchList);
     }
+
+    @Override
+    public boolean isStockInWatchList(String userId, String stockCode) {
+        return watchListRepository.existsByUser_UserIdAndStockCode(userId, stockCode);
+
+    }
 }

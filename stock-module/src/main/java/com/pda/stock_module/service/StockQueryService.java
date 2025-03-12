@@ -3,6 +3,7 @@ package com.pda.stock_module.service;
 import com.pda.core_module.apiPayload.GeneralException;
 import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import com.pda.stock_module.domain.Company;
+import com.pda.stock_module.domain.client.CommunityClient;
 import com.pda.stock_module.domain.common.RedisCommon;
 import com.pda.stock_module.repository.StockQueryRepository;
 import com.pda.stock_module.web.dto.DetailStockResponse;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 public class StockQueryService {
     private final RedisCommon redisCommon;
     private final StringRedisTemplate redisTemplate;
-
+    private final CommunityClient communityClient;
     private final StockQueryRepository stockQueryRepository;
 
     public List<TopStockResponse> getTop10ByTheme(String stockName) {
@@ -64,7 +65,7 @@ public class StockQueryService {
     }
 
     // 주식 상세 정보 조회
-    public DetailStockResponse getStockDetail(String stockName) {
+    public DetailStockResponse getStockDetail(String userId, String stockName) {
         try {
             StockDetailModel stockInfo = redisCommon.getEntriesFromHash(stockName, StockDetailModel.class);
 
@@ -80,13 +81,16 @@ public class StockQueryService {
             if (score != null) {
                 redisTemplate.opsForZSet().incrementScore(key, stockName, 1); // stockName의 score +1
             }
+            boolean watchListAdded = communityClient.isStockInWatchList(userId, stockInfo.getStockCode());
 
             return new DetailStockResponse(
                     stockInfo.getStockName(),
                     stockInfo.getStockCode(),
                     stockInfo.getPrice(),
                     stockInfo.getPriceChange(),
-                    company.getDescription()
+                    company.getDescription(),
+                    watchListAdded
+
             );
 
 
