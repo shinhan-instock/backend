@@ -23,4 +23,23 @@ spec:
         image: jiwonchoe/community-module:v1.2
         imagePullPolicy: Always 
         ports:
-        - containerPort: 80
+        - containerPort: 8088
+        envFrom:
+          - configMapRef:
+              name: community-configmap
+          - secretRef:
+              name: community-secrets
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: "prod"
+          # Sentinel 모드를 위한 프로퍼티 (대문자 + 언더스코어 사용)
+          - name: SPRING_REDIS_SENTINEL_MASTER
+            value: "mymaster"
+          - name: SPRING_REDIS_SENTINEL_NODES
+            value: "my-redis-node-0.my-redis-headless.db-namespace.svc.cluster.local:26379,my-redis-node-1.my-redis-headless.db-namespace.svc.cluster.local:26379"
+          # Redis 비밀번호는 Secret에서 가져옵니다.
+          - name: SPRING_REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: my-redis
+                key: redis-password
