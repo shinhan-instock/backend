@@ -49,7 +49,7 @@ public class PostServiceImpl implements PostService {
         // userid가 null일 경우 팔로잉, 스크랩한 글만 빈 리스트 반환
         if (userid == null) {
             if (popular) {
-                // 인기 게시글 (좋아요 많은 순)
+                // 인기 게시글 ( 좋아요 많은 순)
                 posts = postRepository.findAllByOrderByLikesDesc();
             } else if (scrap || following) {
                 // 팔로잉한 글이나 스크랩한 글일 때 빈 리스트 반환
