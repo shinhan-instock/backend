@@ -15,6 +15,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,5 +101,4 @@ public class StockQueryService {
     public List<StockDetailModel> getStockByMileage(Long mileage) {
         return redisCommon.getStockByMileage(mileage);
     }
-
 }
