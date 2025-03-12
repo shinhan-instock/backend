@@ -30,6 +30,7 @@ public class RedisSentinelConfig {
     @Value("${spring.redis.password}")
     private String password;
 
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration().master(sentinelMaster);

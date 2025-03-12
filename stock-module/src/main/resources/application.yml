@@ -2,6 +2,7 @@
 server:
   profiles: local
   port: 8081
+
 spring:
   batch:
     jdbc:

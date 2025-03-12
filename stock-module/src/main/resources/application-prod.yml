@@ -2,6 +2,7 @@
 server:
   profiles: prod
   port: 8081
+
 spring:
   batch:
     jdbc:
