@@ -3,22 +3,20 @@ package com.pda.community_module.converter;
 import com.pda.community_module.domain.File;
 import com.pda.community_module.domain.Post;
 import com.pda.community_module.domain.User;
-import com.pda.community_module.domain.WatchList;
 import com.pda.community_module.domain.mapping.PostLike;
 import com.pda.community_module.domain.mapping.PostScrap;
 import com.pda.community_module.service.S3Service;
 import com.pda.community_module.web.dto.PostRequestDTO;
 import com.pda.community_module.web.dto.PostResponseDTO;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class PostConverter {
-    public static List<PostResponseDTO.getPostDTO> toPostListDto(List<Post> posts) {
+    public static List<PostResponseDTO.toPostDTO> toPostListDto(List<Post> posts) {
         return posts.stream()
-                .sorted(Comparator.comparing(Post::getCreatedAt).reversed()) // 최신순 정렬
-                .map(post -> new PostResponseDTO.getPostDTO(
+//                .sorted(Comparator.comparing(Post::getCreatedAt).reversed()) // 최신순 정렬
+                .map(post -> new PostResponseDTO.toPostDTO(
                         post.getId(),
                         post.getUser().getNickname(),
                         (post.getUser().getFile() != null ? post.getUser().getFile().getUrl() : null),
@@ -34,9 +32,33 @@ public class PostConverter {
                 .collect(Collectors.toList());
     }
 
+    public static List<PostResponseDTO.getPostDTO> getPostListDto(List<Post> posts, String userId) {
+        return posts.stream()
+//                .sorted(Comparator.comparing(Post::getCreatedAt).reversed()) // 최신순 정렬
+                .map(post -> new PostResponseDTO.getPostDTO(
+                        post.getId(),
+                        post.getUser().getNickname(),
+                        (post.getUser().getFile() != null ? post.getUser().getFile().getUrl() : null),
+                        post.getContent(),
+                        post.getHashtag(),
+                        post.getSentiment() != null ? post.getSentiment().getSentimentScore() : 50,
+                        post.getFile() != null ? post.getFile().getUrl() : null,
+                        post.getLikes().size(),
+                        post.getComments().size(),
+                        post.getCreatedAt(),
+                        post.getUpdateAt(),
+                        post.getLikes().stream()
+                                .anyMatch(like -> like.getUser().getUserId().equals(userId)),
+                        post.getScraps().stream()
+                                .anyMatch(scrap -> scrap.getUser().getUserId().equals(userId))
+                ))
+                .collect(Collectors.toList());
+    }
 
-    public static PostResponseDTO.getPostDTO toPostDto(Post post) {
-        return new PostResponseDTO.getPostDTO(
+
+
+    public static PostResponseDTO.toPostDTO toPostDto(Post post) {
+        return new PostResponseDTO.toPostDTO(
                 post.getId(),
                 post.getUser().getNickname(),
                 (post.getUser().getFile() != null ? post.getUser().getFile().getUrl() : null),

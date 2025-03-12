@@ -11,7 +11,7 @@ public class PostResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class getPostDTO {
+    public static class toPostDTO {
         private Long id;
         private String nickname;
         private String profileImg;
@@ -25,6 +25,25 @@ public class PostResponseDTO {
         private LocalDateTime update_at;
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class getPostDTO {
+        private Long id;
+        private String nickname;
+        private String profileImg;
+        private String content;
+        private String hashtag;
+        private Long sentimentScore;
+        private String images;
+        private int likes;
+        private int comments;
+        private LocalDateTime created_at;
+        private LocalDateTime update_at;
+        boolean isLiked;
+        boolean isScrapped;
+    }
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
