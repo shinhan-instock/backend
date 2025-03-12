@@ -12,6 +12,8 @@ public class UserResponseDTO {
         private String nickname;
         private String imageUrl;
         private String introduction;
+        private boolean isInfluencer;
+        private boolean openAccount;
     }
 
     @Getter
@@ -24,6 +26,8 @@ public class UserResponseDTO {
         private String nickname;
         private String imageUrl;
         private String introduction;
+        private boolean isInfluencer;
+        private boolean openAccount;
     }
 
     @Getter

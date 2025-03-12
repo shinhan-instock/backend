@@ -67,7 +67,7 @@ public class WatchListServiceImpl implements WatchListService {
             } catch (Exception e) {
                 emitter.completeWithError(e);
             }
-        }, 0, 5, TimeUnit.SECONDS); // 3초 -> 5초마다 갱신으로 수정함
+        }, 0, 3, TimeUnit.SECONDS); // 3초 -> 5초마다 갱신으로 수정함
 
         return emitter;
     }

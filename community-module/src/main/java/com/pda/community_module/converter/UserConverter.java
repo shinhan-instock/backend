@@ -17,7 +17,9 @@ public class UserConverter {
                 user.getUserId(),
                 user.getNickname(),
                 (user.getFile() != null ? user.getFile().getUrl() : null),
-                user.getIntroduction()
+                user.getIntroduction(),
+                user.getIsInfluencer(),
+                user.getOpenAccount()
         );
     }
 
@@ -32,7 +34,9 @@ public class UserConverter {
                 user.getName(),
                 user.getNickname(),
                 user.getFile() != null ? user.getFile().getUrl() : null,
-                user.getIntroduction()
+                user.getIntroduction(),
+                user.getIsInfluencer(),
+                user.getOpenAccount()
         );
 //        return UserResponseDTO.getUserInfoDTO.builder()
 //                .userId(user.getUserId())
