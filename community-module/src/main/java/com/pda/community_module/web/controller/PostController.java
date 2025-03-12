@@ -117,12 +117,18 @@ public class PostController {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "사용자를 찾을 수 없습니다.")
     })
-    public ApiResponse<?> getPostsByUser(
+    public ApiResponse<?> getPostsByUser(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
 
         @RequestBody @Schema(description = "사용자 닉네임", example = "{\"nickname\": \"string\"}") Map<String, String> request) {
         log.info("request={}", request);
+        String userid;
+        if (authorizationHeader==null) {
+            userid = null;
+        } else {
+            userid = authorizationHeader.replace("Bearer ", "");
+        }
         String nickname = request.get("nickname");
-        return ApiResponse.onSuccess(postService.getPostsByUser(nickname));
+        return ApiResponse.onSuccess(postService.getPostsByUser(nickname, userid));
     }
 
 
@@ -133,8 +139,14 @@ public class PostController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "사용자를 찾을 수 없습니다.")
     })
-    public ApiResponse<?> getPostsByStock(@PathVariable String name){
-        return  ApiResponse.onSuccess(postService.getPostsByStock(name));
+    public ApiResponse<?> getPostsByStock(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,@PathVariable String name){
+        String userid;
+        if (authorizationHeader==null) {
+            userid = null;
+        } else {
+            userid = authorizationHeader.replace("Bearer ", "");
+        }
+        return  ApiResponse.onSuccess(postService.getPostsByStock(name, userid));
 
 
     }

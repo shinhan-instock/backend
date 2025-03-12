@@ -100,17 +100,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponseDTO.toPostDTO> getPostsByUser(String nickname) {
+    public List<PostResponseDTO.getPostDTO> getPostsByUser(String nickname, String userid) {
         User user =  userRepository.findByNickname(nickname).orElseThrow(()->new GeneralException(ErrorStatus.USER_NOT_FOUND));
         List<Post> posts = postRepository.findAllByUserId(user.getId());
 
-        return PostConverter.toPostListDto(posts);
+        return PostConverter.getPostListDto(posts, userid);
     }
 
     @Override
-    public List<PostResponseDTO.toPostDTO> getPostsByStock(String name) {
+    public List<PostResponseDTO.getPostDTO> getPostsByStock(String name, String userid) {
         List<Post> posts = postRepository.findAllByHashtag(name);
-        return PostConverter.toPostListDto(posts);
+        return  PostConverter.getPostListDto(posts, userid);
     }
 
     @Transactional

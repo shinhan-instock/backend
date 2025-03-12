@@ -14,9 +14,9 @@ public interface PostService {
 
     List<PostResponseDTO.getPostDTO> getMyPosts(String userid);
 
-    List<PostResponseDTO.toPostDTO> getPostsByUser(String nickname);
+    List<PostResponseDTO.getPostDTO> getPostsByUser(String nickname, String userid);
 
-    List<PostResponseDTO.toPostDTO> getPostsByStock(String name);
+    List<PostResponseDTO.getPostDTO> getPostsByStock(String name, String userid);
 
     void deletePost(String userid, Long id);
 
