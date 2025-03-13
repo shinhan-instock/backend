@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: be-community
-        image: jiwonchoe/community-module:v1.15
+        image: jiwonchoe/community-module:v1.16
         imagePullPolicy: Always 
         ports:
         - containerPort: 8088
