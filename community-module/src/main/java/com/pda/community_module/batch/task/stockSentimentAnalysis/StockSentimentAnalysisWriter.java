@@ -10,7 +10,6 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-@StepScope
 public class StockSentimentAnalysisWriter implements ItemWriter<List<StockRequest>> {
 
     private final StockFeignClient stockFeignClient;

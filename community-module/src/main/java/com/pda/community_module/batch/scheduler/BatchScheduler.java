@@ -19,7 +19,7 @@ public class BatchScheduler {
     private final JobLauncher jobLauncher;
     private final Job batchJob;
 
-    @Scheduled(cron = "0 */10 * * * *",zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 * * * *" ,zone = "Asia/Seoul")
     public void runBatchJob() {
         try {
             JobParameters jobParameters = new JobParametersBuilder()

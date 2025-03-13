@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-@StepScope
 public class StockSentimentAnalysisProcessor implements ItemProcessor<List<Sentiment>, List<StockRequest>> {
 
     @Override
