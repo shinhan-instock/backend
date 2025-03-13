@@ -43,32 +43,32 @@ public class AccountServiceImpl implements AccountService{
     private final MileageClient mileageClient;
     private final ObjectMapper objectMapper;
 
-//    @Override
-//    public List<AccountResponseDTO> getMyAccount(String userId) {
-//        Optional<Account> account = accountRepository.findByUserId_UserId(userId);
-//        if (account.isPresent()) {
-//            Long accountId = account.get().getId();
-//            List<OwnStock> stocks = ownStockRepository.findByAccountId(accountId);
-//
-//
-//            if (stocks.isEmpty()) {
-//                throw new GeneralException(ErrorStatus.OWN_STOCK_NOT_FOUND);
-//            }
-//
-//
-//            return stocks.stream()
-//                    .map(stock -> new AccountResponseDTO(
-//                            stock.getStockName(),
-//                            stock.getStockCode(),
-//                            stock.getStockCount(),
-//                            stock.getAvgPrice(),
-//                            stock.getProfit()
-//                    ))
-//                    .collect(Collectors.toList());
-//
-//        }
-//        throw new GeneralException(ErrorStatus.OWN_ACCOUNT_NOT_FOUND); // 계좌 개설 필수
-//    }
+    @Override
+    public List<AccountResponseDTO> getMyAccount(String userId) {
+        Optional<Account> account = accountRepository.findByUserId_UserId(userId);
+        if (account.isPresent()) {
+            Long accountId = account.get().getId();
+            List<OwnStock> stocks = ownStockRepository.findByAccountId(accountId);
+
+
+            if (stocks.isEmpty()) {
+                throw new GeneralException(ErrorStatus.OWN_STOCK_NOT_FOUND);
+            }
+
+
+            return stocks.stream()
+                    .map(stock -> new AccountResponseDTO(
+                            stock.getStockName(),
+                            stock.getStockCode(),
+                            stock.getStockCount(),
+                            stock.getAvgPrice(),
+                            stock.getProfit()
+                    ))
+                    .collect(Collectors.toList());
+
+        }
+        throw new GeneralException(ErrorStatus.OWN_ACCOUNT_NOT_FOUND); // 계좌 개설 필수
+    }
 
     // SSE 스트리밍 (5초마다 보유 주식 목록 전송)
     public SseEmitter streamMyAccount(String userId) {
