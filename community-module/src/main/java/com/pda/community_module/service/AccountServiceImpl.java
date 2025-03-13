@@ -288,7 +288,7 @@ public SseEmitter streamUserStock(String myUserId, String userId) {
                 List<AccountResponseDTO> stockList = userOwnStock.stream()
                         .map(stock -> new AccountResponseDTO(
                                 stock.getStockName(),
-                                null, null, null, null
+                                stock.getStockCode(), null, null, null
                         ))
                         .collect(Collectors.toList());
 
