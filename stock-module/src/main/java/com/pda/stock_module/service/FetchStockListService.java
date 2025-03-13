@@ -1,7 +1,17 @@
 package com.pda.stock_module.service;
 
+import com.pda.stock_module.domain.Company;
 import com.pda.stock_module.domain.common.RedisCommon;
+import com.pda.stock_module.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +19,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -17,8 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class FetchStockListService {
     private final StringRedisTemplate redisTemplate;
     private final RestTemplate restTemplate;
-    private final RedisCommon redisCommon;
-    final String SetKeyForSync = "stocks:keys";
+    private final CompanyRepository companyRepository;
 
     @Transactional
     public void updateStockData() {
@@ -172,7 +182,6 @@ public class FetchStockListService {
         return headers;
     }
 
-    // 삭제금지. DB에 기업개요 저장하는 코드. 후에 실행
 //    public void fetchStockDetailBatch(Map<String, String> stockDataMap) {
 //        if (stockDataMap == null || stockDataMap.isEmpty()) {
 //            System.out.println("❌ 크롤링할 주식 데이터가 없습니다.");
@@ -229,6 +238,7 @@ public class FetchStockListService {
 //                    Company newCompany = new Company(stockCode, stockName, companyDescription);
 //                    companyRepository.save(newCompany);
 //                }
+//                System.out.println("cnt : " + cnt);
 //
 //
 //            }
@@ -238,7 +248,7 @@ public class FetchStockListService {
 //            System.out.println("크롤링 끝");
 //            driver.quit();
 //        }
-
+//
 //    }
 
 }

@@ -29,6 +29,8 @@ public class StockSentimentAnalysisReader implements ItemReader<List<Sentiment>>
         }
 
         LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+        System.out.println("oneHourAgo 객체: " + oneHourAgo);
+        System.out.println("oneHourAgo 해시 코드: " + System.identityHashCode(oneHourAgo));
 
         hasRead = true;
         return sentimentRepository.findRecentSentiments(oneHourAgo);
