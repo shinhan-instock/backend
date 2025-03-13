@@ -12,6 +12,7 @@ import com.pda.community_module.web.dto.AccountResponseDTO;
 import com.pda.community_module.web.dto.MileageRequestDTO;
 import com.pda.community_module.web.dto.StockRequestDTO;
 import com.pda.core_module.apiPayload.GeneralException;
+import com.pda.core_module.apiPayload.code.ErrorReasonDTO;
 import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import feign.Param;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -121,11 +123,27 @@ public class AccountServiceImpl implements AccountService{
                     throw new GeneralException(ErrorStatus.OWN_ACCOUNT_NOT_FOUND);
                 }
 
+            } catch (GeneralException e) {
+                log.error("🚨 데이터 조회 오류: {}", e.getMessage());
+                try {
+                    ErrorReasonDTO errorReason = e.getErrorReason();  // GeneralException에서 가져오기
+                    String errorJson = objectMapper.writeValueAsString(errorReason);
+                    emitter.send(SseEmitter.event().data(errorJson));
+                } catch (IOException ioException) {
+                    log.error("❌ SSE 전송 중 오류 발생: {}", ioException.getMessage());
+                }
+
+                // 응답 후 종료
+                emitter.complete();
+                scheduler.shutdown();
             } catch (IOException e) {
                 log.error("❌ SSE 전송 오류: {}", e.getMessage());
+                emitter.complete(); // SSE 연결 종료
                 scheduler.shutdown();
             } catch (Exception e) {
                 log.error("🚨 데이터 조회 오류: {}", e.getMessage());
+                emitter.complete(); // SSE 연결 종료
+                scheduler.shutdown();
             }
         }, 0, 5, TimeUnit.SECONDS);
 
@@ -278,12 +296,27 @@ public SseEmitter streamUserStock(String myUserId, String userId) {
                 String jsonResponse = objectMapper.writeValueAsString(stockList);
                 emitter.send(SseEmitter.event().data(jsonResponse));
             }
+        } catch (GeneralException e) {
+            log.error("🚨 데이터 조회 오류: {}", e.getMessage());
+            try {
+                ErrorReasonDTO errorReason = e.getErrorReason();  // GeneralException에서 가져오기
+                String errorJson = objectMapper.writeValueAsString(errorReason);
+                emitter.send(SseEmitter.event().data(errorJson));
+            } catch (IOException ioException) {
+                log.error("❌ SSE 전송 중 오류 발생: {}", ioException.getMessage());
+            }
 
+            // 응답 후 종료
+            emitter.complete();
+            scheduler.shutdown();
         } catch (IOException e) {
             log.error("❌ SSE 전송 오류: {}", e.getMessage());
+            emitter.complete(); // SSE 연결 종료
             scheduler.shutdown();
         } catch (Exception e) {
             log.error("🚨 데이터 조회 오류: {}", e.getMessage());
+            emitter.complete(); // SSE 연결 종료
+            scheduler.shutdown();
         }
     }, 0, 5, TimeUnit.SECONDS);
 
