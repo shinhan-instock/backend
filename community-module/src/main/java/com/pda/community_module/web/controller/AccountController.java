@@ -24,13 +24,13 @@ public class AccountController {
     private final MileageClient mileageClient;
 
 
-//    @GetMapping("")
-//    public ResponseEntity<List<AccountResponseDTO>> getMyAccount(@RequestHeader("Authorization") String authorizationHeader) {
-//        String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
-//        List<AccountResponseDTO> response = accountService.getMyAccount(userId);
-//
-//        return ResponseEntity.ok(response);
-//    }
+    @GetMapping("")
+    public ResponseEntity<List<AccountResponseDTO>> getMyAccount(@RequestHeader("Authorization") String authorizationHeader) {
+        String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
+        List<AccountResponseDTO> response = accountService.getMyAccount(userId);
+
+        return ResponseEntity.ok(response);
+    }
 
     // SSE 스트리밍 API (REST API 제거)
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
