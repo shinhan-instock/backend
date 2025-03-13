@@ -36,7 +36,9 @@ public class PostController {
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
             @RequestParam Boolean following,
             @RequestParam Boolean popular,
-            @RequestParam Boolean scrap){
+            @RequestParam Boolean scrap,
+            @RequestParam int page,
+            @RequestParam int size){
 
         String userid;
         if (authorizationHeader==null) {
@@ -45,7 +47,7 @@ public class PostController {
             userid = authorizationHeader.replace("Bearer ", "");
         }
 
-        return ApiResponse.onSuccess( postService.getPosts(following, popular, scrap, userid));
+        return ApiResponse.onSuccess( postService.getPosts(following, popular, scrap, userid,page,size));
     }
 
     // 개별 게시글 보기
