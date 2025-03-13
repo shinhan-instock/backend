@@ -11,16 +11,15 @@ import com.pda.core_module.apiPayload.GeneralException;
 import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import com.pda.core_module.events.CheckStockEvent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,60 +40,49 @@ public class PostServiceImpl implements PostService {
     private final SentimentService sentimentService;
 
     @Override
-    public List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, String userid, int page, int size) {
-        Page<Post> postsPage;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+    public List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, String userid) {
+        List<Post> posts;
 
+        // userid가 null일 경우 팔로잉, 스크랩한 글만 빈 리스트 반환
         if (userid == null) {
             if (popular) {
-                postsPage = postRepository.findAllByOrderByLikesDesc(pageable);
+                // 인기 게시글 ( 좋아요 많은 순)
+                posts = postRepository.findAllByOrderByLikesDesc();
             } else if (scrap || following) {
-                return Collections.emptyList();
+                // 팔로잉한 글이나 스크랩한 글일 때 빈 리스트 반환
+                posts = new ArrayList<>();
             } else {
-                postsPage = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+                // 모든 게시글 (최신순)
+                posts = postRepository.findAllByOrderByCreatedAtDesc();
             }
         } else {
-            User user = userRepository.findByUserId(userid)
-                    .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+            // userid가 null이 아닌 경우, 정상적으로 사용자 정보 조회
+            User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
             if (popular) {
-                postsPage = postRepository.findAllByOrderByLikesDesc(pageable);
+                // 인기 게시글 (좋아요 많은 순)
+                posts = postRepository.findAllByOrderByLikesDesc();
             } else if (following) {
+                // 팔로잉한 유저의 게시글
                 List<Long> followingIdList = user.getFollowingList().stream()
                         .map(follow -> follow.getFollowing().getId())
                         .collect(Collectors.toList());
 
-                if (followingIdList.isEmpty()) {
-                    return Collections.emptyList();
-                }
-
-                // ✅ 최신순 정렬 보장된 메서드 사용
-                postsPage = postRepository.findAllByUserIdIn(followingIdList, pageable);
+                posts = postRepository.findAllByUserIdIn(followingIdList);
             } else if (scrap) {
-                List<PostScrap> postScraps = postScrapRepository.findByUser(user);
-                List<Long> postIds = postScraps.stream()
-                        .map(postScrap -> postScrap.getPost().getId())
+                // 스크랩한 글
+                List<PostScrap> postScraps = postScrapRepository.findByUser(user); // 내 userId
+                posts = postScraps.stream()
+                        .map(postScrap -> postScrap.getPost())
                         .collect(Collectors.toList());
-
-                if (postIds.isEmpty()) {
-                    return Collections.emptyList();
-                }
-
-                List<Post> pagedScrappedPosts = postRepository.findAllByIdInOrderByCreatedAtDesc(postIds)
-                        .stream()
-                        .skip((long) page * size)
-                        .limit(size)
-                        .toList();
-
-                return PostConverter.getPostListDto(pagedScrappedPosts, userid);
             } else {
-                postsPage = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+                // 모든 게시글 (최신순)
+                posts = postRepository.findAllByOrderByCreatedAtDesc();
             }
         }
 
-        return PostConverter.getPostListDto(postsPage.getContent(), userid);
+        return PostConverter.getPostListDto(posts,userid);
     }
-
 
 
     @Override
