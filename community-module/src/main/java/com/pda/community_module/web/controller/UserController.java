@@ -131,12 +131,11 @@ public class UserController {
 //
 //    }
 
-    // SSE 스트리밍 API (POST 방식 유지)
-    @PostMapping(value = "/account/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    // SSE 스트리밍 API
+    @GetMapping(value = "/account/{userId}/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamUsersStock(@RequestHeader("Authorization") String authorizationHeader,
-                                       @RequestBody AccountRequestDTO accountRequestDTO) {
+                                       @PathVariable String userId) {
         String myUserId = authorizationHeader.replace("Bearer ", "");
-        String userId = accountRequestDTO.getUserId();
         return accountService.streamUserStock(myUserId, userId);
     }
 
