@@ -276,7 +276,8 @@ spec:
                                 sh 'git config --global user.name "jiwonchoe12"'
                                 sh 'git checkout argocd'
                                 sh 'git pull origin argocd'
-                                sh 'git merge origin/develop'
+                                sh 'git merge origin/develop || true'
+                                sh "git checkout origin/develop -- ${module}/deployment.yaml"
                                 sh "sed -i 's|image: jiwonchoe/${lowerModule}:v1.*|image: jiwonchoe/${lowerModule}:v1.${BUILD_ID}|' ${module}/deployment.yaml"
                                 sh 'git add .'
                                 sh 'git commit -m "Update Docker Image Version"'
