@@ -262,7 +262,7 @@ public SseEmitter streamUserStock(String myUserId, String userId) {
                                 stock.getStockName(),
                                 stock.getStockCode(),
                                 stock.getStockCount(),
-                                null, // avgPrice는 null 처리
+                                stock.getAvgPrice(),
                                 stock.getProfit()
                         ))
                         .collect(Collectors.toList());

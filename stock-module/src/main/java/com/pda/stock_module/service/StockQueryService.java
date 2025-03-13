@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pda.core_module.apiPayload.GeneralException;
 import com.pda.core_module.apiPayload.code.status.ErrorStatus;
 import com.pda.stock_module.domain.Company;
+import com.pda.stock_module.domain.StockSentiment;
 import com.pda.stock_module.domain.client.CommunityClient;
 import com.pda.stock_module.domain.client.MileageClient;
 import com.pda.stock_module.domain.common.RedisCommon;
 import com.pda.stock_module.repository.StockQueryRepository;
+import com.pda.stock_module.repository.StockSentimentRepository;
 import com.pda.stock_module.web.dto.DetailStockResponse;
 import com.pda.stock_module.web.dto.MileageResponseDTO;
+import com.pda.stock_module.web.dto.StockSentimentResponse;
 import com.pda.stock_module.web.dto.TopStockResponse;
 import com.pda.stock_module.web.model.ListModel;
 import com.pda.stock_module.web.model.StockDetailModel;
@@ -23,6 +26,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +42,7 @@ public class StockQueryService {
     private final StockQueryRepository stockQueryRepository;
     private final MileageClient mileageClient;
     private final ObjectMapper objectMapper;
+    private final StockSentimentRepository stockSentimentRepository;
 
 
 //    public List<TopStockResponse> getTop10ByTheme(String stockName) {
@@ -223,13 +228,22 @@ public class StockQueryService {
                     redisTemplate.opsForZSet().incrementScore(key, stockName, 1);
                 }
 
-                String jsonResponse = objectMapper.writeValueAsString(new DetailStockResponse(
+                Optional<StockSentiment> stock = stockSentimentRepository.findByStockCode(stockCode);
+
+                Long sentimentScore = null;
+                if (stock.isPresent()) {
+                    sentimentScore = stock.get().getSentimentScore();
+                }
+
+
+                String jsonResponse = objectMapper.writeValueAsString(new StockSentimentResponse(
                         stockName,
                         stockCode,
                         updatedStockInfo.getPrice(),
                         updatedStockInfo.getPriceChange(),
                         companyDescription,
-                        watchListAdded
+                        watchListAdded,
+                        sentimentScore
                 ));
                 emitter.send(SseEmitter.event().data(jsonResponse));
 
