@@ -1,4 +1,4 @@
-package com.pda.community_module.config;
+package com.pda.piggyBank_module.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
