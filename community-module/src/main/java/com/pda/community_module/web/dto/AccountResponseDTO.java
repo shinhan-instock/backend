@@ -16,4 +16,17 @@ public class AccountResponseDTO {
     private Long stockCount;
     private Long avgPrice;
     private Double profit;
+
+    @Getter
+    @Setter
+    @AllArgsConstructor // ✅ 생성자 추가
+    public static class AccountResponseStreamDTO {
+        private String stockName;
+        private String stockCode;
+        private Long stockCount;
+        private Long avgPrice;
+        private Double profit;
+        private Double gapPrice;
+    }
+
 }
