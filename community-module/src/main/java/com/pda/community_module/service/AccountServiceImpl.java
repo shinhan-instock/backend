@@ -107,7 +107,7 @@ public class AccountServiceImpl implements AccountService{
                         throw new GeneralException(ErrorStatus.OWN_STOCK_NOT_FOUND);
                     }
 
-                    List<AccountResponseDTO> stockList = stocks.stream().map(stock -> {
+                    List<AccountResponseDTO.AccountResponseStreamDTO> stockList = stocks.stream().map(stock -> {
                         // Redis에서 현재 주식 가격 가져오기
                         Object priceObj = redisTemplate.opsForHash().get("stock:" + stock.getStockName(), "price");
                         double currentPrice = priceObj != null ? Double.parseDouble(priceObj.toString()) : 0.0;
@@ -116,12 +116,13 @@ public class AccountServiceImpl implements AccountService{
                         double profit = stock.getAvgPrice() > 0 ?
                                 ((currentPrice - stock.getAvgPrice()) / stock.getAvgPrice()) * 100 : 0.0;
 
-                        return new AccountResponseDTO(
+                        return new AccountResponseDTO.AccountResponseStreamDTO(
                                 stock.getStockName(),
                                 stock.getStockCode(),
                                 stock.getStockCount(),
                                 stock.getAvgPrice(),
-                                profit  // 수익률 반영
+                                profit,
+                                currentPrice - stock.getAvgPrice()
                         );
                     }).collect(Collectors.toList());
                     // JSON 변환 후 SSE 전송
