@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: be-stock
-        image: jiwonchoe/stock-module:v1.15
+        image: jiwonchoe/stock-module:v1.20
         imagePullPolicy: Always  # ⭐️ 항상 최신 이미지로 업데이트
         envFrom:
           - configMapRef:
