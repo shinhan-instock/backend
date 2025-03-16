@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: be-piggy
-          image: jiwonchoe/piggybank-module:v1.24
+          image: jiwonchoe/piggybank-module:v1.27
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
