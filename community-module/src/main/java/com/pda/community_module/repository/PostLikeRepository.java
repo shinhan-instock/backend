@@ -8,6 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
-
     List<PostLike> findAllByPostId(Long id);
 }

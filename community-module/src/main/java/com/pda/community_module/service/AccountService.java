@@ -9,8 +9,6 @@ import java.util.List;
 public interface AccountService {
     List<AccountResponseDTO> getMyAccount(String userId);
 
-//    List<AccountResponseDTO> getAccount(String myUserId, String userId);
-
     List<AccountResponseDTO> addMyAccount(String userId, StockRequestDTO stockRequestDTO, Integer mileage);
 
     SseEmitter streamMyAccount(String userId);

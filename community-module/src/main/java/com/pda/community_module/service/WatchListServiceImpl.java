@@ -39,7 +39,6 @@ public class WatchListServiceImpl implements WatchListService {
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             try {
-                // 관심종목을 페이징하여 가져옴
                 User user = userRepository.findByUserId(userId).orElseThrow(()->new GeneralException(ErrorStatus.USER_NOT_FOUND));
                 Page<WatchList> watchListsPage = watchListRepository.findByUserId(user.getId(), PageRequest.of(page, size));
                 List<String> stockNames = watchListsPage.getContent().stream()
@@ -51,23 +50,18 @@ public class WatchListServiceImpl implements WatchListService {
                     return;
                 }
 
-                // FeignClient를 통해 여러 주식 데이터 요청
                 StockResponseDTO stockResponse = stockServiceClient.getStockData(stockNames);
-//                System.out.println("Feign 응답 원본: " + stockResponse);
 
-                // DTO 변환 (StockSearchConverter 사용)
                 List<StockResponseDTO.StockResult> stockResults = StockSearchConverter.toStockSearchResList(stockResponse);
 
-                // ApiResponse를 사용해 응답 구조 적용
                 ApiResponse<List<StockResponseDTO.StockResult>> response = ApiResponse.onSuccess(stockResults);
 
-                // JSON 변환 후 SSE로 전송
                 String jsonResponse = objectMapper.writeValueAsString(response);
                 emitter.send(jsonResponse);
             } catch (Exception e) {
                 emitter.completeWithError(e);
             }
-        }, 0, 3, TimeUnit.SECONDS); // 3초 -> 5초마다 갱신으로 수정함
+        }, 0, 3, TimeUnit.SECONDS);
 
         return emitter;
     }
@@ -75,11 +69,9 @@ public class WatchListServiceImpl implements WatchListService {
     @Transactional
     @Override
     public void addWatchList(String userId, String stockCode, String stockName) {
-        // 사용자 확인
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        // 관심 종목 등록 (Converter 사용)
         WatchList watchListEntity = WatchListConverter.toWatchListEntity(user, stockCode, stockName);
         watchListRepository.save(watchListEntity);
     }

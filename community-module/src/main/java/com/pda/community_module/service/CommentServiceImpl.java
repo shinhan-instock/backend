@@ -40,10 +40,8 @@ public class CommentServiceImpl implements CommentService {
         Page<Comment> commentPage;
 
         if (lastCommentId == null) {
-            // 초기 요청: 커서가 없으므로 최신 데이터 조회
             commentPage = commentRepository.findByPost_IdOrderByIdDesc(postId, pageable);
         } else {
-            // 커서가 있는 경우: lastCommentId보다 작은 값 조회 (내림차순)
             commentPage = commentRepository.findByPost_IdAndIdLessThanOrderByIdDesc(postId, lastCommentId, pageable);
         }
 
@@ -75,11 +73,8 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
         log.debug("조회된 Post: {}", post);
 
-        // 2. DTO + 조회된 Post, User로 Comment 엔티티 생성
         Comment comment = CommentConverter.createCommentRequestToEntity(requestDTO, post, user);
-        // 3. DB 저장
         commentRepository.save(comment);
-        // 4. 저장된 엔티티 -> DTO 변환 후 반환
 
     // 3. PostCount 엔티티 조회 후 commentCount 증가
             PostCount postCount = postCountRepository.findByPost(post)
@@ -101,12 +96,10 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
-        // 요청된 userId가 null이거나 댓글 작성자의 비즈니스 아이디와 다르면 수정 불가
         if (requestDTO.getUserId() == null || !comment.getUser().getUserId().equals(requestDTO.getUserId())) {
-            throw new GeneralException(ErrorStatus._UNAUTHORIZED); // 적절한 에러 코드 사용
+            throw new GeneralException(ErrorStatus._UNAUTHORIZED);
         }
 
-        // userId가 일치하면 댓글 내용만 업데이트
         comment.updateContent(requestDTO.getContent());
         return CommentConverter.toCommentEntity(comment);
     }
@@ -121,9 +114,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
         User requestUser = userRepository.findById(requestUserId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
-        // 소프트 딜리트 방식으로 삭제 처리
         comment.delete(requestUser);
-        // 필요한 경우, 업데이트를 DB에 반영하기 위해 flush() 호출
         commentRepository.flush();
     }
 }

@@ -46,7 +46,6 @@ public class AmazonS3Manager{
         }
 
         return amazonS3.getUrl(amazonConfig.getBucket(), keyName).toString();
-//        return String.format("https://%s.s3.amazonaws.com/%s", amazonConfig.getBucket(), keyName);
 
     }
 

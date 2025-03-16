@@ -46,8 +46,4 @@ public class RootController {
         return ApiResponse.onSuccess("Valid input: " + input);
     }
 
-//    @GetMapping("/test")
-//    public String test(){
-//        return "cicd is done";
-//    }
 }

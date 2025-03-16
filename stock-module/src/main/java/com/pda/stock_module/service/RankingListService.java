@@ -101,13 +101,7 @@ public class RankingListService {
                 .collect(Collectors.toList());
     }
 
-//    public List<StockPopularRankResponse> getTop10ByPopularity() {
-//        return redisCommon.getStockByPopularity()
-//                .stream()
-//                .map(this::convertToStockResponseByModel)
-//                .collect(Collectors.toList());
-//
-//    }
+
 
     // SSE 스트리밍 (5초마다 인기 종목 TOP 10 전송)
     public SseEmitter streamTop10ByPopularity() {
@@ -116,27 +110,26 @@ public class RankingListService {
 
         // SSE 연결 종료 시 안전하게 정리
         emitter.onCompletion(() -> {
-            log.info("✅ SSE 연결 종료 (인기 종목 TOP 10)");
+            log.info("SSE 연결 종료 (인기 종목 TOP 10)");
             scheduler.shutdown();
         });
 
         emitter.onTimeout(() -> {
-            log.info("⚠️ SSE 연결 타임아웃 (인기 종목 TOP 10)");
+            log.info("SSE 연결 타임아웃 (인기 종목 TOP 10)");
             scheduler.shutdown();
         });
 
         emitter.onError((e) -> {
-            log.error("❌ SSE 연결 오류 (인기 종목 TOP 10) - " + e.getMessage());
+            log.error("SSE 연결 오류 (인기 종목 TOP 10) - " + e.getMessage());
             scheduler.shutdown();
         });
 
         // 5초마다 인기 종목 TOP 10 갱신 (스케줄러 실행)
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                // 🔥 Redis에서 인기 종목 TOP 10 가져오기
                 List<StockPopularRankResponse> stockList = redisCommon.getStockByPopularity()
                         .stream()
-                        .map(this::convertToStockResponseByModel) // ✅ 변환 메서드 사용
+                        .map(this::convertToStockResponseByModel)
                         .collect(Collectors.toList());
 
                 // JSON 변환 후 SSE 전송
@@ -144,10 +137,10 @@ public class RankingListService {
                 emitter.send(SseEmitter.event().data(jsonResponse));
 
             } catch (IOException e) {
-                log.error("❌ SSE 전송 오류: {}", e.getMessage());
+                log.error("SSE 전송 오류: {}", e.getMessage());
                 scheduler.shutdown();
             } catch (Exception e) {
-                log.error("🚨 데이터 조회 오류: {}", e.getMessage());
+                log.error("데이터 조회 오류: {}", e.getMessage());
             }
         }, 0, 5, TimeUnit.SECONDS);
 

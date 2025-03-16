@@ -19,8 +19,6 @@ public interface CommentService {
 
     Page<CommentResponseDTO.getCommentDTO> getCommentsByPostIdWithCursor(Long postId, Long lastCommentId, int limit);
 
-//    void deleteComment(Long commentId);
-
     @Transactional
     void deleteComment(Long commentId, Long requestUserId);
 }

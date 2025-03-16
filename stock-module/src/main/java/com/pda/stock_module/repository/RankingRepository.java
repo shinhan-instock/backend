@@ -13,9 +13,6 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
     Optional<Ranking> findByStockCode(String stockCode);
     Optional<Ranking> findByStockName(String stockName);
 
-//    @Query("SELECT r.currentPrice FROM Ranking r WHERE r.stockCode = :stockCode")
-//    Optional<Long> findCurrentPriceByStockCode(@Param("stockCode") String stockCode);
-
 
     @Query("SELECT r FROM Ranking r WHERE r.fluctuationRank IS NOT NULL ORDER BY CAST(r.priceChangeRate AS double) DESC")
     List<Ranking> findTop20ByFluctuationRank();

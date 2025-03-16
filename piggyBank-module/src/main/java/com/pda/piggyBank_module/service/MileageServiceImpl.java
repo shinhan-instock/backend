@@ -29,9 +29,8 @@ public class MileageServiceImpl implements MileageService {
     public void addMileage(MileageRequest request) {
         request.getUsers().forEach(user -> {
             Piggy piggy = piggyRepository.findByUserId(user.getUserId())
-//                    .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND))
                     .orElseGet(() -> new Piggy(user.getUserId(), 0)); // 임시용
-            piggy.addMileage(user.getMileage()); // 마일리지 추가
+            piggy.addMileage(user.getMileage());
             piggyRepository.save(piggy);
         });
     }

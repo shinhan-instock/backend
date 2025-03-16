@@ -16,7 +16,6 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    // 댓글 생성
     @PostMapping
     public ResponseEntity<CommentResponseDTO.getCommentDTO> createComment(
             @RequestBody CommentResponseDTO.createCommentDTO requestDTO) {
@@ -24,7 +23,6 @@ public class CommentController {
         return ResponseEntity.ok(commentService.createComment(requestDTO));
     }
 
-    // 댓글 조회 여러개
     @GetMapping("/post/{postId}/infinite")
     public ResponseEntity<Page<CommentResponseDTO.getCommentDTO>> getCommentsByPostIdWithCursor(
             @PathVariable Long postId,
@@ -35,13 +33,11 @@ public class CommentController {
     }
 
 
-    // 특정 댓글 단건 조회
     @GetMapping("/{commentId}")
     public ResponseEntity<CommentResponseDTO.getCommentDTO> getCommentById(@PathVariable Long commentId) {
         return ResponseEntity.ok(commentService.getCommentById(commentId));
     }
 
-    // 댓글 수정
     @PutMapping("/{commentId}")
     public ResponseEntity<CommentResponseDTO.getCommentDTO> updateComment(
             @PathVariable Long commentId,
@@ -49,7 +45,6 @@ public class CommentController {
         return ResponseEntity.ok(commentService.updateComment(commentId, requestDTO));
     }
 
-    // 댓글 삭제
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId,
                                               @RequestParam("userId") Long requestUserId) {

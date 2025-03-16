@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor // ✅ 생성자 추가
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountResponseDTO {
     private String stockName;
@@ -19,7 +19,7 @@ public class AccountResponseDTO {
 
     @Getter
     @Setter
-    @AllArgsConstructor // ✅ 생성자 추가
+    @AllArgsConstructor
     public static class AccountResponseStreamDTO {
         private String stockName;
         private String stockCode;
