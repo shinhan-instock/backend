@@ -22,6 +22,11 @@ spec:
       - name: be-stock
         image: jiwonchoe/stock-module:v1.24
         imagePullPolicy: Always  # ⭐️ 항상 최신 이미지로 업데이트
+        resources:
+          requests:
+            cpu: "200m"
+          limits:
+            cpu: "500m"
         envFrom:
           - configMapRef:
               name: stock-configmap
