@@ -11,7 +11,6 @@ import java.util.List;
 
 
 public interface SentimentRepository extends JpaRepository<Sentiment,Long> {
-
     @Query("SELECT s FROM Sentiment s WHERE s.createdAt >= :oneHourAgo")
     @Transactional
     List<Sentiment> findRecentSentiments(@Param("oneHourAgo") LocalDateTime oneHourAgo);

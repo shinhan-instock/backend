@@ -23,7 +23,6 @@ public class StockSentimentAnalysisProcessor implements ItemProcessor<List<Senti
                 .filter(sentiment -> sentiment.getPost() != null && sentiment.getPost().getHashtag() != null)
                 .collect(Collectors.groupingBy(sentiment -> sentiment.getPost().getHashtag()));
 
-        // 그룹화된 데이터 기반으로 StockRequest 리스트 생성
         return groupedByStock.entrySet().stream()
                 .map(entry -> {
                     String stockName = entry.getKey();

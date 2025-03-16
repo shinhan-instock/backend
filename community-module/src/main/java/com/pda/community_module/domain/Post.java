@@ -30,9 +30,6 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private Boolean deleted;
 
-//    @Column(length = 255)
-//    private String imageUrl;
-
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private File file;
 

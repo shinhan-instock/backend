@@ -24,13 +24,11 @@ public class StockSentimentResetItemWriter implements ItemWriter<StockSentimentR
 
     @Override
     public void write(Chunk<? extends StockSentimentResetDTO> chunk) throws Exception {
-        // 1. 저장할 StockClosingSentiment 목록 생성
         List<StockClosingSentiment> closingSentiments = chunk.getItems().stream()
                 .map(StockSentimentResetDTO::getClosingSentiment)
                 .collect(Collectors.toList());
         stockClosingSentimentRepository.saveAll(closingSentiments);
 
-        // 2. 원본 StockSentiment 삭제 (ID 기반)
         List<Long> idsToDelete = chunk.getItems().stream()
                 .map(StockSentimentResetDTO::getOriginalId)
                 .collect(Collectors.toList());

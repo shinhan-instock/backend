@@ -17,12 +17,10 @@ public class CommentResponseDTO {
         private Long postId;
         private String userId;
         private String content;
-        // 필요시 BaseEntity의 createdAt, updatedAt도 추가 가능
 
-        // 추가 필드
         private String userNickname;
         private String userImage;
-        private LocalDateTime createdAt;  // BaseEntity의 createdAt 필드 사용 (import java.time.LocalDateTime)
+        private LocalDateTime createdAt;
     }
 
     /**

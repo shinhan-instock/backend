@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 public class FetchStockListService {
     private final StringRedisTemplate redisTemplate;
     private final RestTemplate restTemplate;
-    private final CompanyRepository companyRepository;
 
     @Transactional
     public void updateStockData() {
@@ -75,7 +74,7 @@ public class FetchStockListService {
                             String priceChange = null;
                             Object changeRateObj = stockData.get("changeRate");
                             if (changeRateObj instanceof Double) {
-                                priceChange = String.format("%.2f", (Double) changeRateObj * 100); // 소수점 둘째 자리까지 변환
+                                priceChange = String.format("%.2f", (Double) changeRateObj * 100);
                             } else if (changeRateObj instanceof String) {
                                 priceChange = String.format("%.2f", Double.valueOf((String) changeRateObj) * 100);
                             }
@@ -95,15 +94,12 @@ public class FetchStockListService {
                                 redisTemplate.opsForHash().put(redisKey, "priceChange", priceChange);
                                 redisTemplate.opsForHash().put(redisKey, "sectorName", sectorName);
 
-                                // Redis 데이터에 TTL(Time-To-Live) 설정 (예: 1일)
                                 redisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
 
 
                             }
                         }
                     }
-                    // 종목 추가되거나 없어지면 zset sync 맞추기.
-//                    redisTemplate.opsForSet().add(SetKeyForSync, processedStockNames.toArray(new String[0]));
                 }
             } catch (HttpServerErrorException e) {
                 if (e.getMessage().contains("초당 거래건수를 초과")) {
@@ -152,7 +148,6 @@ public class FetchStockListService {
                                 String stockCode = (String) item.get("symbolCode"); // 종목 코드
                                 Integer rank = (Integer) item.get("rank"); // 순위
 
-                                // 🔥 Redis에 저장 ("stock:이름" -> rank)
                                 String redisKey = "stock:" + stockName;
                                 if (redisTemplate.hasKey(redisKey)) { // 해당하는 redisKey가 존재할 때만, 추가.
                                     redisTemplate.opsForHash().put(redisKey, "rank", String.valueOf(rank));
@@ -164,7 +159,7 @@ public class FetchStockListService {
                     System.out.println("시가총액 크롤링 & redis 저장완료.");
                 }
             } catch (Exception e) {
-                System.err.println("❌ " + market + " 데이터 크롤링 중 오류 발생: " + e.getMessage());
+                System.err.println(market + " 데이터 크롤링 중 오류 발생: " + e.getMessage());
             }
         }
     }
@@ -181,74 +176,5 @@ public class FetchStockListService {
         headers.set("Pragma", "no-cache");
         return headers;
     }
-
-//    public void fetchStockDetailBatch(Map<String, String> stockDataMap) {
-//        if (stockDataMap == null || stockDataMap.isEmpty()) {
-//            System.out.println("❌ 크롤링할 주식 데이터가 없습니다.");
-//            return;
-//        }
-//
-//        // WebDriver 설정
-//        System.setProperty("webdriver.chrome.driver", "stock-module/src/main/resources/chromedriver.exe");
-//        ChromeOptions options = new ChromeOptions();
-//        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");  // 성능 최적화
-//        WebDriver driver = new ChromeDriver(options);
-//        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-//
-//        int cnt = 0;
-//        try {
-//            for (Map.Entry<String, String> entry : stockDataMap.entrySet()) {
-//                String stockName = entry.getKey();
-//                String stockCode = entry.getValue();
-//
-//                String detailUrl = "https://finance.daum.net/quotes/A" + stockCode + "#home";
-//                driver.get(detailUrl);
-//
-//                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-//                Actions actions = new Actions(driver);
-//
-//                String companyDescription = "정보 없음";  // 기본값
-//
-//                // 🔥 1️⃣ 기업 개요 크롤링 (출처 포함)
-//                try {
-//                    WebElement companyInfoButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("btnCompanyInfo")));
-//                    actions.moveToElement(companyInfoButton).perform(); // 마우스 오버 (hover)
-//
-//                    WebElement companyInfoElement = wait.until(
-//                            ExpectedConditions.visibilityOfElementLocated(By.id("layerCompanyInfo"))
-//                    );
-//
-//                    companyDescription = companyInfoElement.getText().trim();
-//                    System.out.println(stockName + " 기업 개요 크롤링 성공");
-//
-//                } catch (Exception e) {
-//                    System.out.println("❌ 기업 개요 크롤링 실패: " + e.getMessage());
-//                }
-//
-//                // 🔥 2️⃣ MySQL에 저장 또는 업데이트
-//                Optional<Company> existingCompany = companyRepository.findByStockCode(stockCode);
-//
-//                if (existingCompany.isPresent()) {
-//                    // 기존 데이터 업데이트
-//                    Company company = existingCompany.get();
-//                    company.setDescription(companyDescription);
-//                    companyRepository.save(company);
-//                } else {
-//                    // 새 데이터 저장
-//                    Company newCompany = new Company(stockCode, stockName, companyDescription);
-//                    companyRepository.save(newCompany);
-//                }
-//                System.out.println("cnt : " + cnt);
-//
-//
-//            }
-//        } catch (Exception e) {
-//            System.err.println("❌ 배치 크롤링 중 오류 발생: " + e.getMessage());
-//        } finally {
-//            System.out.println("크롤링 끝");
-//            driver.quit();
-//        }
-//
-//    }
 
 }

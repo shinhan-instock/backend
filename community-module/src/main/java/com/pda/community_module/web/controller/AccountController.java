@@ -32,7 +32,6 @@ public class AccountController {
         return ResponseEntity.ok(response);
     }
 
-    // SSE 스트리밍 API (REST API 제거)
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamMyAccount(@RequestHeader("Authorization") String authorizationHeader) {
         String userId = authorizationHeader.replace("Bearer ", "");
@@ -43,7 +42,7 @@ public class AccountController {
     public ResponseEntity<List<AccountResponseDTO>> addMyAccount(@RequestHeader("Authorization") String authorizationHeader,
                                                                 @RequestBody StockRequestDTO stockRequestDTO) {
         String userId = String.valueOf(authorizationHeader.replace("Bearer ", ""));
-        MileageResponseDTO res = mileageClient.getMileage(authorizationHeader); // 마일리지 조회
+        MileageResponseDTO res = mileageClient.getMileage(authorizationHeader);
         Integer mileage = res.getMileage();
         List<AccountResponseDTO> response = accountService.addMyAccount(userId, stockRequestDTO, mileage);
 

@@ -69,7 +69,6 @@ public class SentimentServiceImpl implements SentimentService{
 
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
             String resultText = response.getBody().getChoices().get(0).getMessage().getContent().trim();
-            // 정규 표현식을 사용해 숫자만 추출
             Pattern pattern = Pattern.compile("\\d+");
             Matcher matcher = pattern.matcher(resultText);
             if (matcher.find()) {
