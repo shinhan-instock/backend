@@ -34,9 +34,6 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 30)
     private String nickname;
 
-//    @Column(length = 50)
-//    private String imageUrl;
-
     @Column(length = 255)
     private String introduction;
 

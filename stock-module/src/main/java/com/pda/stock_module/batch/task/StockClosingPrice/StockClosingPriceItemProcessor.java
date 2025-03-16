@@ -24,7 +24,6 @@ public class StockClosingPriceItemProcessor implements ItemProcessor<StockClosin
                     .build();
         } catch (NumberFormatException e) {
             log.error("종가 파싱 실패 - stockCode {}: {}", item.getStockCode(), e.getMessage());
-            // 파싱에 실패한 경우 해당 항목은 스킵
             return null;
         }
     }

@@ -79,24 +79,22 @@ public class AccountServiceImpl implements AccountService{
 
         // SSE 연결 종료 시 안전하게 정리
         emitter.onCompletion(() -> {
-            log.info("✅ SSE 연결 종료 (사용자 보유 주식)");
+            log.info("SSE 연결 종료 (사용자 보유 주식)");
             scheduler.shutdown();
         });
 
         emitter.onTimeout(() -> {
-            log.info("⚠️ SSE 연결 타임아웃 (사용자 보유 주식)");
+            log.info("SSE 연결 타임아웃 (사용자 보유 주식)");
             scheduler.shutdown();
         });
 
         emitter.onError((e) -> {
-            log.error("❌ SSE 연결 오류 (사용자 보유 주식) - " + e.getMessage());
+            log.error("SSE 연결 오류 (사용자 보유 주식) - " + e.getMessage());
             scheduler.shutdown();
         });
 
-        // 5초마다 보유 주식 목록 갱신 (스케줄러 실행)
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                // 🔥 사용자의 보유 주식 조회
                 Optional<Account> account = accountRepository.findByUserId_UserId(userId);
 
                 if (account.isPresent()) {
@@ -108,11 +106,9 @@ public class AccountServiceImpl implements AccountService{
                     }
 
                     List<AccountResponseDTO.AccountResponseStreamDTO> stockList = stocks.stream().map(stock -> {
-                        // Redis에서 현재 주식 가격 가져오기
                         Object priceObj = redisTemplate.opsForHash().get("stock:" + stock.getStockName(), "price");
                         double currentPrice = priceObj != null ? Double.parseDouble(priceObj.toString()) : 0.0;
 
-                        // 평균 매수가 대비 수익률 계산
                         double profit = stock.getAvgPrice() > 0 ?
                                 ((currentPrice - stock.getAvgPrice()) / stock.getAvgPrice()) * 100 : 0.0;
 
@@ -125,7 +121,6 @@ public class AccountServiceImpl implements AccountService{
                                 currentPrice - stock.getAvgPrice()
                         );
                     }).collect(Collectors.toList());
-                    // JSON 변환 후 SSE 전송
                     String jsonResponse = objectMapper.writeValueAsString(stockList);
                     emitter.send(SseEmitter.event().data(jsonResponse));
 
@@ -134,24 +129,23 @@ public class AccountServiceImpl implements AccountService{
                 }
 
             } catch (GeneralException e) {
-                log.error("🚨 데이터 조회 오류: {}", e.getMessage());
+                log.error("데이터 조회 오류: {}", e.getMessage());
                 try {
                     ErrorReasonDTO errorReason = e.getErrorReason();  // GeneralException에서 가져오기
                     String errorJson = objectMapper.writeValueAsString(errorReason);
                     emitter.send(SseEmitter.event().data(errorJson));
                 } catch (IOException ioException) {
-                    log.error("❌ SSE 전송 중 오류 발생: {}", ioException.getMessage());
+                    log.error("SSE 전송 중 오류 발생: {}", ioException.getMessage());
                 }
 
-                // 응답 후 종료
                 emitter.complete();
                 scheduler.shutdown();
             } catch (IOException e) {
-                log.error("❌ SSE 전송 오류: {}", e.getMessage());
+                log.error("SSE 전송 오류: {}", e.getMessage());
                 emitter.complete(); // SSE 연결 종료
                 scheduler.shutdown();
             } catch (Exception e) {
-                log.error("🚨 데이터 조회 오류: {}", e.getMessage());
+                log.error("데이터 조회 오류: {}", e.getMessage());
                 emitter.complete(); // SSE 연결 종료
                 scheduler.shutdown();
             }
@@ -161,102 +155,35 @@ public class AccountServiceImpl implements AccountService{
     }
 
 
-
-//    @Override
-//    public List<AccountResponseDTO> getAccount(String myUserId, String userId) {
-//        Account myAccount = accountRepository.findByUserId_UserId(myUserId)
-//                .orElseThrow(() -> new GeneralException(ErrorStatus.OWN_ACCOUNT_NOT_FOUND)); // 계좌 개설 필수
-//
-//        User user = userRepository.findByUserId(userId)
-//                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND)); // 사용자 존재 여부 확인
-//
-////        if (myAccount.getUser().getOpenAccount() == false) {
-////            throw new GeneralException(ErrorStatus.NOT_GET_ACCOUNT);
-////        }
-//
-//        if (user.getIsInfluencer()) {
-//            Account userAccount = accountRepository.findByUserId_UserId(userId)
-//                    .orElseThrow(() -> new GeneralException(ErrorStatus.STOCK_ACCOUNT_NOT_FOUND));
-//
-//            // 사용자 계좌 확인
-//            Long accountId = userAccount.getId();
-//
-//            List<OwnStock> userOwnStock = ownStockRepository.findByAccountId(accountId);
-//            if(userOwnStock.isEmpty()) {
-//                throw new GeneralException(ErrorStatus.OWN_STOCK_NOT_FOUND);
-//            }
-//
-//            return userOwnStock.stream()
-//                    .map(stock -> new AccountResponseDTO(
-//                            stock.getStockName(),
-//                            stock.getStockCode(),
-//                            stock.getStockCount(),
-//                            null, // avgPrice는 null 처리
-//                            stock.getProfit()
-//                    ))
-//                    .collect(Collectors.toList());
-//        } else { // 일반인 일때
-//            if (user.getOpenAccount() == false) {
-//                throw new GeneralException(ErrorStatus.DO_NOT_WANT_ACCOUNT);
-//            }
-//
-//            Account userAccount = accountRepository.findByUserId_UserId(userId)
-//                    .orElseThrow(() -> new GeneralException(ErrorStatus.STOCK_ACCOUNT_NOT_FOUND));
-//
-//            // 사용자 계좌 확인
-//            Long accountId = userAccount.getId();
-//
-//            List<OwnStock> userOwnStock = ownStockRepository.findByAccountId(accountId);
-//
-//            if(userOwnStock.isEmpty()) {
-//                throw new GeneralException(ErrorStatus.OWN_STOCK_NOT_FOUND);
-//            }
-//
-//            return userOwnStock.stream()
-//                    .map(stock -> new AccountResponseDTO(
-//                            stock.getStockName(),
-//                            null,
-//                            null,
-//                            null,
-//                            null
-//                    ))
-//                    .collect(Collectors.toList());
-//        }
-//    }
-
-// SSE 스트리밍 (5초마다 특정 사용자의 보유 주식 목록 전송)
 public SseEmitter streamUserStock(String myUserId, String userId) {
     SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
     ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     // SSE 연결 종료 시 안전하게 정리
     emitter.onCompletion(() -> {
-        log.info("✅ SSE 연결 종료 (사용자 보유 주식)");
+        log.info("SSE 연결 종료 (사용자 보유 주식)");
         scheduler.shutdown();
     });
 
     emitter.onTimeout(() -> {
-        log.info("⚠️ SSE 연결 타임아웃 (사용자 보유 주식)");
+        log.info("SSE 연결 타임아웃 (사용자 보유 주식)");
         scheduler.shutdown();
     });
 
     emitter.onError((e) -> {
-        log.error("❌ SSE 연결 오류 (사용자 보유 주식) - " + e.getMessage());
+        log.error("SSE 연결 오류 (사용자 보유 주식) - " + e.getMessage());
         scheduler.shutdown();
     });
 
     // 5초마다 보유 주식 목록 갱신 (스케줄러 실행)
     scheduler.scheduleAtFixedRate(() -> {
         try {
-            // 🔥 내 계좌 확인
             Account myAccount = accountRepository.findByUserId_UserId(myUserId)
                     .orElseThrow(() -> new GeneralException(ErrorStatus.OWN_ACCOUNT_NOT_FOUND));
 
-            // 🔥 대상 사용자 확인
             User user = userRepository.findByUserId(userId)
                     .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-            // 🔥 대상 사용자의 계좌 조회
             if (user.getIsInfluencer()) {
                 Account userAccount = accountRepository.findByUserId_UserId(userId)
                         .orElseThrow(() -> new GeneralException(ErrorStatus.STOCK_ACCOUNT_NOT_FOUND));
@@ -267,17 +194,35 @@ public SseEmitter streamUserStock(String myUserId, String userId) {
                     throw new GeneralException(ErrorStatus.OWN_STOCK_NOT_FOUND);
                 }
 
-                List<AccountResponseDTO> stockList = userOwnStock.stream()
-                        .map(stock -> new AccountResponseDTO(
-                                stock.getStockName(),
-                                stock.getStockCode(),
-                                stock.getStockCount(),
-                                stock.getAvgPrice(),
-                                stock.getProfit()
-                        ))
-                        .collect(Collectors.toList());
+//                List<AccountResponseDTO> stockList = userOwnStock.stream()
+//                        .map(stock -> new AccountResponseDTO(
+//                                stock.getStockName(),
+//                                stock.getStockCode(),
+//                                stock.getStockCount(),
+//                                stock.getAvgPrice(),
+//                                stock.getProfit()
+//                        ))
+//                        .collect(Collectors.toList());
+//
+//                String jsonResponse = objectMapper.writeValueAsString(stockList);
+//                emitter.send(SseEmitter.event().data(jsonResponse));
 
-                // JSON 변환 후 SSE 전송
+                List<AccountResponseDTO.AccountResponseStreamDTO> stockList = userOwnStock.stream().map(stock -> {
+                    Object priceObj = redisTemplate.opsForHash().get("stock:" + stock.getStockName(), "price");
+                    double currentPrice = priceObj != null ? Double.parseDouble(priceObj.toString()) : 0.0;
+
+                    double profit = stock.getAvgPrice() > 0 ?
+                            ((currentPrice - stock.getAvgPrice()) / stock.getAvgPrice()) * 100 : 0.0;
+
+                    return new AccountResponseDTO.AccountResponseStreamDTO(
+                            stock.getStockName(),
+                            stock.getStockCode(),
+                            stock.getStockCount(),
+                            stock.getAvgPrice(),
+                            profit,
+                            currentPrice - stock.getAvgPrice()
+                    );
+                }).collect(Collectors.toList());
                 String jsonResponse = objectMapper.writeValueAsString(stockList);
                 emitter.send(SseEmitter.event().data(jsonResponse));
 
@@ -307,25 +252,25 @@ public SseEmitter streamUserStock(String myUserId, String userId) {
                 emitter.send(SseEmitter.event().data(jsonResponse));
             }
         } catch (GeneralException e) {
-            log.error("🚨 데이터 조회 오류: {}", e.getMessage());
+            log.error("데이터 조회 오류: {}", e.getMessage());
             try {
                 ErrorReasonDTO errorReason = e.getErrorReason();  // GeneralException에서 가져오기
                 String errorJson = objectMapper.writeValueAsString(errorReason);
                 emitter.send(SseEmitter.event().data(errorJson));
             } catch (IOException ioException) {
-                log.error("❌ SSE 전송 중 오류 발생: {}", ioException.getMessage());
+                log.error("SSE 전송 중 오류 발생: {}", ioException.getMessage());
             }
 
             // 응답 후 종료
             emitter.complete();
             scheduler.shutdown();
         } catch (IOException e) {
-            log.error("❌ SSE 전송 오류: {}", e.getMessage());
-            emitter.complete(); // SSE 연결 종료
+            log.error("SSE 전송 오류: {}", e.getMessage());
+            emitter.complete();
             scheduler.shutdown();
         } catch (Exception e) {
-            log.error("🚨 데이터 조회 오류: {}", e.getMessage());
-            emitter.complete(); // SSE 연결 종료
+            log.error("데이터 조회 오류: {}", e.getMessage());
+            emitter.complete();
             scheduler.shutdown();
         }
     }, 0, 5, TimeUnit.SECONDS);
@@ -355,7 +300,6 @@ public SseEmitter streamUserStock(String myUserId, String userId) {
                 .findFirst();
 
         if (existingStockOpt.isPresent()) {
-            // 기존 주식이 있으면 업데이트
             OwnStock existingStock = existingStockOpt.get();
             Long newStockCount = existingStock.getStockCount() + 1;
             Long newAvgPrice = (existingStock.getAvgPrice() * existingStock.getStockCount() + requestPrice) / newStockCount;
@@ -374,7 +318,6 @@ public SseEmitter streamUserStock(String myUserId, String userId) {
             ownStockRepository.updateStock(existingStock.getId(), newStockCount, newAvgPrice, profit);
 
         } else {
-            // 새로운 주식 추가 (수익률 계산 적용)
             Double profit = ((double) (requestPrice - requestPrice) / requestPrice) * 100; // 첫 구매이므로 수익률 0%
 
             OwnStock newStock = OwnStock.builder()
@@ -382,18 +325,16 @@ public SseEmitter streamUserStock(String myUserId, String userId) {
                     .stockName(requestStockName)
                     .stockCode(requestStockCode)
                     .stockCount(1L) // 처음 추가되는 주식이므로 1주
-                    .avgPrice(requestPrice.longValue()) // 첫 구매가 그대로 평균 단가
+                    .avgPrice(requestPrice.longValue())
                     .profit(profit)
                     .build();
 
                 ownStockRepository.save(newStock);
         }
 
-        // 마일리지 차감
         MileageRequestDTO updateMileage = new MileageRequestDTO(userId, mileage - requestPrice);
         mileageClient.updateMileage(updateMileage);
 
-        // 업데이트된 주식 리스트 반환
         List<OwnStock> updatedStocks = ownStockRepository.findByAccountId(accountId);
         return updatedStocks.stream()
                 .map(stock -> new AccountResponseDTO(

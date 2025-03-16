@@ -83,11 +83,11 @@ public class StockSentimentServiceImpl implements StockSentimentService {
         List<StockClosingPrice> stockClosingPrices = stockClosingPriceRepository.findByStockNameAndCreatedAtBetween(stockName, twoMonthsAgo, today);
 
         // stockClosingSentiments 리스트 출력
-        System.out.println("📌 StockClosingSentiments 데이터:");
+        System.out.println("StockClosingSentiments 데이터:");
         stockClosingSentiments.forEach(System.out::println);
 
         // stockClosingPrices 리스트 출력
-        System.out.println("📌 StockClosingPrices 데이터:");
+        System.out.println("StockClosingPrices 데이터:");
         stockClosingPrices.forEach(System.out::println);
 
         // Map으로 변환 (날짜를 Key로 설정)

@@ -46,13 +46,11 @@ public class UserServiceImpl implements UserService{
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._FORBIDDEN));
 
-        // 닉네임이 null이 아닐 때만 검사하도록 수정
         Optional.ofNullable(requestDTO.getNickname())
-                .filter(nickname -> !nickname.equals(user.getNickname()))  // 닉네임이 변경된 경우만
-                .filter(userRepository::existsByNickname)  // 닉네임이 중복된 경우
+                .filter(nickname -> !nickname.equals(user.getNickname()))
+                .filter(userRepository::existsByNickname)
                 .ifPresent(nickname -> { throw new GeneralException(ErrorStatus.DUPLICATE_NICKNAME); });
 
-        // 기존 값 유지, 변경된 값만 업데이트
         if (!user.getName().equals(requestDTO.getName())) {
             user.setName(requestDTO.getName());
         }
@@ -63,7 +61,6 @@ public class UserServiceImpl implements UserService{
             user.setIntroduction(requestDTO.getIntroduction());
         }
 
-        // 이미지 변경 처리
         if (requestDTO.getImage() != null && !requestDTO.getImage().isEmpty()) {
             s3Service.setUserImage(requestDTO.getImage(), user);
         }
@@ -126,7 +123,6 @@ public class UserServiceImpl implements UserService{
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        // 필요한 경우 추가적인 필드를 매핑
         return UserConverter.getUserRealPK(user);
     }
 

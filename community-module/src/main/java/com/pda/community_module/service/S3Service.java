@@ -23,18 +23,17 @@ public class S3Service {
     private final AmazonS3Manager s3Manager;
     private final FileRepository fileRepository;
 
-    // ✅ 새로운 메서드 추가
     public String uploadFile(MultipartFile file) {
         return s3Manager.uploadFile(s3Manager.generateUserKeyName(createFileName()), file);
     }
 
     @Transactional
     public File setPostImage(MultipartFile file, Post post) {
-        String pictureUrl = uploadFile(file); // ✅ 수정된 부분
+        String pictureUrl = uploadFile(file);
 
         File newFile = File.builder()
                 .url(pictureUrl)
-                .user(null) // 게시글과 연결된 이미지라면 user는 null
+                .user(null)
                 .post(post)
                 .build();
 
@@ -45,7 +44,7 @@ public class S3Service {
 
     @Transactional
     public File setUserImage(MultipartFile file, User user) {
-        String pictureUrl = uploadFile(file); // ✅ 수정된 부분
+        String pictureUrl = uploadFile(file);
 
         File existingFile = fileRepository.findByUser(user);
         if (existingFile != null) {

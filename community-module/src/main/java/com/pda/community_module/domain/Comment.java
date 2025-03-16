@@ -16,7 +16,7 @@ public class Comment extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne  // Post 엔티티와 연관관계 (외래키: post_id)
+    @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
@@ -27,7 +27,6 @@ public class Comment extends BaseEntity {
     @Column(nullable = false, length = 255)
     private String content;
 
-    // 소프트 딜리트를 위한 삭제 플래그 추가 (기본값 false)
     @Builder.Default
     @Column(nullable = false)
     private Boolean deleted = false;

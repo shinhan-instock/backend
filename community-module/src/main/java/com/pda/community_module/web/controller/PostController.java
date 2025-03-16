@@ -25,7 +25,6 @@ public class PostController {
 
     private final PostService postService;
 
-    // 조건에 맞는 게시글 전체 리스트 보기
     @GetMapping("/")
     @Operation(summary = "전체 게시글 리스트 보기", description = "게시글 팔로잉, 인기, 스크랩, 기본(최신순) 보기")
     @ApiResponses({

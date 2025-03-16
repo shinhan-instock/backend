@@ -43,40 +43,31 @@ public class PostServiceImpl implements PostService {
     public List<PostResponseDTO.getPostDTO> getPosts(Boolean following, Boolean popular, Boolean scrap, String userid) {
         List<Post> posts;
 
-        // userid가 null일 경우 팔로잉, 스크랩한 글만 빈 리스트 반환
         if (userid == null) {
             if (popular) {
-                // 인기 게시글 ( 좋아요 많은 순)
                 posts = postRepository.findAllByOrderByLikesDesc();
             } else if (scrap || following) {
-                // 팔로잉한 글이나 스크랩한 글일 때 빈 리스트 반환
                 posts = new ArrayList<>();
             } else {
-                // 모든 게시글 (최신순)
                 posts = postRepository.findAllByOrderByCreatedAtDesc();
             }
         } else {
-            // userid가 null이 아닌 경우, 정상적으로 사용자 정보 조회
             User user = userRepository.findByUserId(userid).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
             if (popular) {
-                // 인기 게시글 (좋아요 많은 순)
                 posts = postRepository.findAllByOrderByLikesDesc();
             } else if (following) {
-                // 팔로잉한 유저의 게시글
                 List<Long> followingIdList = user.getFollowingList().stream()
                         .map(follow -> follow.getFollowing().getId())
                         .collect(Collectors.toList());
 
                 posts = postRepository.findAllByUserIdIn(followingIdList);
             } else if (scrap) {
-                // 스크랩한 글
                 List<PostScrap> postScraps = postScrapRepository.findByUser(user); // 내 userId
                 posts = postScraps.stream()
                         .map(postScrap -> postScrap.getPost())
                         .collect(Collectors.toList());
             } else {
-                // 모든 게시글 (최신순)
                 posts = postRepository.findAllByOrderByCreatedAtDesc();
             }
         }
@@ -208,7 +199,6 @@ public class PostServiceImpl implements PostService {
         User user = userRepository.findByUserId(createPostDTO.getUserId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        // 먼저 Post 객체 생성 및 저장
         Post post = Post.builder()
                 .user(user)
                 .content(createPostDTO.getContent())
@@ -216,14 +206,12 @@ public class PostServiceImpl implements PostService {
                 .deleted(false)
                 .build();
 
-        // PostCount 도 맞춰서 생성
         PostCount postCount = PostCount.builder()
                 .post(post)
                 .likeCount(0L)
                 .commentCount(0L)
                 .build();
 
-        // 양방향 연관관계 설정
         post.setPostCount(postCount);
         postRepository.save(post);
 
@@ -263,10 +251,6 @@ public class PostServiceImpl implements PostService {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isPresent()) {
             Post post = optionalPost.get();
-//            Sentiment sentiment = Sentiment.builder()
-//                    .post(post)
-//                    .sentimentScore(sentimentScore)
-//                    .build();
 
             Long analyzedSentimentScore = sentimentService.analyzeSentiment(post.getContent());
             Sentiment sentiment = Sentiment.builder()
@@ -275,7 +259,6 @@ public class PostServiceImpl implements PostService {
                     .build();
             System.out.println("GPT based score: "+analyzedSentimentScore);
             sentimentRepository.save(sentiment);
-//            post.setFinalized(true); // 최종 상태 플래그
             postRepository.save(post);
             System.out.println("***** 글 작성 완료. 감정 점수 부여 완료");
         } else {

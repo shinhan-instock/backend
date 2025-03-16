@@ -87,7 +87,6 @@ public class FetchStockThemeService {
                                 // 레디스 데이터 제한
                                 redisTemplate.opsForList().trim(redisKey,0,9);
 
-                                // Redis 데이터에 TTL(Time-To-Live) 설정 (예: 1일)
                                 redisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
                             }
                         }

@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor // ✅ 생성자 추가
+@AllArgsConstructor
 public class AccountResponseDTO {
     private String stockName;
     private String stockCode;

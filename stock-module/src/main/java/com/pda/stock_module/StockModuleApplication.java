@@ -17,7 +17,6 @@ import java.util.Map;
 @EnableFeignClients
 @EnableJpaAuditing
 @ComponentScan(basePackages = {"com.pda.stock_module", "com.pda.core_module"})
-
 public class StockModuleApplication {
 
 
