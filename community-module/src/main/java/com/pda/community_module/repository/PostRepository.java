@@ -1,7 +1,6 @@
 package com.pda.community_module.repository;
 
 import com.pda.community_module.domain.Post;
-import com.pda.community_module.domain.User;
 import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,7 +23,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByUserId(Long id);
 
-    List<Post> findAllByHashtag(String name);
+    @Query("SELECT p FROM Post p WHERE p.deleted = false ORDER BY p.createdAt DESC")
+    List<Post> findAllByHashtagDesc(String name);
 
     @Query("""
         SELECT p FROM Post p 
