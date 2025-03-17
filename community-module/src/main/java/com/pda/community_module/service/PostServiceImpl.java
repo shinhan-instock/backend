@@ -100,7 +100,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostResponseDTO.getPostDTO> getPostsByStock(String name, String userid) {
-        List<Post> posts = postRepository.findAllByHashtag(name);
+        List<Post> posts = postRepository.findAllByHashtagDesc(name);
         return  PostConverter.getPostListDto(posts, userid);
     }
 
