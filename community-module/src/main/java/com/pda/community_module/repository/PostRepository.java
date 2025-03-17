@@ -23,8 +23,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByUserId(Long id);
 
-    @Query("SELECT p FROM Post p WHERE p.deleted = false ORDER BY p.createdAt DESC")
-    List<Post> findAllByHashtagDesc(String name);
+    @Query("SELECT p FROM Post p WHERE p.deleted = false AND p.hashtag = :name ORDER BY p.createdAt DESC")
+    List<Post> findAllByHashtagDesc(@Param("name") String name);
+
 
     @Query("""
         SELECT p FROM Post p 
