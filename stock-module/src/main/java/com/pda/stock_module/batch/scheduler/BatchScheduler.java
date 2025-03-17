@@ -16,16 +16,18 @@ import java.time.format.DateTimeFormatter;
 public class BatchScheduler {
 
     private final JobLauncher jobLauncher;
-    private final Job batchJob; //
+    private final Job batchJob;
 
     @Scheduled(cron = "0 0 16 * * *", zone = "Asia/Seoul")
     public void runBatchJob() {
         try {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+
             JobParameters jobParameters = new JobParametersBuilder()
-                    .addString("targetTime", LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm")))
+                    .addString("targetTime", timestamp)
                     .toJobParameters();
 
-            jobLauncher.run(batchJob, jobParameters); //
+            jobLauncher.run(batchJob, jobParameters);
             System.out.println("배치 실행 완료: " + jobParameters.getString("targetTime"));
 
         } catch (Exception e) {

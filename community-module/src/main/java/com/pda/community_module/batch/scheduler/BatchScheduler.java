@@ -22,8 +22,10 @@ public class BatchScheduler {
     @Scheduled(cron = "0 0 * * * *" ,zone = "Asia/Seoul")
     public void runBatchJob() {
         try {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+
             JobParameters jobParameters = new JobParametersBuilder()
-                    .addString("targetTime", LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmmss")))
+                    .addString("targetTime", timestamp)
                     .toJobParameters();
 
             jobLauncher.run(batchJob, jobParameters); //
