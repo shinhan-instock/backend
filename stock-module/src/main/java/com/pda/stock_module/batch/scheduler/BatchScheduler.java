@@ -18,7 +18,8 @@ public class BatchScheduler {
     private final JobLauncher jobLauncher;
     private final Job batchJob;
 
-    @Scheduled(cron = "0 0 16 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 16 * * *", zone = "Asia/Seoul") //4시마다
+    //업 .
     public void runBatchJob() {
         try {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
