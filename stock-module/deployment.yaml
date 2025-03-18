@@ -4,7 +4,7 @@ metadata:
   name: be-stock
   namespace: be-namespace
 spec:
-  replicas: 4
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -57,4 +57,4 @@ spec:
           periodSeconds: 10        # 헬스 체크 주기
           timeoutSeconds: 2        # 각 체크에 대한 타임아웃 시간
           failureThreshold: 3      # 실패한 연속 횟수에 대한 임계값
-          successThreshold: 1      # 성공한 연속 횟수에 대한 임계값
+          successThreshold: 1     # 성공한 연속 횟수에 대한 임계값

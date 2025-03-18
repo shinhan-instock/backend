@@ -81,7 +81,6 @@ stock:
     topic:
       setMileage: stock.set-mileage-topic
 
-
 appkey: ${APP_KEY}
 appsecret: ${APP_SECRET}
 
@@ -90,3 +89,16 @@ feign:
   stock-url: ${STOCK_URL:localhost:8081}
   community-url: ${COMMUNITY_URL:localhost:8080}
 
+# Actuator & Prometheus metrics 설정 추가
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
