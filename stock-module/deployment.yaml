@@ -46,15 +46,3 @@ spec:
               secretKeyRef:
                 name: my-redis
                 key: redis-password
-        ports:
-        - containerPort: 8081
-        readinessProbe:
-          httpGet:
-            path: /healthz/ready  # 애플리케이션의 헬스체크 엔드포인트
-            port: 8081
-            host: localhost
-          initialDelaySeconds: 10   # 컨테이너 시작 후 첫 번째 체크 대기 시간
-          periodSeconds: 10        # 헬스 체크 주기
-          timeoutSeconds: 2        # 각 체크에 대한 타임아웃 시간
-          failureThreshold: 3      # 실패한 연속 횟수에 대한 임계값
-          successThreshold: 1     # 성공한 연속 횟수에 대한 임계값
